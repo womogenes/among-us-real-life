@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { serverAddr, subscribeToMessages } from './networking.js';
+import { serverAddr, subscribeToMessages, getLobby } from './networking.js';
 
 export default function App() {
   const [message, setMessage] = useState('Server connection test');

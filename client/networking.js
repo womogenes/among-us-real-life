@@ -4,9 +4,12 @@ import Constants from 'expo-constants';
 const { serverAddr } = Constants.expoConfig;
 const client = new Colyseus.Client(`ws://${serverAddr}`);
 
-// Placeholder function
+// Placeholder functions
 let pushMessage = (message) => {
   console.log('Not subscribed yet');
+};
+let getLobby = () => {
+  console.log('Not connected to server yet.');
 };
 
 // The root component calls this on some state handler,
@@ -15,15 +18,20 @@ let pushMessage = (message) => {
 const subscribeToMessages = (fun) => {
   // Subscribe to message provided by root React Native component
   console.log('Root component subscribed!');
-
   pushMessage = fun;
 };
 
+console.log('Connecting to server...');
 client.joinOrCreate('lobby').then((lobby) => {
-  console.log(`Joined room ${lobby.sessionId}, name: ${lobby.name}`);
+  const joinMessage = `Joined room ${lobby.sessionId}, name: ${lobby.name}`;
+  console.log(joinMessage);
+
+  getLobby = () => {
+    return lobby;
+  };
 
   // This might happen before pushMessage is subscribed to
-  pushMessage('Yayyy');
+  pushMessage(joinMessage);
 
   // Get server ping times
   let pingStart;
@@ -37,9 +45,11 @@ client.joinOrCreate('lobby').then((lobby) => {
 
     let delay = Date.now() - pingStart;
     pushMessage(delay);
-    setTimeout(pingServer, 100);
+    setTimeout(pingServer, 1000);
   });
+
+  // Begin the ping loop
   pingServer();
 });
 
-export { serverAddr, subscribeToMessages };
+export { serverAddr, subscribeToMessages, getLobby };
