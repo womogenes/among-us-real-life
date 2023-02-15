@@ -1,3 +1,7 @@
+# Environment variable files
+.env
+
+# Expo things
 node_modules/
 .expo/
 dist/

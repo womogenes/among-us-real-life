@@ -1,14 +1,13 @@
 import { Room } from '@colyseus/core';
-import { MyRoomState } from './schema/MyRoomState.js';
+// import { TestRoomState } from './schema/TestRoomState.js';
 
-export class MyRoom extends Room {
+export class TestRoom extends Room {
   onCreate(options) {
-    this.setState(new MyRoomState());
+    // this.setState(new TestRoomState());
 
-    this.onMessage('type', (client, message) => {
-      //
-      // handle "type" message.
-      //
+    this.onMessage('pingServer', (client, message) => {
+      console.log(`Server pinged at ${Date.now()}`);
+      client.send('pong', null);
     });
   }
 
