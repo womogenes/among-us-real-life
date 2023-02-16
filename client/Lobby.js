@@ -1,9 +1,17 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Button, Text, View } from 'react-native';
 
-function LobbyScreen() {
+function LobbyScreen({ navigation }) {
     return (
         <View style={styles.lobbyContainer}>
             <Text>Lobby Screen</Text>
+            <Button
+                title="Go to Test Screen"
+                onPress={() => {
+                    navigation.push("TestScreen", {
+                        msg: "You came from the Lobby Screen!",
+                    });
+                }}
+            />
         </View>
     );
 }
