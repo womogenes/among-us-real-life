@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { serverAddr, subscribeToMessages, getLobby } from './networking.js';
 import { LobbyScreen } from './Lobby.js';
+import { GameScreen } from './game.js';
 import { TestScreen } from './TestScreen.js';
 
 const Stack = createNativeStackNavigator();
@@ -21,6 +22,7 @@ export default function App() {
     <NavigationContainer>{
       <Stack.Navigator initialRouteName="TestScreen">
         <Stack.Screen name="Lobby" component={LobbyScreen} />
+        <Stack.Screen name="Game" component={GameScreen} />
         <Stack.Screen
           name="TestScreen"
           component={TestScreen}

@@ -6,7 +6,7 @@ import * as Location from 'expo-location';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 
-export default function App() {
+export default function GameScreen({ navigation }) {
   const [location, setLocation] = useState({coords: {latitude: 0, longitude: 0}});
   const [errorMsg, setErrorMsg] = useState(null);
 
@@ -92,3 +92,5 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
 });
+
+export { GameScreen };
