@@ -25,7 +25,7 @@ export default function App() {
           name="TestScreen"
           component={TestScreen}
           options={{ title: "Dev things" }}
-          initialParams={{ msg: "You came from nowhere!"}}
+          initialParams={{ msg: "You came from nowhere!" }}
         />
 
         {/* William's server ping stuff */}
