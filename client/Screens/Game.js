@@ -5,9 +5,10 @@ import * as Location from 'expo-location';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
-
 export default function GameScreen({ navigation }) {
-  const [location, setLocation] = useState({coords: {latitude: 0, longitude: 0}});
+  const [location, setLocation] = useState({
+    coords: { latitude: 0, longitude: 0 },
+  });
   const [errorMsg, setErrorMsg] = useState(null);
 
   function animate(loc) {
@@ -15,14 +16,14 @@ export default function GameScreen({ navigation }) {
       latitude: loc.coords.latitude,
       longitude: loc.coords.longitude,
       latitudeDelta: 0.0003,
-      longitudeDelta: 0.000001, 
-    }
-    mapView.animateToRegion(r, 500)
+      longitudeDelta: 0.000001,
+    };
+
+    mapView?.animateToRegion(r, 500);
   }
 
   useEffect(() => {
     (async () => {
-      
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
@@ -32,12 +33,15 @@ export default function GameScreen({ navigation }) {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
 
-      let userLocation = await Location.watchPositionAsync({
-        accuracy:Location.Accuracy.High,
-        distanceInterval: 0.1,
-        timeInterval: 100
-      },
-        (loc) => {setLocation(loc),  animate(loc)}
+      let userLocation = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          distanceInterval: 0.1,
+          timeInterval: 100,
+        },
+        (loc) => {
+          setLocation(loc), animate(loc);
+        }
       );
     })();
   }, []);
@@ -53,7 +57,7 @@ export default function GameScreen({ navigation }) {
     <View style={styles.container}>
       <StatusBar style="auto" />
       <MapView
-        ref = {(ref)=>mapView=ref}
+        ref={(ref) => (mapView = ref)}
         style={styles.map}
         initialRegion={{
           latitude: 0,
@@ -67,12 +71,12 @@ export default function GameScreen({ navigation }) {
         <Marker
           coordinate={{
             latitude: location.coords.latitude,
-            longitude: location.coords.longitude
+            longitude: location.coords.longitude,
           }}
-          title='my location'/>
+          title="my location"
+        />
       </MapView>
-      <View>
-      </View>
+      <View></View>
     </View>
   );
 }
