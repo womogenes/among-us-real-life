@@ -5,6 +5,8 @@ import * as Location from 'expo-location';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
+import { getLobby } from '../networking.js';
+
 export default function GameScreen({ navigation }) {
   const [location, setLocation] = useState({
     coords: { latitude: 0, longitude: 0 },
@@ -15,14 +17,19 @@ export default function GameScreen({ navigation }) {
     let r = {
       latitude: loc.coords.latitude,
       longitude: loc.coords.longitude,
-      latitudeDelta: 0.0003,
-      longitudeDelta: 0.000001,
+      latitudeDelta: 0.003,
+      longitudeDelta: 0.00001,
     };
 
     mapView?.animateToRegion(r, 500);
   }
 
   useEffect(() => {
+    // Status update loop
+  }, []);
+
+  useEffect(() => {
+    // Location update loop
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -41,17 +48,13 @@ export default function GameScreen({ navigation }) {
         },
         (loc) => {
           setLocation(loc), animate(loc);
+
+          // Send location to server
+          getLobby()?.send('location', loc);
         }
       );
     })();
   }, []);
-
-  let text = 'Waiting..';
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
 
   return (
     <View style={styles.container}>

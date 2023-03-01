@@ -1,10 +1,8 @@
 import Arena from '@colyseus/arena';
 import { monitor } from '@colyseus/monitor';
 
-/**
- * Import your Room files
- */
 import { TestRoom } from './rooms/TestRoom.js';
+import { GameRoom } from './rooms/GameRoom.js';
 
 export default Arena.default({
   getId: () => 'Your Colyseus App',
@@ -13,7 +11,7 @@ export default Arena.default({
     /**
      * Define your room handlers:
      */
-    gameServer.define('lobby', TestRoom);
+    gameServer.define('lobby', GameRoom);
   },
 
   initializeExpress: (app) => {
