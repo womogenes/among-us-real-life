@@ -6,9 +6,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { serverAddr, subscribeToMessages, getLobby } from './networking.js';
 import { LobbyScreen } from './Lobby.js';
-import { GameScreen } from './Screens/Game.js';
-import { TestScreen } from './Screens/Test.js';
-import { MenuScreen } from './Screens/Menu.js';
+import { GameScreen } from './screens/Game.js';
+import { TestScreen } from './screens/Test.js';
+import { MenuScreen } from './screens/Menu.js';
 
 const Stack = createNativeStackNavigator();
 
