@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Image, Pressable, StyleSheet, Button, Text, View } from 'react-native';
+import Constants from 'expo-constants';
 
 function LobbyScreen({ navigation }) {
   const [eventLog, updateEventLog] = useState([]);
@@ -38,6 +39,7 @@ function LobbyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   lobbyContainer: {
+    paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight,
     flex: 1,
     backgroundColor: '#ffffff',
     flexDirection: 'column',
