@@ -6,9 +6,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { serverAddr, subscribeToMessages, getLobby } from './networking.js';
 import { LobbyScreen } from './Lobby.js';
-import { GameScreen } from './Screens/Game.js.js';
-import { TestScreen } from './Screens/Test.js';
-import { MenuScreen } from './Screens/Menu.js';
+import { GameScreen } from './screens/Game.js';
+import { TestScreen } from './screens/Test.js';
+import { MenuScreen } from './screens/Menu.js';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,7 +31,7 @@ export default function App() {
             options={{ title: 'Dev things' }}
             initialParams={{ msg: 'You came from nowhere!' }}
           />
-
+          <Stack.Screen name="Menu" component={MenuScreen} />
           {/* William's server ping stuff */}
           {/* <View style={styles.container}>
           <Text style={{ fontSize: 18, marginBottom: 8 }}>
