@@ -18,7 +18,8 @@ export default function GameScreen({ navigation }) {
       latitudeDelta: 0.0003,
       longitudeDelta: 0.000001,
     };
-    mapView.animateToRegion(r, 500);
+
+    mapView?.animateToRegion(r, 500);
   }
 
   useEffect(() => {
