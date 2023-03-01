@@ -1,9 +1,23 @@
-import { StyleSheet, Button, Text, View } from 'react-native';
+import { StyleSheet, Button, Text, View, ImageBackground } from 'react-native';
+
+const backgroundImage = {
+  uri: 'client/assets/menuBackground.png',
+};
 
 function MenuScreen({ navigation }) {
   return (
     <View style={styles.menuContainer}>
-      <Text>Menu Screen!!!</Text>
+      <ImageBackground
+        source={backgroundImage}
+        resizeMode="cover"
+        style={styles.backgroundImage}
+      ></ImageBackground>
+      <Text style={styles.titleText}>Among Us!!!</Text>
+      <View style={styles.buttonsContainer}>
+        <Button title="Join" onPress={() => navigation.navigate('Lobby')} />
+        <Button title="Public" onPress={() => navigation.navigate('Lobby')} />
+        <Button title="Create" onPress={() => navigation.navigate('Lobby')} />
+      </View>
     </View>
   );
 }
@@ -14,6 +28,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  titleText: {
+    fontWeight: 'bold',
+  },
+  buttonsContainer: {
+    color: '#505050',
+  },
+  backgroundImage: {
+    flex: 1,
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
   },
 });
 
