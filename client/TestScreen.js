@@ -13,6 +13,10 @@ function TestScreen({ route, navigation }) {
                 onPress={() => navigation.navigate("Lobby")}
             />
             <Button
+                title="Go to Game Screen"
+                onPress={() => navigation.navigate("Game")}
+            />
+            <Button
                 title="Go to Test Screen (this) again!"
                 onPress={() => {
                     navigation.push("TestScreen", {
