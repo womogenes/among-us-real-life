@@ -1,14 +1,10 @@
 import { StyleSheet, Button, Text, View, ImageBackground } from 'react-native';
 
-const backgroundImage = {
-  uri: 'client/assets/menuBackground.png',
-};
-
 function MenuScreen({ navigation }) {
   return (
     <View style={styles.menuContainer}>
       <ImageBackground
-        source={backgroundImage}
+        source={require('client/assets/menuBackground.png')}
         resizeMode="cover"
         style={styles.backgroundImage}
       ></ImageBackground>
