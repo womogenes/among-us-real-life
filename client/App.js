@@ -19,27 +19,29 @@ export default function App() {
   }, []);
 
   return (
-    <NavigationContainer>{
-      <Stack.Navigator initialRouteName="TestScreen">
-        <Stack.Screen name="Lobby" component={LobbyScreen} />
-        <Stack.Screen name="Game" component={GameScreen} />
-        <Stack.Screen
-          name="TestScreen"
-          component={TestScreen}
-          options={{ title: "Dev things" }}
-          initialParams={{ msg: "You came from nowhere!"}}
-        />
+    <NavigationContainer>
+      {
+        <Stack.Navigator initialRouteName="TestScreen">
+          <Stack.Screen name="Lobby" component={LobbyScreen} />
+          <Stack.Screen name="Game" component={GameScreen} />
+          <Stack.Screen
+            name="TestScreen"
+            component={TestScreen}
+            options={{ title: 'Dev things' }}
+            initialParams={{ msg: 'You came from nowhere!' }}
+          />
 
-        {/* William's server ping stuff */}
-        {/* <View style={styles.container}>
+          {/* William's server ping stuff */}
+          {/* <View style={styles.container}>
           <Text style={{ fontSize: 18, marginBottom: 8 }}>
             Connected to <Text style={{ fontWeight: 'bold' }}>{serverAddr}</Text>
           </Text>
           <Text>Ping time: {message} ms</Text>
           <StatusBar style="auto" />
         </View> */}
-      </Stack.Navigator>
-    }</NavigationContainer>
+        </Stack.Navigator>
+      }
+    </NavigationContainer>
   );
 }
 
