@@ -1,6 +1,6 @@
 import { Room } from '@colyseus/core';
 
-import { GameRoomState } from './schema/GameRoomState.js';
+import { GameRoomState, Player } from './schema/GameRoomState.js';
 
 export class GameRoom extends Room {
   onCreate(options) {
@@ -12,12 +12,17 @@ export class GameRoom extends Room {
     }); */
 
     this.onMessage('location', (client, loc) => {
-      console.log(client.sessionId, loc.timestamp);
+      const clientIndex = this.state.players.findIndex(
+        (player) => player.sessionId == client.sessionId
+      );
+      this.state.players[clientIndex].location.update(loc.coords);
     });
   }
 
   onJoin(client, options) {
     console.log(client.sessionId, 'joined!');
+
+    this.state.players.push(new Player(client.sessionId));
   }
 
   onLeave(client, consented) {
