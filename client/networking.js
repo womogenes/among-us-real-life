@@ -29,27 +29,6 @@ client.joinOrCreate('lobby').then((lobby) => {
   getLobby = () => {
     return lobby;
   };
-
-  // This might happen before pushMessage is subscribed to
-  pushMessage(joinMessage);
-
-  // Get server ping times
-  let pingStart;
-
-  const pingServer = () => {
-    pingStart = Date.now();
-    lobby.send('pingServer');
-  };
-  lobby.onMessage('pong', (message) => {
-    console.log('message received');
-
-    let delay = Date.now() - pingStart;
-    pushMessage(delay);
-    setTimeout(pingServer, 1000);
-  });
-
-  // Begin the ping loop
-  pingServer();
 });
 
 export { serverAddr, subscribeToMessages, getLobby };

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Image, Pressable, StyleSheet, Button, Text, View } from 'react-native';
 import Constants from 'expo-constants';
+import Modal from 'react-native-modal';
 
 function LobbyScreen({ navigation }) {
   const [eventLog, updateEventLog] = useState([]);
@@ -45,6 +46,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   settingsContainer: {
+    marginTop: 10,
+    marginLeft: 5,
+    marginRight: 5,
     flexDirection: 'row',
     // backgroundColor: 'powderblue',
     justifyContent: 'space-between',
