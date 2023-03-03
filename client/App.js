@@ -23,11 +23,12 @@ export default function App() {
     <NavigationContainer>
       {
         <Stack.Navigator
-          initialRouteName="TestScreen"
+          initialRouteName="MenuScreen"
           screenOptions={{
-            headerShown: true,
+            headerShown: false,
           }}
         >
+          <Stack.Screen name="Menu" component={MenuScreen} />
           <Stack.Screen name="Lobby" component={LobbyScreen} />
           <Stack.Screen name="Game" component={GameScreen} />
           <Stack.Screen
@@ -36,7 +37,7 @@ export default function App() {
             options={{ title: 'Dev things' }}
             initialParams={{ msg: 'You came from nowhere!' }}
           />
-          <Stack.Screen name="Menu" component={MenuScreen} />
+
           {/* William's server ping stuff */}
           {/* <View style={styles.container}>
           <Text style={{ fontSize: 18, marginBottom: 8 }}>
