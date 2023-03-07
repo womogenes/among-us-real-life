@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 
-function MenuScreen({ navigation }) {
+function JoinScreen({ navigation }) {
   return (
     <View style={styles.menuContainer}>
       <ImageBackground
@@ -18,21 +18,23 @@ function MenuScreen({ navigation }) {
         style={styles.backgroundImage}
       >
         <View style={{ flex: 1, backgroundColor: 'transparent' }} />
-        <Text style={styles.titleText}>Among Us</Text>
+        <Text style={styles.titleText}>Join Page</Text>
         <Text style={styles.lakesideText}>(Lakeside Edition)</Text>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate('Join')}
+            onPress={() => navigation.navigate('Lobby')}
           >
             <Text style={styles.touchableButton}>Join</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('Lobby')}
           >
             <Text style={styles.touchableButton}>Public</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('Lobby')}
@@ -72,8 +74,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   button: {
-    textColor: 'white',
-
     alignItems: 'center',
     backgroundColor: '#BDC9C9',
     flex: 1,
@@ -101,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export { MenuScreen };
+export { JoinScreen };
