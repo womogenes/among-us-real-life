@@ -7,6 +7,8 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { getLobby } from '../networking.js';
 
+import CustomButton from '../components/button.js';
+
 export default function GameScreen({ navigation }) {
   const [location, setLocation] = useState({
     coords: { latitude: 0, longitude: 0 },
@@ -82,6 +84,7 @@ export default function GameScreen({ navigation }) {
           }}
           title="my location"
         />
+        <CustomButton text={'amongus'} image={'../assets/menuBackground.png'}/>
       </MapView>
       <View></View>
     </View>
