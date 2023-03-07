@@ -25,7 +25,7 @@ export default function App() {
         <Stack.Navigator
           initialRouteName="TestScreen"
           screenOptions={{
-            headerShown: true,
+            headerShown: false,
           }}
         >
           <Stack.Screen name="Lobby" component={LobbyScreen} />

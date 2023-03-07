@@ -4,17 +4,14 @@ import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
 
 function LobbyScreen({ navigation }) {
-  const [eventLog, updateEventLog] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleModal = () => setIsModalVisible(() => !isModalVisible);
 
   return (
     <View style={styles.lobbyContainer}>
       <View style={styles.settingsContainer}>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => {
-            console.log('pressed!');
-          }}
-        >
+        <Pressable accessibilityRole="button" onPress={handleModal}>
           <Image
             style={styles.settingsIcon}
             source={require('client/assets/settingsIcon.png')}
@@ -34,6 +31,12 @@ function LobbyScreen({ navigation }) {
           }}
         />
       </View>
+      <Modal isVisible={isModalVisible}>
+        <View style={styles.settingsModal}>
+          <Text>Setting1: </Text>
+          <Button title="Hide modal" onPress={handleModal} />
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -67,6 +70,11 @@ const styles = StyleSheet.create({
     flex: 0.5,
     justifyContent: 'center',
     alignSelf: 'center',
+  },
+  settingsModal: {
+    backgroundColor: 'powderblue',
+    borderRadius: 5,
+    flex: 1,
   },
 });
 
