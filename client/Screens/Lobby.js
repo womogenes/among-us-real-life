@@ -1,13 +1,5 @@
 import { useState } from 'react';
-import {
-  Image,
-  TouchableOpacity,
-  Pressable,
-  StyleSheet,
-  Button,
-  Text,
-  View,
-} from 'react-native';
+import { Image, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';

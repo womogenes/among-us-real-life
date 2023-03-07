@@ -1,16 +1,20 @@
 import {
   StyleSheet,
-  Button,
   Text,
   View,
   ImageBackground,
   TouchableOpacity,
-  Touchable,
 } from 'react-native';
-import React, { useState } from 'react';
-import Modal from 'react-native-modal';
+import { React, useState } from 'react';
 
 function MenuScreen({ navigation }) {
+  const joinGame = () => {
+    navigation.navigate('Join');
+  };
+  const toLobby = () => {
+    navigation.navigate('Lobby');
+  };
+
   return (
     <View style={styles.menuContainer}>
       <ImageBackground
@@ -23,19 +27,13 @@ function MenuScreen({ navigation }) {
           <Text style={styles.lakesideText}>(Lakeside Edition)</Text>
         </View>
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Join')}
-          >
-            <Text style={styles.touchableButton}>Join</Text>
+          <TouchableOpacity style={styles.button} onPress={joinGame}>
+            <Text style={styles.buttonText}>Join</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Lobby')}
-          >
-            <Text style={styles.touchableButton}>Create</Text>
+
+          <TouchableOpacity style={styles.button} onPress={toLobby}>
+            <Text style={styles.buttonText}>Create</Text>
           </TouchableOpacity>
-          <View style={styles.emptyTouchableView}></View>
         </View>
       </ImageBackground>
     </View>
@@ -43,56 +41,42 @@ function MenuScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  menuContainer: {
-    flex: 1,
-    flexDirection: 'column',
-  },
   backgroundImage: {
     width: '100%',
     height: '100%',
+    flexDirection: 'column',
   },
   titleContainer: {
-    backgroundColor: 'red',
     flex: 0.4,
     justifyContent: 'center',
     alignItems: 'center',
   },
   titleText: {
     fontWeight: 'bold',
-    fontSize: 50,
+    fontSize: 60,
     letterSpacing: 3,
   },
   lakesideText: {
-    color: 'black',
-    flex: 2,
     fontSize: 20,
-    textAlign: 'center',
   },
   buttonsContainer: {
     color: '#505050',
     flex: 0.6,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   button: {
-    textColor: 'white',
-
-    alignItems: 'center',
     backgroundColor: '#BDC9C9',
-    flex: 1,
-    marginTop: 20,
-    marginBottom: 10,
-    marginLeft: 70,
-    marginRight: 70,
-    paddingTop: 15,
-    paddingBottom: 15,
+    width: '65%',
+    height: '15%',
+    margin: 20,
     borderRadius: 20,
-  },
-  emptyTouchableView: {
-    flex: 4,
-  },
-  touchableButton: {
-    color: 'black',
-    fontSize: 17,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'black',
+    fontSize: 30,
   },
 });
 
