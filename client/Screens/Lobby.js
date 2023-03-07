@@ -18,6 +18,7 @@ function LobbyScreen({ navigation }) {
   const handleModal = () => setIsModalVisible(() => !isModalVisible);
 
   const [killRadius, setKillRadius] = useState(5);
+  const [killCooldown, setKillCooldown] = useState(60);
 
   const startGame = () => {
     navigation.navigate('Game');
@@ -56,6 +57,19 @@ function LobbyScreen({ navigation }) {
                 maximumValue={10}
                 step={1}
                 onValueChange={(killRadius) => setKillRadius(killRadius)}
+                trackClickable={true}
+              />
+            </View>
+            <View>
+              <Text style={styles.settingsModalText}>
+                Kill Cooldown: {killCooldown}
+              </Text>
+              <Slider
+                value={killCooldown}
+                minimumValue={10}
+                maximumValue={240}
+                step={10}
+                onValueChange={(killCooldown) => setKillCooldown(killCooldown)}
                 trackClickable={true}
               />
             </View>

@@ -27,12 +27,14 @@ function MenuScreen({ navigation }) {
           >
             <Text style={styles.touchableButton}>Join</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('Lobby')}
           >
             <Text style={styles.touchableButton}>Public</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('Lobby')}
@@ -72,8 +74,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   button: {
-    textColor: 'white',
-
     alignItems: 'center',
     backgroundColor: '#BDC9C9',
     flex: 1,
