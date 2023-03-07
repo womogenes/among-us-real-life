@@ -13,7 +13,7 @@ function MenuScreen({ navigation }) {
   return (
     <View style={styles.menuContainer}>
       <ImageBackground
-        source={require('client/assets/menuBackground.png')}
+        source={require('client/assets/menuTrial.png')}
         resizeMode="cover"
         style={styles.backgroundImage}
       >
