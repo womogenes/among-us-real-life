@@ -73,7 +73,7 @@ function LobbyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   lobbyContainer: {
-    paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight,
+    paddingTop: Constants.statusBarHeight,
     flex: 1,
     backgroundColor: '#ffffff',
     flexDirection: 'column',
