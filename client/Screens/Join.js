@@ -8,9 +8,8 @@ import {
   Touchable,
 } from 'react-native';
 import React, { useState } from 'react';
-import Modal from 'react-native-modal';
 
-function MenuScreen({ navigation }) {
+function JoinScreen({ navigation }) {
   return (
     <View style={styles.menuContainer}>
       <ImageBackground
@@ -18,17 +17,24 @@ function MenuScreen({ navigation }) {
         resizeMode="cover"
         style={styles.backgroundImage}
       >
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Among Us</Text>
-          <Text style={styles.lakesideText}>(Lakeside Edition)</Text>
-        </View>
+        <View style={{ flex: 1, backgroundColor: 'transparent' }} />
+        <Text style={styles.titleText}>Join Page</Text>
+        <Text style={styles.lakesideText}>(Lakeside Edition)</Text>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate('Join')}
+            onPress={() => navigation.navigate('Lobby')}
           >
             <Text style={styles.touchableButton}>Join</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('Lobby')}
+          >
+            <Text style={styles.touchableButton}>Public</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('Lobby')}
@@ -45,36 +51,29 @@ function MenuScreen({ navigation }) {
 const styles = StyleSheet.create({
   menuContainer: {
     flex: 1,
-    flexDirection: 'column',
-  },
-  backgroundImage: {
-    width: '100%',
-    height: '100%',
-  },
-  titleContainer: {
-    backgroundColor: 'red',
-    flex: 0.4,
-    justifyContent: 'center',
+    backgroundColor: '#ffffff',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   titleText: {
     fontWeight: 'bold',
-    fontSize: 50,
-    letterSpacing: 3,
-  },
-  lakesideText: {
     color: 'black',
-    flex: 2,
-    fontSize: 20,
     textAlign: 'center',
+    fontSize: 50,
+    flex: 0.5,
+    letterSpacing: 3,
   },
   buttonsContainer: {
     color: '#505050',
-    flex: 0.6,
+    flex: 2,
+  },
+  backgroundImage: {
+    flex: 1,
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
   },
   button: {
-    textColor: 'white',
-
     alignItems: 'center',
     backgroundColor: '#BDC9C9',
     flex: 1,
@@ -86,6 +85,12 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     borderRadius: 20,
   },
+  lakesideText: {
+    color: 'black',
+    flex: 2,
+    fontSize: 20,
+    textAlign: 'center',
+  },
   emptyTouchableView: {
     flex: 4,
   },
@@ -96,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export { MenuScreen };
+export { JoinScreen };
