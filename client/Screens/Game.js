@@ -1,5 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  Touchable,
+  TouchableOpacity,
+} from 'react-native';
+import Constants from 'expo-constants';
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 
@@ -12,6 +20,7 @@ export default function GameScreen({ navigation }) {
     coords: { latitude: 0, longitude: 0 },
   });
   const [errorMsg, setErrorMsg] = useState(null);
+  const [debugMsg, setDebugMsg] = useState('');
 
   function animate(loc) {
     let r = {
@@ -26,6 +35,17 @@ export default function GameScreen({ navigation }) {
 
   useEffect(() => {
     // Status update loop
+    const room = getLobby();
+
+    room.onStateChange.once((state) => {
+      // This is run once, when the client connects
+      setDebugMsg(JSON.stringify(state, null, 1));
+    });
+
+    room.onStateChange((state) => {
+      // This is run whenever the server updates state
+      setDebugMsg(JSON.stringify(state, null, 1));
+    });
   }, []);
 
   useEffect(() => {
@@ -58,7 +78,23 @@ export default function GameScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
+
+      <View style={styles.debugContainer}>
+        {/* Debug container */}
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Debug</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Menu')}
+        >
+          <Text style={{ color: '#fff' }}>Back to menu</Text>
+        </TouchableOpacity>
+
+        <Text style={{ fontFamily: 'Courier New', fontSize: 16 }}>
+          {debugMsg}
+        </Text>
+      </View>
+
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
@@ -88,8 +124,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'stretch',
+    justifyContent: 'flex-start',
   },
   map: {
     position: 'absolute',
@@ -97,6 +133,26 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+  },
+
+  debugContainer: {
+    alignItems: 'flex-start',
+    margin: 20,
+    marginTop: Constants.statusBarHeight,
+    padding: 20,
+    borderRadius: 10,
+    backgroundColor: '#ffffffdd',
+    zIndex: 2,
+  },
+
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#888',
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    borderRadius: 5,
   },
 });
 
