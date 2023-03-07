@@ -39,7 +39,7 @@ function LobbyScreen({ navigation }) {
 
       <View style={styles.bodyContainer}>
         <TouchableOpacity style={styles.button} onPress={startGame}>
-          <Text style={[styles.buttonText, { fontSize: 24 }]}>Start Game</Text>
+          <Text style={styles.buttonText}>Start Game</Text>
         </TouchableOpacity>
       </View>
 
@@ -138,6 +138,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'black',
+    fontSize: 24,
+    marginTop: 7,
   },
 });
 
