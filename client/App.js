@@ -5,10 +5,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { serverAddr, subscribeToMessages, getLobby } from './networking.js';
-import { LobbyScreen } from './Lobby.js';
+import { LobbyScreen } from './screens/Lobby.js';
 import { GameScreen } from './screens/Game.js';
 import { TestScreen } from './screens/Test.js';
 import { MenuScreen } from './screens/Menu.js';
+import { JoinScreen } from './screens/Join.js';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ export default function App() {
           <Stack.Screen name="Menu" component={MenuScreen} />
           <Stack.Screen name="Lobby" component={LobbyScreen} />
           <Stack.Screen name="Game" component={GameScreen} />
+          <Stack.Screen name="Join" component={JoinScreen} />
           <Stack.Screen
             name="TestScreen"
             component={TestScreen}

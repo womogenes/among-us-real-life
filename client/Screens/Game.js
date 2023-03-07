@@ -26,7 +26,7 @@ export default function GameScreen({ navigation }) {
     let r = {
       latitude: loc.coords.latitude,
       longitude: loc.coords.longitude,
-      latitudeDelta: 0.003,
+      latitudeDelta: 0.0003,
       longitudeDelta: 0.00001,
     };
 
@@ -98,10 +98,14 @@ export default function GameScreen({ navigation }) {
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
+        pitchEnabled = {false}
+        rotateEnabled = {false}
+        scrollEnabled = {false}
+        zoomEnabled = {false}
         initialRegion={{
           latitude: 0,
           longitude: 0,
-          latitudeDelta: 0.0038,
+          latitudeDelta: 0.00038,
           longitudeDelta: 0.000001,
         }}
         provider={PROVIDER_GOOGLE}
