@@ -57,9 +57,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
-    fontSize: '50px',
+    fontSize: 50,
     flex: 0.5,
-    letterSpacing: '3px',
+    letterSpacing: 3,
   },
   buttonsContainer: {
     color: '#505050',
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   lakesideText: {
     color: 'black',
     flex: 2,
-    fontSize: '20px',
+    fontSize: 20,
     textAlign: 'center',
   },
   emptyTouchableView: {
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   touchableButton: {
     color: 'black',
-    fontSize: '17px',
+    fontSize: 17,
     justifyContent: 'center',
   },
 });
