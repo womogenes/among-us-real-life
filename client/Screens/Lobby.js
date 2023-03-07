@@ -17,7 +17,8 @@ function LobbyScreen({ navigation }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const handleModal = () => setIsModalVisible(() => !isModalVisible);
 
-  const [setting1, setSetting1] = useState(5);
+  const [killRadius, setKillRadius] = useState(5);
+  const [killCooldown, setKillCooldown] = useState(60);
 
   const startGame = () => {
     navigation.navigate('Game');
@@ -47,13 +48,28 @@ function LobbyScreen({ navigation }) {
         <View style={styles.settingsModal}>
           <View style={styles.settingsModalSettings}>
             <View>
-              <Text style={styles.settingsModalText}>Setting1: {setting1}</Text>
+              <Text style={styles.settingsModalText}>
+                Kill Radius: {killRadius}
+              </Text>
               <Slider
-                value={setting1}
+                value={killRadius}
                 minimumValue={2}
                 maximumValue={10}
                 step={1}
-                onValueChange={(setting1) => setSetting1(setting1)}
+                onValueChange={(killRadius) => setKillRadius(killRadius)}
+                trackClickable={true}
+              />
+            </View>
+            <View>
+              <Text style={styles.settingsModalText}>
+                Kill Cooldown: {killCooldown}
+              </Text>
+              <Slider
+                value={killCooldown}
+                minimumValue={10}
+                maximumValue={240}
+                step={10}
+                onValueChange={(killCooldown) => setKillCooldown(killCooldown)}
                 trackClickable={true}
               />
             </View>
@@ -73,7 +89,7 @@ function LobbyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   lobbyContainer: {
-    paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight,
+    paddingTop: Constants.statusBarHeight,
     flex: 1,
     backgroundColor: '#ffffff',
     flexDirection: 'column',
@@ -100,7 +116,6 @@ const styles = StyleSheet.create({
   settingsModalSettings: {
     padding: 5,
     margin: 10,
-    backgroundColor: 'red',
     width: '80%',
     flex: 0.8,
   },
