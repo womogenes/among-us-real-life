@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Image, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
-import { withSafeAreaInsets } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { Slider } from '@miblanchard/react-native-slider';
 
 function LobbyScreen({ navigation }) {
@@ -18,6 +18,7 @@ function LobbyScreen({ navigation }) {
 
   return (
     <View style={styles.lobbyContainer}>
+      <StatusBar style="dark" />
       <View style={styles.settingsContainer}>
         <TouchableOpacity accessibilityRole="button" onPress={handleModal}>
           <Image
@@ -25,7 +26,7 @@ function LobbyScreen({ navigation }) {
             source={require('client/assets/settingsIcon.png')}
           />
         </TouchableOpacity>
-        <Text style={styles.codeText}>Code: XXXXXX</Text>
+        <Text style={styles.codeText}>Code: XXXX</Text>
       </View>
 
       <View style={styles.playerContainer}></View>
@@ -81,7 +82,7 @@ function LobbyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   lobbyContainer: {
-    paddingTop: Constants.statusBarHeight,
+    marginTop: Constants.statusBarHeight,
     flex: 1,
     backgroundColor: '#ffffff',
     flexDirection: 'column',
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   settingsModalExit: {
-    padding: 5,
+    paddingTop: 20,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -142,11 +143,11 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '40%',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     color: 'black',
     fontSize: 24,
-    marginTop: 7,
   },
 });
 
