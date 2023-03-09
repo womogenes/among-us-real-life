@@ -41,14 +41,15 @@ export default function GameScreen({ navigation }) {
     // Status update loop
     const room = getLobby();
 
-    console.log('logged into game room');
-
-    setPlayers(new Map(Object.entries(room.state.players.$items)));
+    setPlayers(room.state.players.$items);
 
     room.onStateChange((state) => {
-      console.log('STATE CHANGED');
       setPlayers(state.players.$items);
     });
+
+    return () => {
+      room.removeAllListeners();
+    };
   }, []);
 
   useEffect(() => {
