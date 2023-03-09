@@ -137,9 +137,9 @@ export default function GameScreen({ navigation }) {
       </MapView>
       <View>
         <CustomButton
-          type={'regular'}
-          text={'amogus'}
+          type={'image'}
           image={require('client/assets/usebutton.jpg')}
+          imagesize={'100%'}
           roundness={50}
           backgroundcolor={'white'}
           width={100}

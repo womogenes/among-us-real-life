@@ -10,12 +10,15 @@ function CustomButton(props) {
                 props.width? {width: props.width} : {width: 100},
                 props.height? {height: props.height} : {height: 100},
                 ]}>
-                {props.type == 'image'? <Image style={styles.buttonImage} source={props.image} /* prop example: require('client/assets/myimage.jpg') *//>
+                {props.type == 'image'? 
+                    <Image style={[styles.buttonImage, props.imagesize? {width: props.imagesize} : {width: '100%'}]} source={props.image} /* prop example: require('client/assets/myimage.jpg') *//>
                 : props.type == 'text'? <Text style={styles.buttonText}>{props.text}</Text>
-                : <View>
-                    <Image style={styles.buttonImage} source={props.image}/>
+                :
+                [
+                    
+                    <Image style={[styles.buttonImage, props.imagesize? {width: props.imagesize} : {width: '100%'}]} source={props.image}/>,
                     <Text style={styles.buttonText}>{props.text}</Text>
-                </View>
+                ]
                 }
             </TouchableOpacity>
         </View>
@@ -37,12 +40,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonImage:  {
-        width: null,
-        height: null,
-        flex: 1
+        margin: 10,
+        resizeMode: 'cover',
+        flex: 1,
     },
     buttonText: {
-        padding: 8,
         color: 'black',
     },
 })
