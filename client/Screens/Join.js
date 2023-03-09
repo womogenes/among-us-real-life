@@ -2,31 +2,41 @@ import {
   StyleSheet,
   Text,
   View,
-  ImageBackground,
   TouchableOpacity,
   TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import React, { useState } from 'react';
 
 function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
   return (
-    <View style={styles.menuContainer}>
-      <View style={{ flex: 1, backgroundColor: 'transparent' }} />
-      <Text style={styles.titleText}>Join Server</Text>
-      <TextInput
-        style={styles.TextInput}
-        onChangeText={onChangeCode}
-        placeholder="XXXXXX"
-      ></TextInput>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Lobby')}
-      >
-        <Text style={styles.touchableButton}>Join</Text>
-      </TouchableOpacity>
-      <View style={styles.emptyTouchableView}></View>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.menuContainer}>
+        <View style={{ flex: 1, backgroundColor: 'transparent' }} />
+        <Text style={styles.titleText}>Join Server</Text>
+        <View style={styles.emptyContainer}></View>
+        <TextInput
+          style={styles.textInput}
+          onChangeText={onChangeCode}
+          placeholder="XXXX"
+          autoCapitalize="characters"
+          autoComplete="off"
+          autoCorrect="off"
+          keyboardType="numeric"
+          maxLength={4}
+          color="#333"
+        ></TextInput>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Lobby')}
+        >
+          <Text style={styles.touchableButton}>Join</Text>
+        </TouchableOpacity>
+        <View style={styles.emptyTouchableView}></View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -43,7 +53,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 50,
     flex: 0.5,
-    letterSpacing: 3,
+    letterSpacing: 1,
   },
   button: {
     backgroundColor: '#BDC9C9',
@@ -60,11 +70,16 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 17,
   },
-  TextInput: {
+  textInput: {
     height: 40,
     margin: 12,
     borderWidth: 1,
-    padding: 10,
+    padding: 30,
+    fontSize: 25,
+    marginBottom: '10%',
+  },
+  emptyContainer: {
+    flex: 0.5,
   },
 });
 
