@@ -1,15 +1,20 @@
 import {
   StyleSheet,
-  Button,
   Text,
   View,
   ImageBackground,
   TouchableOpacity,
-  Touchable,
 } from 'react-native';
-import React, { useState } from 'react';
+import { React, useState } from 'react';
 
 function MenuScreen({ navigation }) {
+  const joinGame = () => {
+    navigation.navigate('Join');
+  };
+  const toLobby = () => {
+    navigation.navigate('Lobby');
+  };
+
   return (
     <View style={styles.menuContainer}>
       <ImageBackground
@@ -17,29 +22,18 @@ function MenuScreen({ navigation }) {
         resizeMode="cover"
         style={styles.backgroundImage}
       >
-        <View style={{ flex: 1, backgroundColor: 'transparent' }} />
-        <Text style={styles.titleText}>Among Us</Text>
-        <Text style={styles.lakesideText}>(Lakeside Edition)</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>Among Us</Text>
+          <Text style={styles.lakesideText}>(Lakeside Edition)</Text>
+        </View>
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Join')}
-          >
-            <Text style={styles.touchableButton}>Join</Text>
+          <TouchableOpacity style={styles.button} onPress={joinGame}>
+            <Text style={styles.buttonText}>Join</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Lobby')}
-          >
-            <Text style={styles.touchableButton}>Public</Text>
+
+          <TouchableOpacity style={styles.button} onPress={toLobby}>
+            <Text style={styles.buttonText}>Create</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Lobby')}
-          >
-            <Text style={styles.touchableButton}>Create</Text>
-          </TouchableOpacity>
-          <View style={styles.emptyTouchableView}></View>
         </View>
       </ImageBackground>
     </View>
@@ -47,57 +41,42 @@ function MenuScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  menuContainer: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
+  backgroundImage: {
+    width: '100%',
+    height: '100%',
+    flexDirection: 'column',
+  },
+  titleContainer: {
+    flex: 0.4,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   titleText: {
     fontWeight: 'bold',
-    color: 'black',
-    textAlign: 'center',
-    fontSize: 50,
-    flex: 0.5,
+    fontSize: 60,
     letterSpacing: 3,
+  },
+  lakesideText: {
+    fontSize: 20,
   },
   buttonsContainer: {
     color: '#505050',
-    flex: 2,
-  },
-  backgroundImage: {
-    flex: 1,
+    flex: 0.6,
     justifyContent: 'center',
-    width: '100%',
-    height: '100%',
+    alignItems: 'center',
   },
   button: {
-    textColor: 'white',
-
-    alignItems: 'center',
     backgroundColor: '#BDC9C9',
-    flex: 1,
-    marginTop: 20,
-    marginBottom: 10,
-    marginLeft: 70,
-    marginRight: 70,
-    paddingTop: 15,
-    paddingBottom: 15,
+    width: '65%',
+    height: '15%',
+    margin: 20,
     borderRadius: 20,
-  },
-  lakesideText: {
-    color: 'black',
-    flex: 2,
-    fontSize: 20,
-    textAlign: 'center',
-  },
-  emptyTouchableView: {
-    flex: 4,
-  },
-  touchableButton: {
-    color: 'black',
-    fontSize: 17,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'black',
+    fontSize: 30,
   },
 });
 
