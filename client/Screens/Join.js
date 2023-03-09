@@ -2,39 +2,41 @@ import {
   StyleSheet,
   Text,
   View,
-  ImageBackground,
   TouchableOpacity,
   TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import React, { useState } from 'react';
 
 function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
-
   return (
-    <View style={styles.menuContainer}>
-      <View style={{ flex: 1, backgroundColor: 'transparent' }} />
-      <Text style={styles.titleText}>Join Server</Text>
-      <View style={styles.emptyContainer}></View>
-      <TextInput
-        style={styles.textInput}
-        onChangeText={onChangeCode}
-        placeholder="XXXX"
-        autoCapitalize="characters"
-        autoComplete="off"
-        autoCorrect="off"
-        keyboardType="numeric"
-        maxLength={4}
-        color="#333"
-      ></TextInput>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Lobby')}
-      >
-        <Text style={styles.touchableButton}>Join</Text>
-      </TouchableOpacity>
-      <View style={styles.emptyTouchableView}></View>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.menuContainer}>
+        <View style={{ flex: 1, backgroundColor: 'transparent' }} />
+        <Text style={styles.titleText}>Join Server</Text>
+        <View style={styles.emptyContainer}></View>
+        <TextInput
+          style={styles.textInput}
+          onChangeText={onChangeCode}
+          placeholder="XXXX"
+          autoCapitalize="characters"
+          autoComplete="off"
+          autoCorrect="off"
+          keyboardType="numeric"
+          maxLength={4}
+          color="#333"
+        ></TextInput>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Lobby')}
+        >
+          <Text style={styles.touchableButton}>Join</Text>
+        </TouchableOpacity>
+        <View style={styles.emptyTouchableView}></View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
