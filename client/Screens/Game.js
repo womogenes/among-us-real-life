@@ -140,7 +140,8 @@ export default function GameScreen({ navigation }) {
           type={'regular'}
           text={'amogus'}
           image={require('client/assets/usebutton.jpg')}
-          roundness={50} backgroundcolor={'white'}
+          roundness={50}
+          backgroundcolor={'white'}
           width={100}
           height={100}
         />
