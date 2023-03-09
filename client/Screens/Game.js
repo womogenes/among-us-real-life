@@ -6,6 +6,7 @@ import {
   Pressable,
   Touchable,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect } from 'react';
@@ -131,9 +132,17 @@ export default function GameScreen({ navigation }) {
           }}
           title="my location"
         />
-        <CustomButton text={'amongus'} image={'../assets/menuBackground.png'}/>
       </MapView>
-      <View></View>
+      <View>
+        <CustomButton
+          type={'regular'}
+          text={'amogus'}
+          image={require('client/assets/usebutton.jpg')}
+          roundness={50} backgroundcolor={'white'}
+          width={100}
+          height={100}
+        />
+      </View>
     </View>
   );
 }
