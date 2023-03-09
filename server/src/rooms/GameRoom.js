@@ -7,25 +7,18 @@ export class GameRoom extends Room {
     this.setState(new GameRoomState());
 
     this.onMessage('location', (client, loc) => {
-      const clientIndex = this.state.players.findIndex(
-        (player) => player.sessionId == client.sessionId
-      );
-      this.state.players[clientIndex].location.update(loc.coords);
+      this.state.players[client.sessionId].location.update(loc.coords);
     });
   }
 
   onJoin(client, options) {
     console.log(client.sessionId, 'joined!');
-
-    this.state.players.push(new Player(client.sessionId));
+    this.state.players.set(client.sessionId, new Player(client.sessionId));
   }
 
   onLeave(client, consented) {
     console.log(client.sessionId, 'left!');
-    const clientIndex = this.state.players.findIndex(
-      (player) => player.sessionId === client.sessionId
-    );
-    this.state.players.splice(clientIndex, 1);
+    this.state.players.delete(client.sessionId);
   }
 
   onDispose() {
