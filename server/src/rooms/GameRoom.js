@@ -6,11 +6,6 @@ export class GameRoom extends Room {
   onCreate(options) {
     this.setState(new GameRoomState());
 
-    /* this.onMessage('pingServer', (client, message) => {
-      console.log(`Server pinged at ${Date.now()}`);
-      client.send('pong', null);
-    }); */
-
     this.onMessage('location', (client, loc) => {
       const clientIndex = this.state.players.findIndex(
         (player) => player.sessionId == client.sessionId
@@ -27,6 +22,10 @@ export class GameRoom extends Room {
 
   onLeave(client, consented) {
     console.log(client.sessionId, 'left!');
+    const clientIndex = this.state.players.findIndex(
+      (player) => player.sessionId === client.sessionId
+    );
+    this.state.players.splice(clientIndex, 1);
   }
 
   onDispose() {

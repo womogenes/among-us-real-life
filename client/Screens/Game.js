@@ -26,8 +26,6 @@ export default function GameScreen({ navigation }) {
     let r = {
       latitude: loc.coords.latitude,
       longitude: loc.coords.longitude,
-      latitudeDelta: 0.0003,
-      longitudeDelta: 0.00001,
     };
 
     mapView?.animateToRegion(r, 500);
@@ -50,6 +48,10 @@ export default function GameScreen({ navigation }) {
 
   useEffect(() => {
     // Location update loop
+
+    // This is a listener that gets removed when the component unmounts
+    let locationWatcher;
+
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -60,13 +62,14 @@ export default function GameScreen({ navigation }) {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
 
-      let userLocation = await Location.watchPositionAsync(
+      locationWatcher = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
           distanceInterval: 0.1,
           timeInterval: 100,
         },
         (loc) => {
+          console.log('hello', Date.now());
           setLocation(loc), animate(loc);
 
           // Send location to server
@@ -74,6 +77,12 @@ export default function GameScreen({ navigation }) {
         }
       );
     })();
+
+    return async () => {
+      // Unmount listener when component unmounts
+      console.log('Removed tracking');
+      await locationWatcher.remove();
+    };
   }, []);
 
   return (
@@ -90,7 +99,9 @@ export default function GameScreen({ navigation }) {
           <Text style={{ color: '#fff' }}>Back to menu</Text>
         </TouchableOpacity>
 
-        <Text style={{ fontFamily: 'Courier New', fontSize: 16 }}>
+        <Text>Session ID: {getLobby().sessionId}</Text>
+
+        <Text style={{ fontFamily: 'Courier New', fontSize: 10 }}>
           {debugMsg}
         </Text>
       </View>
@@ -98,19 +109,19 @@ export default function GameScreen({ navigation }) {
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
-        pitchEnabled = {false}
-        rotateEnabled = {false}
-        scrollEnabled = {false}
-        zoomEnabled = {false}
+        pitchEnabled={false}
+        rotateEnabled={false}
+        scrollEnabled={false}
+        zoomEnabled={false}
         initialRegion={{
           latitude: 0,
           longitude: 0,
           latitudeDelta: 0.00038,
           longitudeDelta: 0.000001,
         }}
-        provider={PROVIDER_GOOGLE}
-        mapType="satellite"
+        mapType="standard"
       >
+        {/* Loop through all connected players */}
         <Marker
           coordinate={{
             latitude: location.coords.latitude,
