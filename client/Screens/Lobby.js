@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { Image, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  KeyboardAvoidingView,
+} from 'react-native';
 import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
 import { StatusBar } from 'expo-status-bar';
@@ -12,12 +20,19 @@ function LobbyScreen({ navigation }) {
   const [killRadius, setKillRadius] = useState(5);
   const [killCooldown, setKillCooldown] = useState(60);
 
+  const handleEditable = () => this.setState({ editable: true });
+  const [name, setName] = useState('');
+
   const startGame = () => {
     navigation.navigate('Game');
   };
 
   return (
-    <View style={styles.lobbyContainer}>
+    <KeyboardAvoidingView
+      style={styles.lobbyContainer}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      enabled={false}
+    >
       <StatusBar style="dark" />
       <View style={styles.settingsContainer}>
         <TouchableOpacity accessibilityRole="button" onPress={handleModal}>
@@ -26,6 +41,17 @@ function LobbyScreen({ navigation }) {
             source={require('client/assets/settingsIcon.png')}
           />
         </TouchableOpacity>
+
+        <TextInput
+          style={styles.nameContainer}
+          value={name}
+          onChangeText={(name) => setName({ name })}
+          placeholder="username"
+          onPress={handleEditable}
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}
+        />
+
         <Text style={styles.codeText}>Code: XXXX</Text>
       </View>
 
@@ -76,7 +102,7 @@ function LobbyScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -95,9 +121,23 @@ const styles = StyleSheet.create({
     flex: 0.1,
   },
   settingsIcon: {
-    justifyContent: 'flex-start',
     height: 50,
     width: 50,
+  },
+  nameContainer: {
+    backgroundColor: '#BDC9C9',
+    fontSize: 20,
+    padding: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 20,
+    flex: 1,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  codeText: {
+    fontSize: 25,
   },
   settingsModal: {
     backgroundColor: 'white',
@@ -122,9 +162,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 0.2,
-  },
-  codeText: {
-    fontSize: 25,
   },
   playerContainer: {
     backgroundColor: 'red',
