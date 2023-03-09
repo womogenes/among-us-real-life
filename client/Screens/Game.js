@@ -7,9 +7,10 @@ import {
   Touchable,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from 'react-native';
 import Constants from 'expo-constants';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -17,6 +18,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { getLobby } from '../networking.js';
 
 import CustomButton from '../components/button.js';
+var mapView;
 
 export default function GameScreen({ navigation }) {
   const [location, setLocation] = useState({
@@ -24,28 +26,28 @@ export default function GameScreen({ navigation }) {
   });
   const [errorMsg, setErrorMsg] = useState(null);
   const [debugMsg, setDebugMsg] = useState('');
+  const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
 
-  function animate(loc) {
+  const animate = (loc) => {
     let r = {
       latitude: loc.coords.latitude,
       longitude: loc.coords.longitude,
     };
 
     mapView?.animateToRegion(r, 500);
-  }
+  };
 
   useEffect(() => {
     // Status update loop
     const room = getLobby();
 
-    room.onStateChange.once((state) => {
-      // This is run once, when the client connects
-      setDebugMsg(JSON.stringify(state, null, 1));
-    });
+    console.log('logged into game room');
+
+    setPlayers(new Map(Object.entries(room.state.players.$items)));
 
     room.onStateChange((state) => {
-      // This is run whenever the server updates state
-      setDebugMsg(JSON.stringify(state, null, 1));
+      console.log('STATE CHANGED');
+      setPlayers(state.players.$items);
     });
   }, []);
 
@@ -72,7 +74,6 @@ export default function GameScreen({ navigation }) {
           timeInterval: 100,
         },
         (loc) => {
-          console.log('hello', Date.now());
           setLocation(loc), animate(loc);
 
           // Send location to server
@@ -83,8 +84,7 @@ export default function GameScreen({ navigation }) {
 
     return async () => {
       // Unmount listener when component unmounts
-      console.log('Removed tracking');
-      await locationWatcher.remove();
+      await locationWatcher?.remove();
     };
   }, []);
 
@@ -104,34 +104,36 @@ export default function GameScreen({ navigation }) {
 
         <Text>Session ID: {getLobby().sessionId}</Text>
 
-        <Text style={{ fontFamily: 'Courier New', fontSize: 10 }}>
-          {debugMsg}
-        </Text>
+        <Text>{players.size - 1} other players connected</Text>
       </View>
 
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
-        pitchEnabled={false}
+        /* pitchEnabled={false}
         rotateEnabled={false}
         scrollEnabled={false}
-        zoomEnabled={false}
+        zoomEnabled={false} */
         initialRegion={{
-          latitude: 0,
-          longitude: 0,
-          latitudeDelta: 0.00038,
-          longitudeDelta: 0.000001,
+          latitude: 47.7326514,
+          longitude: -122.3278194,
+          latitudeDelta: 0.001,
+          longitudeDelta: 0.0001,
         }}
         mapType="standard"
       >
-        {/* Loop through all connected players */}
-        <Marker
-          coordinate={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          }}
-          title="my location"
-        />
+        {Array.from(players, ([sessionId, player]) => {
+          return (
+            <Marker
+              key={sessionId}
+              coordinate={{
+                latitude: player?.location?.latitude,
+                longitude: player?.location?.longitude,
+              }}
+              title={`Player ${sessionId}`}
+            />
+          );
+        })}
       </MapView>
       <View>
         <CustomButton
@@ -163,7 +165,7 @@ const styles = StyleSheet.create({
   },
 
   debugContainer: {
-    alignItems: 'flex-start',
+    // alignItems: 'flex-start',
     margin: 20,
     marginTop: Constants.statusBarHeight,
     padding: 20,

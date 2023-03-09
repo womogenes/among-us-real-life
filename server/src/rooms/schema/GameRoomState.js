@@ -1,26 +1,25 @@
 import * as schema from '@colyseus/schema';
-const Schema = schema.Schema;
-const ArraySchema = schema.ArraySchema;
+const { Schema, MapSchema } = schema;
 
 class Location extends Schema {
   constructor() {
     super();
 
-    this.lat = 0;
-    this.long = 0;
-    this.alt = 0;
+    this.latitude = 0;
+    this.longitude = 0;
+    this.altitude = 0;
   }
 
   update(coords) {
-    this.lat = coords.latitude;
-    this.long = coords.longitude;
-    this.alt = coords.altitude;
+    this.latitude = coords.latitude;
+    this.longitude = coords.longitude;
+    this.altitude = coords.altitude;
   }
 }
 schema.defineTypes(Location, {
-  lat: 'number', // Latitude
-  long: 'number', // Longitude
-  alt: 'number', // altitude
+  latitude: 'number', // Latitude
+  longitude: 'number', // Longitude
+  altitude: 'number', // altitude
 });
 
 export class Player extends Schema {
@@ -40,10 +39,10 @@ export class GameRoomState extends Schema {
   constructor() {
     super();
 
-    this.players = new ArraySchema();
+    this.players = new MapSchema();
   }
 }
 
 schema.defineTypes(GameRoomState, {
-  players: [Player],
+  players: { map: Player },
 });
