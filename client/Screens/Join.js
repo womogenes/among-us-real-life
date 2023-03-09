@@ -26,7 +26,6 @@ function JoinScreen({ navigation }) {
           autoCorrect="off"
           keyboardType="numeric"
           maxLength={4}
-          color="#333"
         ></TextInput>
         <TouchableOpacity
           style={styles.button}
@@ -71,10 +70,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   textInput: {
-    height: 40,
+    height: 60,
     margin: 12,
     borderWidth: 1,
-    padding: 30,
+    paddingLeft: 40,
+    paddingRight: 40,
     fontSize: 25,
     marginBottom: '10%',
   },
