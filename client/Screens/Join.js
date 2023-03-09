@@ -19,14 +19,13 @@ function JoinScreen({ navigation }) {
       <TextInput
         style={styles.textInput}
         onChangeText={onChangeCode}
-        placeholder="XXXXXXXXX"
+        placeholder="XXXX"
         autoCapitalize="characters"
         autoComplete="off"
         autoCorrect="off"
         keyboardType="numeric"
         maxLength={4}
         color="#333"
-        placeholderTextColor={'black'}
       ></TextInput>
       <TouchableOpacity
         style={styles.button}
@@ -63,7 +62,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   emptyTouchableView: {
-    flex: 2,
+    flex: 4,
   },
   touchableButton: {
     color: 'black',
@@ -76,7 +75,6 @@ const styles = StyleSheet.create({
     padding: 30,
     fontSize: 25,
     marginBottom: '10%',
-    color: 'black',
   },
   emptyContainer: {
     flex: 0.5,
