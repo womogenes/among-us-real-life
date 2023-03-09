@@ -23,7 +23,7 @@ function JoinScreen({ navigation }) {
           placeholder="XXXX"
           autoCapitalize="characters"
           autoComplete="off"
-          autoCorrect="off"
+          autoCorrect={false}
           keyboardType="numeric"
           maxLength={4}
         ></TextInput>
