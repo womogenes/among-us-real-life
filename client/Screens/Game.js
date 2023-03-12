@@ -18,6 +18,9 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { getLobby } from '../networking.js';
 
 import CustomButton from '../components/button.js';
+
+import ControlPanel from '../components/controlpanel.js';
+
 var mapView;
 
 export default function GameScreen({ navigation }) {
@@ -135,17 +138,7 @@ export default function GameScreen({ navigation }) {
           );
         })}
       </MapView>
-      <View>
-        <CustomButton
-          type={'image'}
-          image={require('client/assets/usebutton.jpg')}
-          imagesize={'100%'}
-          roundness={50}
-          backgroundcolor={'white'}
-          width={100}
-          height={100}
-        />
-      </View>
+      <ControlPanel/>
     </View>
   );
 }

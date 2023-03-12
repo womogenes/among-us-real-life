@@ -2,7 +2,13 @@ import { StyleSheet, View, Text, TouchableOpacity, Image,} from 'react-native';
 
 function CustomButton(props) {
     return (
-        <View style={styles.button}>
+        <View style={[
+            styles.button,
+            props.top&& {top: props.top},
+            props.bottom&& {bottom: props.bottom},
+            props.right&& {right: props.right},
+            props.left&& {left: props.left},
+            ]}>
             <TouchableOpacity style={[
                 styles.shape,
                 props.roundness? {borderRadius: props.roundness} : {borderRadius: 1},
