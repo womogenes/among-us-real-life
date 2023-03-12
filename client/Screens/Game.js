@@ -31,6 +31,7 @@ export default function GameScreen({ navigation }) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
+  const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
   const [buttonState, setButtonState] = useState(
     {
       use: false,
@@ -163,7 +164,7 @@ export default function GameScreen({ navigation }) {
           );
         })}
       </MapView>
-      <Minimap/>
+      <Minimap userCoords={[location.coords.latitude, location.coords.longitude]} taskCoords={tasks}/>
       <ControlPanel useButtonState={buttonState.use} useButtonPress={useButton} reportButtonState={buttonState.report} reportButtonPress={reportButton} taskCompletion={taskCompletion}/>
       <Button title={'increase tasks'} onPress={() => setTaskCompletion(taskCompletion + 10)}/>
     </View>
