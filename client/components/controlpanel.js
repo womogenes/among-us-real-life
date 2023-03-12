@@ -1,6 +1,7 @@
-import { StyleSheet, View, Text, TouchableOpacity, Image,} from 'react-native';
+import { StyleSheet, View} from 'react-native';
 
 import CustomButton from '../components/button.js';
+import TaskBar from '../components/taskbar.js';
 
 function ControlPanel(props) {
     return (
@@ -31,6 +32,7 @@ function ControlPanel(props) {
             right={-10}
             bottom={320}
             />
+            <TaskBar taskCompletion={props.taskCompletion}/>
         </View>
     );
 }
