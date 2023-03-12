@@ -6,6 +6,7 @@ import {
   Pressable,
   Touchable,
   TouchableOpacity,
+  Button,
   Image,
   ScrollView,
 } from 'react-native';
@@ -30,6 +31,12 @@ export default function GameScreen({ navigation }) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
+  const [buttonState, setButtonState] = useState(
+    {
+      use: false,
+      report: false,
+    }
+  );
 
   const animate = (loc) => {
     let r = {
@@ -39,6 +46,23 @@ export default function GameScreen({ navigation }) {
 
     mapView?.animateToRegion(r, 500);
   };
+
+  function changeButtonState(button) {
+    if (button == "use") {
+      setButtonState(prevButtonState => ({...prevButtonState, use: !buttonState.use}));
+    }
+    if (button == "report") {
+      setButtonState(prevButtonState => ({...prevButtonState, report: !buttonState.report}));
+    }
+  }
+
+  function useButton() {
+    console.log("USE")
+  }
+
+  function reportButton() {
+    console.log("REPORT")
+  }
 
   useEffect(() => {
     // Status update loop
@@ -138,7 +162,7 @@ export default function GameScreen({ navigation }) {
           );
         })}
       </MapView>
-      <ControlPanel/>
+      <ControlPanel useButtonState={buttonState.use} useButtonPress={useButton} reportButtonState={buttonState.report} reportButtonPress={reportButton}/>
     </View>
   );
 }

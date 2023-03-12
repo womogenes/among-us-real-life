@@ -1,6 +1,16 @@
 import { StyleSheet, View, Text, TouchableOpacity, Image,} from 'react-native';
 
 function CustomButton(props) {
+    
+    var myOpacity = 1;
+
+    if (props.disabled) {
+        myOpacity = 0.5;
+    }
+    else {
+        myOpacity = 1;
+    }
+
     return (
         <View style={[
             styles.button,
@@ -9,8 +19,12 @@ function CustomButton(props) {
             props.right&& {right: props.right},
             props.left&& {left: props.left},
             ]}>
-            <TouchableOpacity style={[
+            <TouchableOpacity 
+            disabled={props.disabled}
+            onPress={props.onPress}
+            style={[
                 styles.shape,
+                {opacity: myOpacity},
                 props.roundness? {borderRadius: props.roundness} : {borderRadius: 1},
                 props.backgroundcolor? {backgroundColor: props.backgroundcolor} : {backgroundColor: 'white'},
                 props.width? {width: props.width} : {width: 100},
@@ -39,6 +53,7 @@ const styles = StyleSheet.create({
         flex: 1,
         display: 'flex',
         alignItems: 'center',
+        position: 'absolute'
     },
     shape: {
         padding: 10,
@@ -47,7 +62,7 @@ const styles = StyleSheet.create({
     },
     buttonImage:  {
         margin: 10,
-        resizeMode: 'cover',
+        resizeMode: 'contain',
         flex: 1,
     },
     buttonText: {
