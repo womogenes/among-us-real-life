@@ -18,7 +18,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { getLobby } from '../networking.js';
 
-import CustomButton from '../components/button.js';
+import Minimap from '../components/minimap.js';
 
 import ControlPanel from '../components/controlpanel.js';
 
@@ -163,6 +163,7 @@ export default function GameScreen({ navigation }) {
           );
         })}
       </MapView>
+      <Minimap/>
       <ControlPanel useButtonState={buttonState.use} useButtonPress={useButton} reportButtonState={buttonState.report} reportButtonPress={reportButton} taskCompletion={taskCompletion}/>
       <Button title={'increase tasks'} onPress={() => setTaskCompletion(taskCompletion + 10)}/>
     </View>
