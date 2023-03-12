@@ -164,7 +164,7 @@ export default function GameScreen({ navigation }) {
         })}
       </MapView>
       <ControlPanel useButtonState={buttonState.use} useButtonPress={useButton} reportButtonState={buttonState.report} reportButtonPress={reportButton} taskCompletion={taskCompletion}/>
-      <Button title={'press'} onPress={() => setTaskCompletion(taskCompletion + 10)}/>
+      <Button title={'increase tasks'} onPress={() => setTaskCompletion(taskCompletion + 10)}/>
     </View>
   );
 }

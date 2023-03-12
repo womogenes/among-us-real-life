@@ -2,6 +2,7 @@ import { StyleSheet, View} from 'react-native';
 
 import CustomButton from '../components/button.js';
 import TaskBar from '../components/taskbar.js';
+import Tasks from '../components/tasks.js';
 
 function ControlPanel(props) {
     return (
@@ -32,6 +33,7 @@ function ControlPanel(props) {
             right={-10}
             bottom={320}
             />
+            <Tasks/>
             <TaskBar taskCompletion={props.taskCompletion}/>
         </View>
     );
