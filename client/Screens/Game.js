@@ -39,7 +39,7 @@ export default function GameScreen({ navigation }) {
       kill: false,
     }
   );
-  const [taskCompletion, setTaskCompletion] = useState(10);
+  const [taskCompletion, setTaskCompletion] = useState(10); // Pull information from server
 
   const animate = (loc) => {
     let r = {
