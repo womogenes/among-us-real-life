@@ -20,7 +20,6 @@ function ControlPanel(props) {
 
   useEffect(() => {
     if (timer <= 0) {
-      console.log('hello');
       clearInterval(intervalID);
       setTimer(null);
     }
