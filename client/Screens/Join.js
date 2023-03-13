@@ -6,11 +6,18 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  KeyboardAvoidingView,
 } from 'react-native';
 import React, { useState } from 'react';
 
 function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
+
+  function joinPressed(code) {
+    if (code == '5050') {
+      navigation.navigate('Lobby');
+    }
+  }
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.menuContainer}>
@@ -22,14 +29,16 @@ function JoinScreen({ navigation }) {
           onChangeText={onChangeCode}
           placeholder="XXXX"
           autoCapitalize="characters"
-          autoComplete="off"
+          autoComplete={false}
           autoCorrect={false}
           keyboardType="numeric"
           maxLength={4}
         ></TextInput>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Lobby')}
+          onPress={() => {
+            joinPressed(code);
+          }}
         >
           <Text style={styles.touchableButton}>Join</Text>
         </TouchableOpacity>

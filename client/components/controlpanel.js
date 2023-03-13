@@ -26,6 +26,7 @@ function ControlPanel(props) {
     }
   }, [timer]);
 
+<<<<<<< HEAD
   return (
     <View style={styles.bottom}>
       {props.userType == 'crewmate' && (
@@ -56,6 +57,91 @@ function ControlPanel(props) {
             right={-10}
             bottom={320}
           />
+=======
+    useEffect(() => {
+        if(timer <= 0) {
+            clearInterval(intervalID);
+            setTimer(null);
+        }
+    }, [timer])
+
+    return (
+        <View style={styles.bottom}>
+            {props.userType == "crewmate"&&
+                <View style={styles.buttonContainer}>
+                    <CustomButton
+                    type={'image'}
+                    disabled={props.useButtonState}
+                    onPress={props.useButtonPress}
+                    image={require('client/assets/usebutton.png')}
+                    imagesize={'75%'}
+                    roundness={50}
+                    backgroundcolor={'#00000000'}
+                    width={150}
+                    height={150}
+                    right={-10}
+                    bottom={200}
+                    />
+                    <CustomButton
+                    type={'image'}
+                    disabled={props.reportButtonState}
+                    onPress={props.reportButtonPress}
+                    image={require('client/assets/reportbutton.png')}
+                    imagesize={"75%"}
+                    roundness={50}
+                    backgroundcolor={'#00000000'}
+                    width={150}
+                    height={150}
+                    right={-10}
+                    bottom={320}
+                    />
+                </View>
+            }
+            {props.userType == "imposter"&&
+                <View style={styles.buttonContainer}>
+                    <CustomButton
+                    type={'cooldown'}
+                    disabled={props.killButtonState}
+                    onPress={() => {props.killButtonPress(); killCooldown();}}
+                    cooldownTimer={timer}
+                    text={timer}
+                    image={require('client/assets/killbutton.png')}
+                    imagesize={'65%'}
+                    roundness={50}
+                    backgroundcolor={'#00000000'}
+                    width={150}
+                    height={150}
+                    right={-10}
+                    bottom={200}
+                    />
+                    <CustomButton
+                    type={'image'}
+                    disabled={props.reportButtonState}
+                    onPress={props.reportButtonPress}
+                    image={require('client/assets/reportbutton.png')}
+                    imagesize={"75%"}
+                    roundness={50}
+                    backgroundcolor={'#00000000'}
+                    width={150}
+                    height={150}
+                    right={-10}
+                    bottom={320}
+                    />
+                </View>
+            }
+            {props.userType == "ghost-crewmate"&&
+                <View style={styles.buttonContainer}>
+
+                </View>
+            }
+            {props.userType == "ghost-imposter"&&
+                <View style={styles.buttonContainer}>
+
+                </View>
+            }
+            <Tasks/>
+            <TaskBar taskCompletion={props.taskCompletion}/>
+>>>>>>> d04c7636e53b3a6ad5d328ac0d20c7a97a8a1e5a
         </View>
       )}
       {props.userType == 'imposter' && (

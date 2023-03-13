@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   titleContainer: {
-    flex: 0.4,
+    flex: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     color: '#505050',
-    flex: 0.6,
+    flex: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'black',
-    fontSize: 30,
+    fontSize: 27,
   },
 });
 
