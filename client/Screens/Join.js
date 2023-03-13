@@ -7,17 +7,33 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
+  FlatList,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+import { getLobbyRoom } from '../networking.js';
 
 function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
+  const [roomList, setRoomList] = useState([]);
 
   function joinPressed(code) {
     if (code == '5050') {
       navigation.navigate('Lobby');
     }
   }
+
+  useEffect(() => {
+    // This gets run only once
+    const lobby = getLobbyRoom();
+
+    // setRoomList(room.state.rooms.$items);
+
+    return () => {
+      lobby?.removeAllListeners();
+    };
+  }, []);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.menuContainer}>
@@ -43,6 +59,17 @@ function JoinScreen({ navigation }) {
           <Text style={styles.touchableButton}>Join</Text>
         </TouchableOpacity>
         <View style={styles.emptyTouchableView}></View>
+
+        <FlatList
+          data={roomList}
+          renderItem={(item) => {
+            return (
+              <View>
+                <Text>{JSON.stringify(item)}</Text>
+              </View>
+            );
+          }}
+        ></FlatList>
       </View>
     </TouchableWithoutFeedback>
   );

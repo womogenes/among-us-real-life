@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { serverAddr, subscribeToMessages, getLobby } from './networking.js';
+import { serverAddr, getLobby } from './networking.js';
 import { LobbyScreen } from './screens/Lobby.js';
 import { GameScreen } from './screens/Game.js';
 import { TestScreen } from './screens/Test.js';
@@ -15,10 +15,6 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [message, setMessage] = useState('Server connection test');
-
-  useEffect(() => {
-    subscribeToMessages(setMessage);
-  }, []);
 
   return (
     <NavigationContainer>

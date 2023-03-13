@@ -5,14 +5,30 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-import { React, useState } from 'react';
+import { React, useEffect, useState } from 'react';
+
+import { getLobbyRoom } from '../networking.js';
 
 function MenuScreen({ navigation }) {
   const joinGame = () => {
     navigation.navigate('Join');
   };
+
+  useEffect(() => {
+    const lobby = getLobbyRoom();
+    lobby?.onMessage('gameCreated', (message) => {
+      navigation.navigate('Lobby', code);
+    });
+
+    return () => {
+      lobby?.removeAllListeners();
+    };
+  });
+
   const toLobby = () => {
-    navigation.navigate('Lobby');
+    // Request a game room
+    const lobby = getLobbyRoom();
+    lobby?.send('createNewGame');
   };
 
   return (
