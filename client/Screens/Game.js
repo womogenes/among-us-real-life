@@ -6,6 +6,7 @@ import {
   Pressable,
   Touchable,
   TouchableOpacity,
+  Button,
   Image,
   ScrollView,
 } from 'react-native';
@@ -17,7 +18,10 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { getLobby } from '../networking.js';
 
-import CustomButton from '../components/button.js';
+import Minimap from '../components/minimap.js';
+
+import ControlPanel from '../components/controlpanel.js';
+
 var mapView;
 
 export default function GameScreen({ navigation }) {
@@ -27,6 +31,15 @@ export default function GameScreen({ navigation }) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
+  const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+  const [buttonState, setButtonState] = useState(
+    {
+      use: false, // These should all be true at the beginning of the game
+      report: false,
+      kill: false,
+    }
+  );
+  const [taskCompletion, setTaskCompletion] = useState(10);
 
   const animate = (loc) => {
     let r = {
@@ -36,6 +49,27 @@ export default function GameScreen({ navigation }) {
 
     mapView?.animateToRegion(r, 500);
   };
+
+  function changeButtonState(button) {
+    if (button == "use") {
+      setButtonState(prevButtonState => ({...prevButtonState, use: !buttonState.use}));
+    }
+    if (button == "report") {
+      setButtonState(prevButtonState => ({...prevButtonState, report: !buttonState.report}));
+    }
+  }
+
+  function useButton() {
+    console.log("USE")
+  }
+
+  function reportButton() {
+    console.log("REPORT")
+  }
+
+  function killButton() {
+    console.log("KILL")
+  }
 
   useEffect(() => {
     // Status update loop
@@ -136,17 +170,10 @@ export default function GameScreen({ navigation }) {
           );
         })}
       </MapView>
-      <View>
-        <CustomButton
-          type={'regular'}
-          text={'amogus'}
-          image={require('client/assets/usebutton.jpg')}
-          roundness={50}
-          backgroundcolor={'white'}
-          width={100}
-          height={100}
-        />
-      </View>
+      <Minimap userCoords={[location.coords.latitude, location.coords.longitude]} taskCoords={tasks}/>
+      {/*<ControlPanel userType={"crewmate"} useButtonState={buttonState.use} useButtonPress={useButton} reportButtonState={buttonState.report} reportButtonPress={reportButton} taskCompletion={taskCompletion}/>*/}
+      <ControlPanel userType={"imposter"} killButtonState={buttonState.kill} killButtonPress={killButton} cooldown={10} reportButtonState={buttonState.report} reportButtonPress={reportButton} taskCompletion={taskCompletion}/>
+      <Button title={'increase tasks'} onPress={() => setTaskCompletion(taskCompletion + 10)}/>
     </View>
   );
 }
