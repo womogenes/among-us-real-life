@@ -34,8 +34,9 @@ export default function GameScreen({ navigation }) {
   const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
   const [buttonState, setButtonState] = useState(
     {
-      use: false,
+      use: false, // These should all be true at the beginning of the game
       report: false,
+      kill: false,
     }
   );
   const [taskCompletion, setTaskCompletion] = useState(10);
@@ -64,6 +65,10 @@ export default function GameScreen({ navigation }) {
 
   function reportButton() {
     console.log("REPORT")
+  }
+
+  function killButton() {
+    console.log("KILL")
   }
 
   useEffect(() => {
@@ -165,7 +170,8 @@ export default function GameScreen({ navigation }) {
         })}
       </MapView>
       <Minimap userCoords={[location.coords.latitude, location.coords.longitude]} taskCoords={tasks}/>
-      <ControlPanel useButtonState={buttonState.use} useButtonPress={useButton} reportButtonState={buttonState.report} reportButtonPress={reportButton} taskCompletion={taskCompletion}/>
+      {/*<ControlPanel userType={"crewmate"} useButtonState={buttonState.use} useButtonPress={useButton} reportButtonState={buttonState.report} reportButtonPress={reportButton} taskCompletion={taskCompletion}/>*/}
+      <ControlPanel userType={"imposter"} killButtonState={buttonState.kill} killButtonPress={killButton} cooldown={10} reportButtonState={buttonState.report} reportButtonPress={reportButton} taskCompletion={taskCompletion}/>
       <Button title={'increase tasks'} onPress={() => setTaskCompletion(taskCompletion + 10)}/>
     </View>
   );

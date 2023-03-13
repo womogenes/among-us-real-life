@@ -4,7 +4,7 @@ function CustomButton(props) {
     
     var myOpacity = 1;
 
-    if (props.disabled) {
+    if (props.disabled || props.cooldownTimer > 0) {
         myOpacity = 0.5;
     }
     else {
@@ -20,25 +20,25 @@ function CustomButton(props) {
             props.left&& {left: props.left},
             ]}>
             <TouchableOpacity 
-            disabled={props.disabled}
+            disabled={props.cooldownTimer > 0? true: props.disabled}
             onPress={props.onPress}
             style={[
                 styles.shape,
-                {opacity: myOpacity},
                 props.roundness? {borderRadius: props.roundness} : {borderRadius: 1},
                 props.backgroundcolor? {backgroundColor: props.backgroundcolor} : {backgroundColor: 'white'},
                 props.width? {width: props.width} : {width: 100},
                 props.height? {height: props.height} : {height: 100},
                 ]}>
                 {props.type == 'image'? 
-                    <Image style={[styles.buttonImage, props.imagesize? {width: props.imagesize} : {width: '100%'}]} source={props.image} /* prop example: require('client/assets/myimage.jpg') *//>
-                : props.type == 'text'? <Text style={styles.buttonText}>{props.text}</Text>
-                :
-                [
-                    
-                    <Image style={[styles.buttonImage, props.imagesize? {width: props.imagesize} : {width: '100%'}]} source={props.image}/>,
-                    <Text style={styles.buttonText}>{props.text}</Text>
+                    <Image style={[styles.buttonImage, {opacity: myOpacity}, props.imagesize? {width: props.imagesize} : {width: '100%'}]} source={props.image} /* prop example: require('client/assets/myimage.jpg') *//>
+                : props.type == 'text'? <Text style={[styles.buttonText,{opacity: myOpacity}]}>{props.text}</Text>
+                : props.type == 'cooldown'?
+                [                  
+                    <Image style={[styles.buttonImage, {opacity: myOpacity}, props.imagesize? {width: props.imagesize} : {width: '100%'}]} source={props.image}/>,
+                    <Text style={[styles.buttonText, {opacity: 1}]}>{props.text}</Text>
                 ]
+                :
+                    <View></View>
                 }
             </TouchableOpacity>
         </View>
@@ -67,5 +67,8 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: 'black',
+        position: 'absolute',
+        fontSize: 40,
+        fontWeight: '900',
     },
 })
