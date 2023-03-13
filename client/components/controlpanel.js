@@ -20,7 +20,6 @@ function ControlPanel(props) {
 
   useEffect(() => {
     if (timer <= 0) {
-      console.log('hello');
       clearInterval(intervalID);
       setTimer(null);
     }
@@ -78,12 +77,25 @@ function ControlPanel(props) {
             right={-10}
             bottom={200}
           />
+        <CustomButton
+            type={'cooldown'}
+            disabled={props.reportButtonState}
+            onPress={props.reportButtonPress}
+            image={require('client/assets/sabotagebutton.png')}
+            imagesize={'75%'}
+            roundness={50}
+            backgroundcolor={'#00000000'}
+            width={150}
+            height={150}
+            right={-10}
+            bottom={80}
+          />
           <CustomButton
             type={'image'}
             disabled={props.reportButtonState}
             onPress={props.reportButtonPress}
             image={require('client/assets/reportbutton.png')}
-            imagesize={'75%'}
+            imagesize={'65%'}
             roundness={50}
             backgroundcolor={'#00000000'}
             width={150}
@@ -92,12 +104,6 @@ function ControlPanel(props) {
             bottom={320}
           />
         </View>
-      )}
-      {props.userType == 'ghost-crewmate' && (
-        <View style={styles.buttonContainer}></View>
-      )}
-      {props.userType == 'ghost-imposter' && (
-        <View style={styles.buttonContainer}></View>
       )}
       <Tasks />
       <TaskBar taskCompletion={props.taskCompletion} />

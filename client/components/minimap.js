@@ -22,9 +22,9 @@ function Minimap(props) {
         scrollEnabled={false}
         zoomEnabled={false}
         initialRegion={{
-          latitude: 47.73730025968958,
-          longitude: -122.33942898995133,
-          latitudeDelta: 0.002,
+          latitude: 47.7326514,
+          longitude: -122.3278194,
+          latitudeDelta: 0.0025,
           longitudeDelta: 0.0001,
         }}
         mapType="standard"
