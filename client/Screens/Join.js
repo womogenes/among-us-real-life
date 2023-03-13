@@ -14,9 +14,10 @@ function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
 
   function joinPressed(code) {
-    if (code == '5050') navigation.navigate('Lobby');
+    if (code == '5050') {
+      navigation.navigate('Lobby');
+    }
   }
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.menuContainer}>
@@ -36,7 +37,7 @@ function JoinScreen({ navigation }) {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            joinPressed();
+            joinPressed(code);
           }}
         >
           <Text style={styles.touchableButton}>Join</Text>
