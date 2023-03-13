@@ -18,8 +18,8 @@ Alternatively, `npm run dev` to start the server with nodemon.
 - `src/rooms/MyRoom.js`: an empty room handler for you to implement your logic
 - `src/rooms/schema/MyRoomState.js`: an empty schema used on your room's state.
 - `package.json`:
-    - `scripts`:
-        - `npm start`: runs `node index.js`
-        - `npm test`: runs mocha test suite
-        - `npm run loadtest`: runs the [`@colyseus/loadtest`](https://github.com/colyseus/colyseus-loadtest/) tool for testing the connection, using the `loadtest/example.js` script.
-        - `npm run dev`: runs `nodemon index.js` so that server is auto-reloaded with every change (more on nodemon: https://www.npmjs.com/package/nodemon)
+  - `scripts`:
+    - `npm start`: runs `node index.js`
+    - `npm test`: runs mocha test suite
+    - `npm run loadtest`: runs the [`@colyseus/loadtest`](https://github.com/colyseus/colyseus-loadtest/) tool for testing the connection, using the `loadtest/example.js` script.
+    - `npm run dev`: runs `nodemon index.js` so that server is auto-reloaded with every change (more on nodemon: https://www.npmjs.com/package/nodemon)

@@ -10,7 +10,6 @@
    SERVER_ADDR=<IP address>:2567
    ```
    Replace `<IP address>` with the address your server will run on. To get this, go to your server and run either `ipconfig` on Windows or `ipconfig getifaddr en0` on Mac. (The `2567` is the port used by Colyseus, for now.)
-  
 
 ## To start the server
 

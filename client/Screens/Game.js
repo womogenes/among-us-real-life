@@ -32,13 +32,11 @@ export default function GameScreen({ navigation }) {
   const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
-  const [buttonState, setButtonState] = useState(
-    {
-      use: false, // These should all be true at the beginning of the game
-      report: false,
-      kill: false,
-    }
-  );
+  const [buttonState, setButtonState] = useState({
+    use: false, // These should all be true at the beginning of the game
+    report: false,
+    kill: false,
+  });
   const [taskCompletion, setTaskCompletion] = useState(10);
 
   const animate = (loc) => {
@@ -51,24 +49,30 @@ export default function GameScreen({ navigation }) {
   };
 
   function changeButtonState(button) {
-    if (button == "use") {
-      setButtonState(prevButtonState => ({...prevButtonState, use: !buttonState.use}));
+    if (button == 'use') {
+      setButtonState((prevButtonState) => ({
+        ...prevButtonState,
+        use: !buttonState.use,
+      }));
     }
-    if (button == "report") {
-      setButtonState(prevButtonState => ({...prevButtonState, report: !buttonState.report}));
+    if (button == 'report') {
+      setButtonState((prevButtonState) => ({
+        ...prevButtonState,
+        report: !buttonState.report,
+      }));
     }
   }
 
   function useButton() {
-    console.log("USE")
+    console.log('USE');
   }
 
   function reportButton() {
-    console.log("REPORT")
+    console.log('REPORT');
   }
 
   function killButton() {
-    console.log("KILL")
+    console.log('KILL');
   }
 
   useEffect(() => {
@@ -170,10 +174,24 @@ export default function GameScreen({ navigation }) {
           );
         })}
       </MapView>
-      <Minimap userCoords={[location.coords.latitude, location.coords.longitude]} taskCoords={tasks}/>
+      <Minimap
+        userCoords={[location.coords.latitude, location.coords.longitude]}
+        taskCoords={tasks}
+      />
       {/*<ControlPanel userType={"crewmate"} useButtonState={buttonState.use} useButtonPress={useButton} reportButtonState={buttonState.report} reportButtonPress={reportButton} taskCompletion={taskCompletion}/>*/}
-      <ControlPanel userType={"imposter"} killButtonState={buttonState.kill} killButtonPress={killButton} cooldown={10} reportButtonState={buttonState.report} reportButtonPress={reportButton} taskCompletion={taskCompletion}/>
-      <Button title={'increase tasks'} onPress={() => setTaskCompletion(taskCompletion + 10)}/>
+      <ControlPanel
+        userType={'imposter'}
+        killButtonState={buttonState.kill}
+        killButtonPress={killButton}
+        cooldown={10}
+        reportButtonState={buttonState.report}
+        reportButtonPress={reportButton}
+        taskCompletion={taskCompletion}
+      />
+      <Button
+        title={'increase tasks'}
+        onPress={() => setTaskCompletion(taskCompletion + 10)}
+      />
     </View>
   );
 }
