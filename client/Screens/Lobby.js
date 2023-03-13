@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  FlatList,
 } from 'react-native';
 import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
@@ -22,8 +23,12 @@ function LobbyScreen({ navigation }) {
   const [killRadius, setKillRadius] = useState(5);
   const [killCooldown, setKillCooldown] = useState(60);
 
-  const handleEditable = () => this.setState({ editable: true });
   const [name, setName] = useState('');
+
+  function changeNameText(changedName) {
+    setName(changedName);
+    console.log(name);
+  }
 
   const startGame = () => {
     navigation.navigate('Game');
@@ -47,18 +52,17 @@ function LobbyScreen({ navigation }) {
 
           <TextInput
             style={styles.nameContainer}
-            value={name}
-            onChangeText={(name) => setName({ name })}
-            placeholder="username"
-            onPress={handleEditable}
-            adjustsFontSizeToFit={true}
-            numberOfLines={1}
+            onChangeText={changeNameText}
+            placeholder="Username..."
+            maxLength={16}
           />
 
           <Text style={styles.codeText}>Code: XXXX</Text>
         </View>
 
-        <View style={styles.playerContainer}></View>
+        <View style={styles.playerContainer}>
+          <Text style={styles.nameText}>{name}</Text>
+        </View>
 
         <View style={styles.bodyContainer}>
           <TouchableOpacity style={styles.button} onPress={startGame}>
@@ -114,7 +118,7 @@ function LobbyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   lobbyContainer: {
-    marginTop: Constants.statusBarHeight + 10,
+    marginTop: Constants.statusBarHeight,
     flex: 1,
     backgroundColor: '#ffffff',
     flexDirection: 'column',
@@ -122,6 +126,7 @@ const styles = StyleSheet.create({
   settingsContainer: {
     marginLeft: 5,
     marginRight: 5,
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
     flex: 0.1,
@@ -191,6 +196,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'black',
     fontSize: 24,
+  },
+  nameText: {
+    fontSize: 30,
   },
 });
 
