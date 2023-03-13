@@ -32,6 +32,11 @@ export default function GameScreen({ navigation }) {
   const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+  const [sabotageList, setSabotageList] = useState([
+    {name: 'Reactor', availability: true},
+    {name: 'O2', availability: true},
+    {name: 'Door', availability: true},
+  ]);
   const [buttonState, setButtonState] = useState({
     use: false, // These should all be true at the beginning of the game
     report: false,
@@ -184,6 +189,7 @@ export default function GameScreen({ navigation }) {
         killButtonState={buttonState.kill}
         killButtonPress={killButton}
         cooldown={10}
+        sabotageList={sabotageList}
         reportButtonState={buttonState.report}
         reportButtonPress={reportButton}
         taskCompletion={taskCompletion}
