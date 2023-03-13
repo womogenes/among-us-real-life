@@ -7,6 +7,8 @@ import {
   View,
   TextInput,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
@@ -28,87 +30,91 @@ function LobbyScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.lobbyContainer}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      enabled={false}
-    >
-      <StatusBar style="dark" />
-      <View style={styles.settingsContainer}>
-        <TouchableOpacity accessibilityRole="button" onPress={handleModal}>
-          <Image
-            style={styles.settingsIcon}
-            source={require('client/assets/settingsIcon.png')}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAvoidingView
+        style={styles.lobbyContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        enabled={false}
+      >
+        <StatusBar style="dark" />
+        <View style={styles.settingsContainer}>
+          <TouchableOpacity accessibilityRole="button" onPress={handleModal}>
+            <Image
+              style={styles.settingsIcon}
+              source={require('client/assets/settingsIcon.png')}
+            />
+          </TouchableOpacity>
+
+          <TextInput
+            style={styles.nameContainer}
+            value={name}
+            onChangeText={(name) => setName({ name })}
+            placeholder="username"
+            onPress={handleEditable}
+            adjustsFontSizeToFit={true}
+            numberOfLines={1}
           />
-        </TouchableOpacity>
 
-        <TextInput
-          style={styles.nameContainer}
-          value={name}
-          onChangeText={(name) => setName({ name })}
-          placeholder="username"
-          onPress={handleEditable}
-          adjustsFontSizeToFit={true}
-          numberOfLines={1}
-        />
-
-        <Text style={styles.codeText}>Code: XXXX</Text>
-      </View>
-
-      <View style={styles.playerContainer}></View>
-
-      <View style={styles.bodyContainer}>
-        <TouchableOpacity style={styles.button} onPress={startGame}>
-          <Text style={styles.buttonText}>Start Game</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Modal isVisible={isModalVisible}>
-        <View style={styles.settingsModal}>
-          <View style={styles.settingsModalSettings}>
-            <View>
-              <Text style={styles.settingsModalText}>
-                Kill Radius: {killRadius}
-              </Text>
-              <Slider
-                value={killRadius}
-                minimumValue={2}
-                maximumValue={10}
-                step={1}
-                onValueChange={(killRadius) => setKillRadius(killRadius)}
-                trackClickable={true}
-              />
-            </View>
-            <View>
-              <Text style={styles.settingsModalText}>
-                Kill Cooldown: {killCooldown}
-              </Text>
-              <Slider
-                value={killCooldown}
-                minimumValue={10}
-                maximumValue={240}
-                step={10}
-                onValueChange={(killCooldown) => setKillCooldown(killCooldown)}
-                trackClickable={true}
-              />
-            </View>
-          </View>
-          <View style={styles.settingsModalExit}>
-            <TouchableOpacity onPress={handleModal} style={styles.button}>
-              <Text style={[styles.buttonText, { fontSize: 24 }]}>
-                Close Settings
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.codeText}>Code: XXXX</Text>
         </View>
-      </Modal>
-    </KeyboardAvoidingView>
+
+        <View style={styles.playerContainer}></View>
+
+        <View style={styles.bodyContainer}>
+          <TouchableOpacity style={styles.button} onPress={startGame}>
+            <Text style={styles.buttonText}>Start Game</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Modal isVisible={isModalVisible}>
+          <View style={styles.settingsModal}>
+            <View style={styles.settingsModalSettings}>
+              <View>
+                <Text style={styles.settingsModalText}>
+                  Kill Radius: {killRadius}
+                </Text>
+                <Slider
+                  value={killRadius}
+                  minimumValue={2}
+                  maximumValue={10}
+                  step={1}
+                  onValueChange={(killRadius) => setKillRadius(killRadius)}
+                  trackClickable={true}
+                />
+              </View>
+              <View>
+                <Text style={styles.settingsModalText}>
+                  Kill Cooldown: {killCooldown}
+                </Text>
+                <Slider
+                  value={killCooldown}
+                  minimumValue={10}
+                  maximumValue={240}
+                  step={10}
+                  onValueChange={(killCooldown) =>
+                    setKillCooldown(killCooldown)
+                  }
+                  trackClickable={true}
+                />
+              </View>
+            </View>
+            <View style={styles.settingsModalExit}>
+              <TouchableOpacity onPress={handleModal} style={styles.button}>
+                <Text style={[styles.buttonText, { fontSize: 24 }]}>
+                  Close Settings
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   lobbyContainer: {
-    marginTop: Constants.statusBarHeight,
+    marginTop: Constants.statusBarHeight + 10,
     flex: 1,
     backgroundColor: '#ffffff',
     flexDirection: 'column',
