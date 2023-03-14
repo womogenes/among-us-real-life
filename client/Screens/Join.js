@@ -28,9 +28,7 @@ function JoinScreen({ navigation }) {
           style={styles.textInput}
           onChangeText={onChangeCode}
           placeholder="XXXX"
-          autoCapitalize="characters"
           autoComplete={false}
-          autoCorrect={false}
           keyboardType="numeric"
           maxLength={4}
         ></TextInput>

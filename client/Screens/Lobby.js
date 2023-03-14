@@ -23,11 +23,22 @@ function LobbyScreen({ navigation }) {
   const [killRadius, setKillRadius] = useState(5);
   const [killCooldown, setKillCooldown] = useState(60);
 
+  nameList = ['You', 'Devin', 'Dan', 'Julie', 'Jackson'];
+
+  const userList = [];
+  for (let i = 0; i < 5; i++) {
+    userList[i] = { key: nameList[i] };
+  }
+  const [memberList, setMemberList] = useState(userList);
+
   const [name, setName] = useState('');
 
   function changeNameText(changedName) {
     setName(changedName);
-    console.log(name);
+
+    let newMemberList = [...memberList];
+    newMemberList[0] = { key: changedName };
+    setMemberList(newMemberList);
   }
 
   const startGame = () => {
@@ -55,13 +66,20 @@ function LobbyScreen({ navigation }) {
             onChangeText={changeNameText}
             placeholder="Username..."
             maxLength={16}
+            autoComplete={false}
+            autoCorrect={false}
           />
 
           <Text style={styles.codeText}>Code: XXXX</Text>
         </View>
 
         <View style={styles.playerContainer}>
-          <Text style={styles.nameText}>{name}</Text>
+          <FlatList
+            data={memberList}
+            renderItem={({ item }) => (
+              <Text style={styles.item}>{item.key}</Text>
+            )}
+          />
         </View>
 
         <View style={styles.bodyContainer}>
