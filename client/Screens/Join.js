@@ -10,10 +10,13 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+import { getLobbyRoom } from '../networking.js';
 
 function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
+  const [roomList, setRoomList] = useState([]);
   const rooms = [
     {
       id: '0000',
@@ -70,6 +73,18 @@ function JoinScreen({ navigation }) {
       navigation.navigate('Lobby');
     }
   }
+
+  useEffect(() => {
+    // This gets run only once
+    const lobby = getLobbyRoom();
+
+    // setRoomList(room.state.rooms.$items);
+
+    return () => {
+      lobby?.removeAllListeners();
+    };
+  }, []);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <KeyboardAvoidingView

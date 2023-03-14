@@ -16,7 +16,7 @@ import * as Location from 'expo-location';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
-import { getLobby } from '../networking.js';
+import { getLobbyRoom } from '../networking.js';
 
 import Minimap from '../components/minimap.js';
 
@@ -32,6 +32,11 @@ export default function GameScreen({ navigation }) {
   const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+  const [sabotageList, setSabotageList] = useState([
+    {name: 'Reactor', availability: true},
+    {name: 'O2', availability: true},
+    {name: 'Door', availability: true},
+  ]);
   const [buttonState, setButtonState] = useState({
     use: false, // These should all be true at the beginning of the game
     report: false,
@@ -77,7 +82,7 @@ export default function GameScreen({ navigation }) {
 
   useEffect(() => {
     // Status update loop
-    const room = getLobby();
+    const room = getLobbyRoom();
 
     setPlayers(room.state.players.$items);
 
@@ -116,7 +121,7 @@ export default function GameScreen({ navigation }) {
           setLocation(loc), animate(loc);
 
           // Send location to server
-          getLobby()?.send('location', loc);
+          getLobbyRoom()?.send('location', loc);
         }
       );
     })();
@@ -141,7 +146,7 @@ export default function GameScreen({ navigation }) {
           <Text style={{ color: '#fff' }}>Back to menu</Text>
         </TouchableOpacity>
 
-        <Text>Session ID: {getLobby().sessionId}</Text>
+        <Text>Session ID: {getLobbyRoom().sessionId}</Text>
 
         <Text>{players.size - 1} other players connected</Text>
       </View>
@@ -184,6 +189,7 @@ export default function GameScreen({ navigation }) {
         killButtonState={buttonState.kill}
         killButtonPress={killButton}
         cooldown={10}
+        sabotageList={sabotageList}
         reportButtonState={buttonState.report}
         reportButtonPress={reportButton}
         taskCompletion={taskCompletion}
