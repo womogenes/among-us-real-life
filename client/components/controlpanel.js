@@ -1,6 +1,8 @@
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 import { useRef, useEffect, useState } from 'react';
+
+import Modal from 'react-native-modal';
 
 import CustomButton from '../components/button.js';
 import TaskBar from '../components/taskbar.js';
@@ -9,6 +11,7 @@ import Tasks from '../components/tasks.js';
 function ControlPanel(props) {
   const [timer, setTimer] = useState(null);
   const [intervalID, setIntervalID] = useState();
+  const [isModalVisible, setModalVisibility] = useState(false);
 
   function killCooldown() {
     setTimer(props.cooldown);
@@ -16,6 +19,18 @@ function ControlPanel(props) {
       setTimer((prevState) => prevState - 1);
     }, 1000);
     setIntervalID(interval);
+  }
+
+  function renderSabotageTasks() {
+    return props.sabotageList.map((item) => {
+        return (
+            <Text>{item.name}</Text>
+        )
+    })
+  }
+
+  function sabotageTasks() {
+    setModalVisibility(true);
   }
 
   useEffect(() => {
@@ -79,8 +94,10 @@ function ControlPanel(props) {
           />
         <CustomButton
             type={'cooldown'}
-            disabled={props.reportButtonState}
-            onPress={props.reportButtonPress}
+            disabled={props.sabotageButtonState}
+            onPress={() => {
+                sabotageTasks();
+            }}
             image={require('client/assets/sabotagebutton.png')}
             imagesize={'75%'}
             roundness={50}
@@ -103,6 +120,11 @@ function ControlPanel(props) {
             right={-10}
             bottom={320}
           />
+        <Modal isVisible={isModalVisible} style={styles.modal}>
+            <View style={styles.modalBackground}>
+                {renderSabotageTasks()}
+            </View>
+        </Modal>
         </View>
       )}
       <Tasks />
@@ -127,6 +149,16 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
+    position: 'absolute',
+  },
+  modal: {
+    alignItems: 'center',
+  },
+  modalBackground: {
+    width: '80%',
+    height: '60%',
+    backgroundColor: 'white',
+    alignItems: 'center',
     position: 'absolute',
   },
 });

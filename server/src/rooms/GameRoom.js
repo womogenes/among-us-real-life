@@ -1,6 +1,7 @@
 import { Room } from '@colyseus/core';
 
 import { GameRoomState, Player } from './schema/GameRoomState.js';
+import { onCreateGameRoom } from './LobbyRoom.js';
 
 export class GameRoom extends Room {
   onCreate(options) {
@@ -9,6 +10,8 @@ export class GameRoom extends Room {
     this.onMessage('location', (client, loc) => {
       this.state.players[client.sessionId].location.update(loc.coords);
     });
+
+    onCreateGameRoom(this);
   }
 
   onJoin(client, options) {
