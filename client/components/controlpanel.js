@@ -23,12 +23,16 @@ function ControlPanel(props) {
 
   function renderSabotageTasks() {
     return props.sabotageList.map((item) => {
-      return <Text>{item.name}</Text>;
+      return <TouchableOpacity style={styles.sabotageListButton}><Text>{item.name}</Text></TouchableOpacity>;
     });
   }
 
   function sabotageTasks() {
     setModalVisibility(true);
+  }
+
+  function closeSabotageTasks() {
+    setModalVisibility(false);
   }
 
   useEffect(() => {
@@ -119,7 +123,13 @@ function ControlPanel(props) {
             bottom={320}
           />
           <Modal isVisible={isModalVisible} style={styles.modal}>
-            <View style={styles.modalBackground}>{renderSabotageTasks()}</View>
+            <View style={styles.modalBackground}>
+                <View style={styles.closeButtonContainer}>
+                    <TouchableOpacity style={styles.closeButton} onPress={closeSabotageTasks}><Text style={styles.closeButtonText}>&#x2716;</Text></TouchableOpacity>
+                </View>
+                <Text style={styles.modalTitle}>Sabotage</Text>
+                {renderSabotageTasks()}
+            </View>
           </Modal>
         </View>
       )}
@@ -153,8 +163,30 @@ const styles = StyleSheet.create({
   modalBackground: {
     width: '80%',
     height: '60%',
+    padding: 10,
     backgroundColor: 'white',
     alignItems: 'center',
     position: 'absolute',
   },
+  modalTitle: {
+    fontSize: 50,
+  },
+  closeButtonContainer: {
+    width: '100%',
+    alignItems: 'flex-end',
+  },
+  closeButton: {
+  },
+  closeButtonText: {
+    fontSize: 20,
+  },
+  sabotageListButton: {
+    width: '80%',
+    height: '10%',
+    borderWidth: 2,
+    borderRadius: 10,
+    margin: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });
