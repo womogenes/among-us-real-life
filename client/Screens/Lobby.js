@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
   FlatList,
 } from 'react-native';
 import Constants from 'expo-constants';
@@ -37,12 +38,25 @@ function LobbyScreen({ navigation }) {
     setKillCooldown(prevKillCooldown);
   }
 
-  nameList = ['You', 'Devin', 'Dan', 'Julie', 'Jackson'];
+  nameList = [
+    'You',
+    'Devin',
+    'Dan',
+    'Julie',
+    'Jackson',
+    'Joe',
+    'Devin',
+    'Dan',
+    'Julie',
+    'Jackson',
+    'Joe',
+  ];
 
   const userList = [];
   for (let i = 0; i < 5; i++) {
     userList[i] = { key: nameList[i] };
   }
+  w;
   const [memberList, setMemberList] = useState(userList);
 
   const [name, setName] = useState('');
@@ -51,7 +65,7 @@ function LobbyScreen({ navigation }) {
     setName(changedName);
 
     let newMemberList = [...memberList];
-    newMemberList[0] = { key: changedName };
+    newMemberList[0] = { key: name };
     setMemberList(newMemberList);
   }
 
@@ -219,11 +233,10 @@ const styles = StyleSheet.create({
     flex: 0.2,
   },
   playerContainer: {
-    backgroundColor: 'red',
+    backgroundColor: '#7ABAFA',
     flex: 0.7,
   },
   bodyContainer: {
-    padding: 15,
     flex: 0.2,
     justifyContent: 'center',
     alignItems: 'center',
@@ -263,6 +276,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 30,
     marginBottom: 40,
+  },
+  item: {
+    color: 'white',
+    textAlign: 'center',
+    margin: 20,
+    padding: 20,
+    fontSize: 25,
+    borderWidth: 2,
+    borderRadius: 15,
   },
 });
 
