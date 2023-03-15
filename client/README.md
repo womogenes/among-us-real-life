@@ -22,10 +22,23 @@ const room = getLobbyRoom();
 
 ### Methods
 
-Todo:
+All game rooms from `0000` to `9999` are open by default. You can connect to any one of them by doing
+```js
+import { connectToGameRoom } from 'networking.js';
 
-1. `createGameRoom`
-2. `getAllRooms`
+// ... stuff
+
+await connectToGameRoom('1234'); // Needs to be a string
+```
+
+Important: `connectToGameRoom` is an async function!
+
+Getting all rooms can be done with
+```js
+getLobbyRoom().rooms
+```
+This is a Colyseus state object that automatically updates.
+
 
 ## Game room
 
@@ -48,6 +61,15 @@ To send stuff to the server, use
 ```js
 room.send('messageType', messageObject);
 ```
+
+#### Location updates
+
+To update the server on the client's location, do
+```js
+getLobbyRoom().send('location', loc);
+```
+where `loc` is a location object. (TODO: document format of `loc` object)
+
 
 ### State
 
