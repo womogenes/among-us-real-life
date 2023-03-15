@@ -23,7 +23,7 @@ function ControlPanel(props) {
 
   function renderSabotageTasks() {
     return props.sabotageList.map((item) => {
-      return <TouchableOpacity style={styles.sabotageListButton}><Text>{item.name}</Text></TouchableOpacity>;
+      return <TouchableOpacity style={styles.sabotageListButton} key={item.key}><Text>{item.name}</Text></TouchableOpacity>;
     });
   }
 
