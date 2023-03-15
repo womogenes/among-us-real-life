@@ -62,7 +62,7 @@ function LobbyScreen({ navigation }) {
   const userList = [];
   for (let i = 0; i < 5; i++) {
     userList[i] = { key: nameList[i] };
-  };
+  }
   const [memberList, setMemberList] = useState(userList);
 
   const [name, setName] = useState('');

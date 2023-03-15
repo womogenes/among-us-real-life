@@ -121,7 +121,7 @@ export default function GameScreen({ navigation }) {
           setLocation(loc), animate(loc);
 
           // Send location to server
-          getLobbyRoom()?.send('location', loc);
+          getGameRoom()?.send('location', loc);
         }
       );
     })();
