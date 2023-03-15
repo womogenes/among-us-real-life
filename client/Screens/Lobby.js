@@ -22,6 +22,20 @@ function LobbyScreen({ navigation }) {
 
   const [killRadius, setKillRadius] = useState(5);
   const [killCooldown, setKillCooldown] = useState(60);
+  const [prevKillRadius, setPrevKillRadius] = useState(5);
+  const [prevKillCooldown, setPrevKillCooldown] = useState(60);
+
+  function storePrev() {
+    setPrevKillRadius(killRadius);
+    setPrevKillCooldown(killCooldown);
+    console.log('Hi' + prevKillRadius);
+  }
+
+  function dontSave() {
+    console.log(prevKillRadius);
+    setKillRadius(prevKillRadius);
+    setKillCooldown(prevKillCooldown);
+  }
 
   nameList = ['You', 'Devin', 'Dan', 'Julie', 'Jackson'];
 
@@ -57,7 +71,7 @@ function LobbyScreen({ navigation }) {
           <TouchableOpacity accessibilityRole="button" onPress={handleModal}>
             <Image
               style={styles.settingsIcon}
-              source={require('client/assets/settingsIcon.png')}
+              source={require('client/assets/settings.png')}
             />
           </TouchableOpacity>
 
@@ -88,9 +102,14 @@ function LobbyScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <Modal isVisible={isModalVisible}>
+        <Modal
+          isVisible={isModalVisible}
+          animationType="slide"
+          onShow={storePrev}
+        >
           <View style={styles.settingsModal}>
             <View style={styles.settingsModalSettings}>
+              <Text style={styles.titleSettings}>Settings</Text>
               <View>
                 <Text style={styles.settingsModalText}>
                   Kill Radius: {killRadius}
@@ -106,7 +125,7 @@ function LobbyScreen({ navigation }) {
               </View>
               <View>
                 <Text style={styles.settingsModalText}>
-                  Kill Cooldown: {killCooldown}
+                  Kill Cooldown: {killCooldown}s
                 </Text>
                 <Slider
                   value={killCooldown}
@@ -122,9 +141,16 @@ function LobbyScreen({ navigation }) {
             </View>
             <View style={styles.settingsModalExit}>
               <TouchableOpacity onPress={handleModal} style={styles.button}>
-                <Text style={[styles.buttonText, { fontSize: 24 }]}>
-                  Close Settings
-                </Text>
+                <Text style={[styles.buttonText]}>Close and Save</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  handleModal();
+                  dontSave();
+                }}
+                style={styles.closeDontSave}
+              >
+                <Text style={[styles.dontSaveText]}>Close and Don't Save</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -174,16 +200,16 @@ const styles = StyleSheet.create({
     flex: 1,
     color: 'white',
     alignItems: 'center',
+    marginTop: '5%',
   },
   settingsModalSettings: {
-    padding: 5,
-    margin: 10,
     width: '80%',
     flex: 0.8,
   },
   settingsModalText: {
     fontSize: 20,
     paddingTop: 10,
+    textAlign: 'center',
   },
   settingsModalExit: {
     paddingTop: 20,
@@ -210,13 +236,33 @@ const styles = StyleSheet.create({
     height: '40%',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20,
+  },
+  closeDontSave: {
+    backgroundColor: '#BDC9C9',
+    padding: 10,
+    borderRadius: 20,
+    width: '80%',
+    height: '40%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 40,
   },
   buttonText: {
-    color: 'black',
-    fontSize: 24,
+    fontSize: 22,
+  },
+  dontSaveText: {
+    color: 'red',
+    fontSize: 22,
   },
   nameText: {
     fontSize: 30,
+  },
+  titleSettings: {
+    fontSize: 35,
+    textAlign: 'center',
+    marginTop: 30,
+    marginBottom: 40,
   },
 });
 
