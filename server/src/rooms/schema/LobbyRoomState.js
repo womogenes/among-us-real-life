@@ -1,14 +1,14 @@
 import * as schema from '@colyseus/schema';
-const { Schema, MapSchema } = schema;
+const { Schema, ArraySchema } = schema;
 
 export class LobbyRoomState extends Schema {
   constructor() {
     super();
 
-    this.rooms = new MapSchema();
+    this.rooms = new ArraySchema();
   }
 }
 
 schema.defineTypes(LobbyRoomState, {
-  rooms: { map: String },
+  rooms: ['string'],
 });

@@ -36,13 +36,17 @@ schema.defineTypes(Player, {
 });
 
 export class GameRoomState extends Schema {
-  constructor() {
+  constructor(code) {
     super();
 
     this.players = new MapSchema();
+    this.code = code;
+    this.refresh = 0;
   }
 }
 
 schema.defineTypes(GameRoomState, {
   players: { map: Player },
+  code: 'string',
+  refresh: 'number',
 });

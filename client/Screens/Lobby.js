@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Image,
   TouchableOpacity,
@@ -17,6 +17,8 @@ import Modal from 'react-native-modal';
 import { StatusBar } from 'expo-status-bar';
 import { Slider } from '@miblanchard/react-native-slider';
 
+import { getGameRoom } from '../networking.js';
+
 function LobbyScreen({ navigation }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const handleModal = () => setIsModalVisible(() => !isModalVisible);
@@ -25,6 +27,23 @@ function LobbyScreen({ navigation }) {
   const [killCooldown, setKillCooldown] = useState(60);
   const [prevKillRadius, setPrevKillRadius] = useState(5);
   const [prevKillCooldown, setPrevKillCooldown] = useState(60);
+
+  const [roomState, setRoomState] = useState({});
+  const [roomCode, setRoomCode] = useState('XXXX');
+
+  useEffect(() => {
+    // NETWORKING STUFF
+    const room = getGameRoom();
+
+    room.onStateChange((state) => {
+      setRoomState(state);
+      setRoomCode(state.code);
+    });
+
+    return () => {
+      room.removeAllListeners();
+    };
+  }, []);
 
   function storePrev() {
     setPrevKillRadius(killRadius);
@@ -38,19 +57,7 @@ function LobbyScreen({ navigation }) {
     setKillCooldown(prevKillCooldown);
   }
 
-  nameList = [
-    'You',
-    'Devin',
-    'Dan',
-    'Julie',
-    'Jackson',
-    'Joe',
-    'Devin',
-    'Dan',
-    'Julie',
-    'Jackson',
-    'Joe',
-  ];
+  let nameList = ['You', 'Devin', 'Dan', 'Julie', 'Jackson'];
 
   const userList = [];
   for (let i = 0; i < 5; i++) {
@@ -98,7 +105,7 @@ function LobbyScreen({ navigation }) {
             autoCorrect={false}
           />
 
-          <Text style={styles.codeText}>Code: XXXX</Text>
+          <Text style={styles.codeText}>Code: {roomCode}</Text>
         </View>
 
         <View style={styles.playerContainer}>
@@ -182,8 +189,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   settingsContainer: {
-    marginLeft: 5,
-    marginRight: 5,
+    marginHorizontal: 10,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',

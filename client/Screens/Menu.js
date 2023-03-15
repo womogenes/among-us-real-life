@@ -8,28 +8,24 @@ import {
 } from 'react-native';
 import { React, useEffect, useState } from 'react';
 
-import { getLobbyRoom } from '../networking.js';
+import { getLobbyRoom, connectToGameRoom } from '../networking.js';
 
 function MenuScreen({ navigation }) {
   const joinGame = () => {
     navigation.navigate('Join');
   };
 
-  useEffect(() => {
-    const lobby = getLobbyRoom();
-    lobby?.onMessage('gameCreated', (message) => {
-      navigation.navigate('Lobby', code);
-    });
-
-    return () => {
-      lobby?.removeAllListeners();
-    };
-  });
-
   const toLobby = () => {
     // Request a game room
     const lobby = getLobbyRoom();
     lobby?.send('createNewGame');
+
+    lobby?.onMessage('gameCreated', async (code) => {
+      await connectToGameRoom(code);
+      navigation.navigate('Lobby');
+
+      lobby.removeAllListeners();
+    });
   };
 
   return (

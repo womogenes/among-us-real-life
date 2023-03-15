@@ -16,7 +16,7 @@ import * as Location from 'expo-location';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
-import { getLobbyRoom } from '../networking.js';
+import { getGameRoom, getLobbyRoom } from '../networking.js';
 
 import Minimap from '../components/minimap.js';
 
@@ -82,9 +82,9 @@ export default function GameScreen({ navigation }) {
 
   useEffect(() => {
     // Status update loop
-    const room = getLobbyRoom();
+    const room = getGameRoom();
 
-    setPlayers(room.state.players.$items);
+    setPlayers(room?.state?.players?.$items);
 
     room.onStateChange((state) => {
       setPlayers(state.players.$items);

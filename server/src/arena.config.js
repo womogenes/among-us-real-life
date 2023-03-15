@@ -12,7 +12,12 @@ export default Arena.default({
      * Define your room handlers:
      */
     gameServer.define('lobby', LobbyRoom);
-    gameServer.define('defaultGameRom', GameRoom);
+
+    // Declare all possible game codes
+    for (let i = 0; i < 10000; i++) {
+      const code = i.toString().padStart(4, '0');
+      gameServer.define(code, GameRoom, { code });
+    }
   },
 
   initializeExpress: (app) => {

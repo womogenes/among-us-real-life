@@ -9,6 +9,27 @@ let getLobbyRoom = () => {
   console.log('Not connected to server yet.');
 };
 
+let getGameRoom = () => {
+  // This can also be promise-ified
+  console.log('Not connected to server yet.');
+};
+
+const connectToGameRoom = (code) => {
+  return new Promise((resolve, reject) => {
+    client
+      .joinOrCreate(code)
+      .then((gameRoom) => {
+        console.log(`Joined game room ${gameRoom.sessionId}, name: ${code}`);
+        getGameRoom = () => gameRoom;
+
+        resolve();
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
 console.log('Connecting to server...');
 client.joinOrCreate('lobby').then((lobby) => {
   console.log(`Joined room ${lobby.sessionId}, name: ${lobby.name}`);
@@ -17,9 +38,7 @@ client.joinOrCreate('lobby').then((lobby) => {
     console.log(message);
   });
 
-  getLobbyRoom = () => {
-    return lobby;
-  };
+  getLobbyRoom = () => lobby;
 });
 
-export { serverAddr, getLobbyRoom };
+export { serverAddr, getLobbyRoom, connectToGameRoom, getGameRoom };

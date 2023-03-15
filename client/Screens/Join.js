@@ -12,11 +12,12 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 
-import { getLobbyRoom } from '../networking.js';
+import { getLobbyRoom, connectToGameRoom } from '../networking.js';
 
 function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
   const [roomList, setRoomList] = useState([]);
+
   const rooms = [
     {
       id: '0000',
@@ -68,17 +69,21 @@ function JoinScreen({ navigation }) {
     },
   ];
 
-  function joinPressed(code) {
-    if (code == '5050') {
-      navigation.navigate('Lobby');
-    }
-  }
+  const joinPressed = async (code) => {
+    await connectToGameRoom(code);
+    navigation.navigate('Lobby');
+  };
 
   useEffect(() => {
     // This gets run only once
     const lobby = getLobbyRoom();
 
-    // setRoomList(room.state.rooms.$items);
+    // Keep roomList in sync with the server
+    setRoomList(lobby.state.rooms);
+
+    lobby.onStateChange((state) => {
+      setRoomList(state.rooms.$items);
+    });
 
     return () => {
       lobby?.removeAllListeners();
@@ -116,14 +121,14 @@ function JoinScreen({ navigation }) {
             <Text style={styles.touchableButton}>Join</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Room list container */}
         <SafeAreaView style={styles.roomListContainer}>
           <FlatList
             style={styles.roomList}
-            data={rooms}
-            renderItem={({ item }) => (
-              <Text style={styles.room}>{item.title}</Text>
-            )}
-            keyExtractor={(item) => item.id}
+            data={roomList}
+            renderItem={({ item }) => <Text style={styles.room}>{item}</Text>}
+            keyExtractor={(item) => item}
             snapToAlignment="start"
             decelerationRate={'fast'}
           />
@@ -179,18 +184,14 @@ const styles = StyleSheet.create({
   },
   roomList: {
     width: '80%',
-    borderRadius: 5,
-    borderWidth: 1,
-    backgroundColor: '#BDC9C9',
   },
   room: {
-    backgroundColor: '#ffffff',
+    overflow: 'hidden', // For the borderRadius
+    backgroundColor: '#BDC9C9',
     borderRadius: 5,
-    borderWidth: 1,
-    borderColor: 'black',
     fontSize: 20,
     padding: 10,
-    margin: 2,
+    marginVertical: 2,
   },
 });
 
