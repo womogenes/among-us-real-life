@@ -11,6 +11,7 @@ This is not the game lobby: that's technically just an abstraction within a Coly
 3. The server then allows the client to join a room
 
 `networking.js` exports a couple functions, one of which is `getLobbyRoom`. This contains a Colyseus client lobby room instance. Usage:
+
 ```js
 import { getLobbyRoom } from 'networking.js';
 
@@ -22,10 +23,9 @@ const room = getLobbyRoom();
 ### Methods
 
 Todo:
+
 1. `createGameRoom`
 2. `getAllRooms`
-
-
 
 ## Game room
 

@@ -23,10 +23,8 @@ function ControlPanel(props) {
 
   function renderSabotageTasks() {
     return props.sabotageList.map((item) => {
-        return (
-            <Text>{item.name}</Text>
-        )
-    })
+      return <Text>{item.name}</Text>;
+    });
   }
 
   function sabotageTasks() {
@@ -92,11 +90,11 @@ function ControlPanel(props) {
             right={-10}
             bottom={200}
           />
-        <CustomButton
+          <CustomButton
             type={'cooldown'}
             disabled={props.sabotageButtonState}
             onPress={() => {
-                sabotageTasks();
+              sabotageTasks();
             }}
             image={require('client/assets/sabotagebutton.png')}
             imagesize={'75%'}
@@ -120,11 +118,9 @@ function ControlPanel(props) {
             right={-10}
             bottom={320}
           />
-        <Modal isVisible={isModalVisible} style={styles.modal}>
-            <View style={styles.modalBackground}>
-                {renderSabotageTasks()}
-            </View>
-        </Modal>
+          <Modal isVisible={isModalVisible} style={styles.modal}>
+            <View style={styles.modalBackground}>{renderSabotageTasks()}</View>
+          </Modal>
         </View>
       )}
       <Tasks />
