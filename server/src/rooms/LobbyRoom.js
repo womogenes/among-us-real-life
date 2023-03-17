@@ -18,34 +18,31 @@ export class LobbyRoom extends Room {
 
     // Function to track other rooms' creation
     onCreateGameRoom = (room) => {
-      console.log(`Game room ${room.metadata?.code} registered with Colyseus`);
-      this.rooms.set(room.metadata.code, room);
+      console.log(`Game room ${room.state.code} registered with Colyseus`);
 
       // console.log('this state rooms:', this.state.rooms);
       this.state.rooms.push(room.metadata.code);
     };
 
-    onDisposeGameRoom = (room, code) => {
-      console.log(`Game room ${code} disposed`);
+    onDisposeGameRoom = (code) => {
       this.rooms.delete(code);
-      this.state.rooms.splice(
-        this.state.rooms.findIndex((r) => code === r.metadata.code),
-        1
-      );
+      this.state.rooms.splice(this.state.rooms.indexOf(code), 1);
+
+      console.log(`Game room ${code} disposed.`);
     };
 
     console.log('Game room creation/disposal handlers registered');
   }
 
   onJoin(client, options) {
-    console.log(client.sessionId, 'joined lobby!');
+    console.log('Client', client.sessionId, 'joined lobby!');
   }
 
   onLeave(client, consented) {
-    console.log(client.sessionId, 'left!');
+    console.log('Client', client.sessionId, 'left!');
   }
 
   onDispose() {
-    console.log('room', this.roomId, 'disposing...');
+    console.log('Lobby room', this.roomId, 'disposing...');
   }
 }

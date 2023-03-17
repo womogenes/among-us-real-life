@@ -27,9 +27,8 @@ export class GameRoom extends Room {
     this.state.players.delete(client.sessionId);
   }
 
-  onDispose() {
-    console.log('room', this.roomId, 'disposing...');
-
-    onDisposeGameRoom(this, this.state.code);
+  async onDispose() {
+    console.log('Game room', this.roomId, 'disposing...');
+    onDisposeGameRoom(this.state.code);
   }
 }

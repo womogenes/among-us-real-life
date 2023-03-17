@@ -16,7 +16,7 @@ import Modal from 'react-native-modal';
 import { StatusBar } from 'expo-status-bar';
 import { Slider } from '@miblanchard/react-native-slider';
 
-import { getGameRoom } from '../networking.js';
+import { getGameRoom, leaveGameRoom } from '../networking.js';
 
 function LobbyScreen({ navigation }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -30,6 +30,9 @@ function LobbyScreen({ navigation }) {
   const [roomState, setRoomState] = useState({});
   const [roomCode, setRoomCode] = useState('XXXX');
 
+  const [memberList, setMemberList] = useState([]);
+  const [name, setName] = useState('');
+
   useEffect(() => {
     // NETWORKING STUFF
     const room = getGameRoom();
@@ -37,10 +40,13 @@ function LobbyScreen({ navigation }) {
     room.onStateChange((state) => {
       setRoomState(state);
       setRoomCode(state.code);
+      setMemberList(state.players);
     });
 
     return () => {
-      room.removeAllListeners();
+      // Disconnect from the room
+      console.log(`Left game room ${room.sessionId}, code: ${room.state.code}`);
+      leaveGameRoom();
     };
   }, []);
 
@@ -55,16 +61,6 @@ function LobbyScreen({ navigation }) {
     setKillRadius(prevKillRadius);
     setKillCooldown(prevKillCooldown);
   }
-
-  let nameList = ['You', 'Devin', 'Dan', 'Julie', 'Jackson'];
-
-  const userList = [];
-  for (let i = 0; i < 5; i++) {
-    userList[i] = { key: nameList[i] };
-  }
-  const [memberList, setMemberList] = useState(userList);
-
-  const [name, setName] = useState('');
 
   const host = false;
 

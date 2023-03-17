@@ -19,77 +19,29 @@ function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
   const [roomList, setRoomList] = useState([]);
 
-  const rooms = [
-    {
-      id: '0000',
-      title: 'First Room',
-    },
-    {
-      id: '0001',
-      title: 'Second Room',
-    },
-    {
-      id: '0002',
-      title: 'Third Room',
-    },
-    {
-      id: '1',
-      title: 'First Room',
-    },
-    {
-      id: '2',
-      title: 'Second Room',
-    },
-    {
-      id: '3',
-      title: 'Third Room',
-    },
-    {
-      id: '4',
-      title: 'First Room',
-    },
-    {
-      id: '5',
-      title: 'Second Room',
-    },
-    {
-      id: '6',
-      title: 'Third Room',
-    },
-    {
-      id: '7',
-      title: 'First Room',
-    },
-    {
-      id: '8',
-      title: 'Second Room',
-    },
-    {
-      id: '9',
-      title: 'Third Room',
-    },
-  ];
-
   const joinPressed = async (code) => {
     await connectToGameRoom(code);
     navigation.navigate('Lobby');
   };
 
-  useEffect(async () => {
-    // This gets run only once
-    const lobby = await lobbyRoom;
+  useEffect(
+    (async () => {
+      // This gets run only once
+      const lobby = await lobbyRoom;
 
-    // Keep roomList in sync with the server
-    setRoomList(lobby.state.rooms);
+      // Keep roomList in sync with the server
+      setRoomList(lobby.state.rooms);
 
-    lobby.onStateChange((state) => {
-      setRoomList(state.rooms.$items);
-    });
+      lobby.onStateChange((state) => {
+        setRoomList(state.rooms.$items);
+      });
 
-    return () => {
-      lobby?.removeAllListeners();
-    };
-  }, []);
+      return () => {
+        lobby?.removeAllListeners();
+      };
+    })(),
+    []
+  );
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
