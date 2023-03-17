@@ -4,41 +4,31 @@ import Constants from 'expo-constants';
 const { serverAddr } = Constants.expoConfig;
 const client = new Colyseus.Client(`ws://${serverAddr}`);
 
-let getLobbyRoom = () => {
-  // Eventually, this can be promise-ified
-  console.log('Not connected to server yet.');
-};
-
-let getGameRoom = () => {
-  // This can also be promise-ified
-  console.log('Not connected to server yet.');
-};
+// Game room needs to be able to be changed
+let getGameRoom = () => {};
 
 const connectToGameRoom = (code) => {
   return new Promise((resolve, reject) => {
-    client
-      .joinOrCreate(code)
-      .then((gameRoom) => {
-        console.log(`Joined game room ${gameRoom.sessionId}, name: ${code}`);
-        getGameRoom = () => gameRoom;
+    client.joinOrCreate(code).then((gameRoom) => {
+      console.log(`Joined game room ${gameRoom.sessionId}, name: ${code}`);
 
-        resolve();
-      })
-      .catch((error) => {
-        reject(error);
-      });
+      getGameRoom = () => gameRoom;
+      resolve(gameRoom);
+    });
   });
 };
 
-console.log('Connecting to server...');
-client.joinOrCreate('lobby').then((lobby) => {
-  console.log(`Joined room ${lobby.sessionId}, name: ${lobby.name}`);
+const lobbyRoom = new Promise((resolve, reject) => {
+  console.log('Connecting to server...');
+  client.joinOrCreate('lobby').then((lobby) => {
+    console.log(`Joined room ${lobby.sessionId}, name: ${lobby.name}`);
 
-  lobby.onMessage('rooms', (message) => {
-    console.log(message);
+    lobby.onMessage('rooms', (message) => {
+      console.log(message);
+    });
+
+    resolve(lobby);
   });
-
-  getLobbyRoom = () => lobby;
 });
 
-export { serverAddr, getLobbyRoom, connectToGameRoom, getGameRoom };
+export { serverAddr, lobbyRoom, connectToGameRoom, getGameRoom };

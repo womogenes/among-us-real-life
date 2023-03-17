@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 
-import { getLobbyRoom, connectToGameRoom } from '../networking.js';
+import { lobbyRoom, connectToGameRoom } from '../networking.js';
 
 function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
@@ -75,9 +75,9 @@ function JoinScreen({ navigation }) {
     navigation.navigate('Lobby');
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     // This gets run only once
-    const lobby = getLobbyRoom();
+    const lobby = await lobbyRoom;
 
     // Keep roomList in sync with the server
     setRoomList(lobby.state.rooms);

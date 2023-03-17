@@ -12,7 +12,7 @@ import * as Location from 'expo-location';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
-import { getGameRoom, getLobbyRoom } from '../networking.js';
+import { getGameRoom, lobbyRoom } from '../networking.js';
 
 import Minimap from '../components/minimap.js';
 
@@ -141,8 +141,6 @@ export default function GameScreen({ navigation }) {
         >
           <Text style={{ color: '#fff' }}>Back to menu</Text>
         </TouchableOpacity>
-
-        <Text>Session ID: {getLobbyRoom().sessionId}</Text>
 
         <Text>{players.size - 1} other players connected</Text>
       </View>

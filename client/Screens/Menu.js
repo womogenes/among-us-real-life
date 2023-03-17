@@ -8,16 +8,16 @@ import {
 } from 'react-native';
 import { React, useEffect, useState } from 'react';
 
-import { getLobbyRoom, connectToGameRoom } from '../networking.js';
+import { lobbyRoom, connectToGameRoom } from '../networking.js';
 
 function MenuScreen({ navigation }) {
   const joinGame = () => {
     navigation.navigate('Join');
   };
 
-  const toLobby = () => {
+  const toLobby = async () => {
     // Request a game room
-    const lobby = getLobbyRoom();
+    const lobby = await lobbyRoom;
     lobby?.send('createNewGame');
 
     lobby?.onMessage('gameCreated', async (code) => {

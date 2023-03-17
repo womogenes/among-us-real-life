@@ -10,49 +10,59 @@ This is not the game lobby: that's technically just an abstraction within a Coly
    2. Request to join a room
 3. The server then allows the client to join a room
 
-`networking.js` exports a couple functions, one of which is `getLobbyRoom`. This contains a Colyseus client lobby room instance. Usage:
+`networking.js` exports a couple things, one of which is `lobbyRoom`. This contains a Colyseus client lobby room instance. Usage:
 
 ```js
-import { getLobbyRoom } from 'networking.js';
+import { lobbyRoom } from 'networking.js';
 
 // ... some in-between code
 
-const room = getLobbyRoom();
+// This needs to be in an async function:
+(await lobbyRoom).someRandomMethod(...);
 ```
 
-### Methods
+### Connecting to game room
 
 All game rooms from `0000` to `9999` are open by default. You can connect to any one of them by doing
+
 ```js
 import { connectToGameRoom } from 'networking.js';
 
 // ... stuff
 
-await connectToGameRoom('1234'); // Needs to be a string
+// Needs to be a string inside
+// This evaluates to a GameRoom object if needed
+await connectToGameRoom('1234');
 ```
 
 Important: `connectToGameRoom` is an async function!
 
-Getting all rooms can be done with
-```js
-getLobbyRoom().rooms
-```
-This is a Colyseus state object that automatically updates.
+### Getting all available rooms
 
+Getting all rooms can be done with
+
+```js
+(await lobbyRoom).rooms;
+```
+
+This is a Colyseus state object that automatically updates.
 
 ## Game room
 
-`networking.js` exports a couple functions, one of which is `getGameRoom`. This contains a Colyseus client game room instance. You can import this in other files
+`networking.js` exports a couple things, one of which is `gameRoom`. This contains a Colyseus client game room instance. You can import this in other files with
 
 ```js
-import { getGameRoom } from 'networking.js';
+import { gameRoom } from 'networking.js';
 
 // ... some in-between code
 
-const room = getGameRoom();
+// This needs to be in an async function
+(await gameRoom).doStuff(...);
 ```
 
 (Replace `networking.js` with the appropriate relative path, if the file that's importing is in a different directory.)
+
+This is a (Promise that resolves to) a Colyseus room object.
 
 ### Sending stuff
 
@@ -65,11 +75,12 @@ room.send('messageType', messageObject);
 #### Location updates
 
 To update the server on the client's location, do
-```js
-getLobbyRoom().send('location', loc);
-```
-where `loc` is a location object. (TODO: document format of `loc` object)
 
+```js
+(await lobbyRoom).send('location', loc);
+```
+
+where `loc` is a location object. (TODO: document format of `loc` object)
 
 ### State
 
