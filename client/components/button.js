@@ -60,8 +60,9 @@ function CustomButton(props) {
                   : { width: '100%' },
               ]}
               source={props.image}
+              key="image"
             />,
-            <Text style={[styles.buttonText, { opacity: 1 }]}>
+            <Text style={[styles.buttonText, { opacity: 1 }]} key="text">
               {props.text}
             </Text>,
           ]
