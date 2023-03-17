@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   FlatList,
   SafeAreaView,
+  ImageBackground,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 
@@ -97,42 +98,48 @@ function JoinScreen({ navigation }) {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         enabled={false}
       >
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Join Server</Text>
-        </View>
-        <View style={styles.bodyContainer}>
-          <TextInput
-            style={styles.textInput}
-            onChangeText={onChangeCode}
-            placeholder="XXXX"
-            autoCapitalize="characters"
-            autoComplete="off"
-            autoCorrect={false}
-            keyboardType="numeric"
-            maxLength={4}
-            textAlign={'center'}
-          />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              joinPressed(code);
-            }}
-          >
-            <Text style={styles.touchableButton}>Join</Text>
-          </TouchableOpacity>
-        </View>
+        <ImageBackground
+          source={require('client/assets/joinGifBackground.gif')}
+          style={styles.backgroundImage}
+        >
+          <View style={styles.titleContainer}>
+            <Text style={styles.titleText}>Join Server</Text>
+          </View>
+          <View style={styles.bodyContainer}>
+            <TextInput
+              style={styles.textInput}
+              onChangeText={onChangeCode}
+              placeholder="XXXX"
+              placeholderTextColor={'white'}
+              autoCapitalize="characters"
+              autoComplete="off"
+              autoCorrect={false}
+              keyboardType="numeric"
+              maxLength={4}
+              textAlign={'center'}
+            />
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                joinPressed(code);
+              }}
+            >
+              <Text style={styles.touchableButton}>Join</Text>
+            </TouchableOpacity>
+          </View>
 
-        {/* Room list container */}
-        <SafeAreaView style={styles.roomListContainer}>
-          <FlatList
-            style={styles.roomList}
-            data={roomList}
-            renderItem={({ item }) => <Text style={styles.room}>{item}</Text>}
-            keyExtractor={(item) => item}
-            snapToAlignment="start"
-            decelerationRate={'fast'}
-          />
-        </SafeAreaView>
+          {/* Room list container */}
+          <SafeAreaView style={styles.roomListContainer}>
+            <FlatList
+              style={styles.roomList}
+              data={roomList}
+              renderItem={({ item }) => <Text style={styles.room}>{item}</Text>}
+              keyExtractor={(item) => item}
+              snapToAlignment="start"
+              decelerationRate={'fast'}
+            />
+          </SafeAreaView>
+        </ImageBackground>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
@@ -151,7 +158,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontWeight: 'bold',
-    color: 'black',
+    color: 'white',
     fontSize: 50,
     letterSpacing: 1,
   },
@@ -177,6 +184,8 @@ const styles = StyleSheet.create({
     height: '25%',
     borderWidth: 1,
     fontSize: 25,
+    borderColor: 'white',
+    color: 'white',
   },
   roomListContainer: {
     flex: 0.5,
@@ -192,6 +201,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     padding: 10,
     marginVertical: 2,
+  },
+  backgroundImage: {
+    width: '100%',
+    height: '100%',
+    flexDirection: 'column',
   },
 });
 
