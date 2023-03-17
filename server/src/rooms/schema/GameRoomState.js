@@ -23,16 +23,18 @@ schema.defineTypes(Location, {
 });
 
 export class Player extends Schema {
-  constructor(sessionId) {
+  constructor(sessionId, isHost) {
     super();
 
     this.sessionId = sessionId;
     this.location = new Location();
+    this.isHost = isHost;
   }
 }
 schema.defineTypes(Player, {
   sessionId: 'string',
   location: Location,
+  isHost: 'boolean',
 });
 
 export class GameRoomState extends Schema {

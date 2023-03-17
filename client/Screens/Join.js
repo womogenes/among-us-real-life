@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 
-import { lobbyRoom, connectToGameRoom } from '../networking.js';
+import { connectToGameRoom, getLobbyRoom } from '../networking.js';
 
 function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
@@ -24,24 +24,21 @@ function JoinScreen({ navigation }) {
     navigation.navigate('Lobby');
   };
 
-  useEffect(
-    (async () => {
-      // This gets run only once
-      const lobby = await lobbyRoom;
+  useEffect(() => {
+    // This gets run only once
+    const lobby = getLobbyRoom();
 
-      // Keep roomList in sync with the server
-      setRoomList(lobby.state.rooms);
+    // Keep roomList in sync with the server
+    setRoomList(lobby.state.rooms);
 
-      lobby.onStateChange((state) => {
-        setRoomList(state.rooms.$items);
-      });
+    lobby.onStateChange((state) => {
+      setRoomList(state.rooms.$items);
+    });
 
-      return () => {
-        lobby?.removeAllListeners();
-      };
-    })(),
-    []
-  );
+    return () => {
+      lobby?.removeAllListeners();
+    };
+  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

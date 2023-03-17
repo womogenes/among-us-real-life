@@ -32,6 +32,7 @@ function LobbyScreen({ navigation }) {
 
   const [memberList, setMemberList] = useState([]);
   const [name, setName] = useState('');
+  const [isHost, setIsHost] = useState(false);
 
   useEffect(() => {
     // NETWORKING STUFF
@@ -41,6 +42,7 @@ function LobbyScreen({ navigation }) {
       setRoomState(state);
       setRoomCode(state.code);
       setMemberList(state.players);
+      setIsHost(state.players[room.sessionId].isHost);
     });
 
     return () => {
@@ -61,8 +63,6 @@ function LobbyScreen({ navigation }) {
     setKillRadius(prevKillRadius);
     setKillCooldown(prevKillCooldown);
   }
-
-  const host = false;
 
   function changeNameText(changedName) {
     setName(changedName);
@@ -119,10 +119,10 @@ function LobbyScreen({ navigation }) {
           <TouchableOpacity
             style={styles.button}
             onPress={startGame}
-            disabled={!host}
+            disabled={!isHost}
           >
             <Text style={styles.buttonText}>
-              {host ? 'Start Game' : 'Waiting on host...'}
+              {isHost ? 'Start Game' : 'Waiting on host...'}
             </Text>
           </TouchableOpacity>
         </View>

@@ -23,27 +23,23 @@ const leaveGameRoom = () => {
   getGameRoom = () => {};
 };
 
-const lobbyRoom = new Promise((resolve) => {
-  console.log('Connecting to server...');
+let getLobbyRoom = () => {};
 
-  const connectToLobby = () => {
-    client.joinOrCreate('lobby').then((lobby) => {
-      console.log(`Joined room ${lobby.sessionId}, name: ${lobby.name}`);
+console.log('Connecting to server...');
+client.joinOrCreate('lobby').then((lobby) => {
+  console.log(`Joined room ${lobby.sessionId}, name: ${lobby.name}`);
 
-      lobby.onMessage('rooms', (message) => {
-        console.log(message);
-      });
+  lobby.onMessage('rooms', (message) => {
+    console.log(message);
+  });
 
-      lobby.onError((code, message) => {
-        console.error(`Server error: attempting to reconnect...`);
-        connectToLobby();
-      });
-
-      resolve(lobby);
-    });
-  };
-
-  connectToLobby();
+  getLobbyRoom = () => lobby;
 });
 
-export { serverAddr, lobbyRoom, connectToGameRoom, getGameRoom, leaveGameRoom };
+export {
+  serverAddr,
+  getLobbyRoom,
+  connectToGameRoom,
+  getGameRoom,
+  leaveGameRoom,
+};

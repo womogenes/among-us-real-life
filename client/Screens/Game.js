@@ -1,11 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Button,
-} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
@@ -115,6 +109,8 @@ export default function GameScreen({ navigation }) {
         },
         (loc) => {
           setLocation(loc), animate(loc);
+
+          console.log(JSON.stringify(loc, null, 1));
 
           // Send location to server
           getGameRoom()?.send('location', loc);

@@ -19,9 +19,7 @@ export class LobbyRoom extends Room {
     // Function to track other rooms' creation
     onCreateGameRoom = (room) => {
       console.log(`Game room ${room.state.code} registered with Colyseus`);
-
-      // console.log('this state rooms:', this.state.rooms);
-      this.state.rooms.push(room.metadata.code);
+      this.state.rooms.push(room.state.code);
     };
 
     onDisposeGameRoom = (code) => {
