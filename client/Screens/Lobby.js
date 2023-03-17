@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  ScrollView,
   FlatList,
 } from 'react-native';
 import Constants from 'expo-constants';
@@ -67,6 +66,8 @@ function LobbyScreen({ navigation }) {
 
   const [name, setName] = useState('');
 
+  const host = false;
+
   function changeNameText(changedName) {
     setName(changedName);
 
@@ -98,9 +99,9 @@ function LobbyScreen({ navigation }) {
           <TextInput
             style={styles.nameContainer}
             onChangeText={changeNameText}
-            placeholder="Username..."
+            placeholder="Username"
             maxLength={16}
-            autoComplete={false}
+            autoComplete="off"
             autoCorrect={false}
           />
 
@@ -111,14 +112,22 @@ function LobbyScreen({ navigation }) {
           <FlatList
             data={memberList}
             renderItem={({ item }) => (
-              <Text style={styles.item}>{item.key}</Text>
+              <TouchableWithoutFeedback>
+                <Text style={styles.item}>{item.key}</Text>
+              </TouchableWithoutFeedback>
             )}
           />
         </View>
 
         <View style={styles.bodyContainer}>
-          <TouchableOpacity style={styles.button} onPress={startGame}>
-            <Text style={styles.buttonText}>Start Game</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={startGame}
+            disabled={!host}
+          >
+            <Text style={styles.buttonText}>
+              {host ? 'Start Game' : 'Waiting on host...'}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -201,14 +210,13 @@ const styles = StyleSheet.create({
   nameContainer: {
     backgroundColor: '#BDC9C9',
     fontSize: 20,
-    padding: 10,
-    marginLeft: 10,
-    marginRight: 10,
+    marginHorizontal: 10,
     borderRadius: 20,
     flex: 1,
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
+    textAlign: 'center',
   },
   codeText: {
     fontSize: 25,
@@ -219,7 +227,6 @@ const styles = StyleSheet.create({
     flex: 1,
     color: 'white',
     alignItems: 'center',
-    marginTop: '5%',
   },
   settingsModalSettings: {
     width: '80%',
@@ -227,14 +234,12 @@ const styles = StyleSheet.create({
   },
   settingsModalText: {
     fontSize: 20,
-    paddingTop: 10,
     textAlign: 'center',
   },
   settingsModalExit: {
-    paddingTop: 20,
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     flex: 0.2,
   },
   playerContainer: {
@@ -248,30 +253,26 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#BDC9C9',
-    padding: 10,
     borderRadius: 20,
     width: '80%',
     height: '40%',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
   },
   closeDontSave: {
     backgroundColor: '#BDC9C9',
-    padding: 10,
     borderRadius: 20,
     width: '80%',
     height: '40%',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 40,
   },
   buttonText: {
-    fontSize: 22,
+    fontSize: 20,
   },
   dontSaveText: {
     color: 'red',
-    fontSize: 22,
+    fontSize: 20,
   },
   nameText: {
     fontSize: 30,

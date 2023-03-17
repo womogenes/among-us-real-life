@@ -3,12 +3,8 @@ import {
   StyleSheet,
   Text,
   View,
-  Pressable,
-  Touchable,
   TouchableOpacity,
   Button,
-  Image,
-  ScrollView,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -134,7 +130,7 @@ export default function GameScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar style="auto" />
 
       <View style={styles.debugContainer}>
         {/* Debug container */}
