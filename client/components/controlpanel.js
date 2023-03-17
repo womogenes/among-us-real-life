@@ -101,7 +101,7 @@ function ControlPanel(props) {
               sabotageTasks();
             }}
             image={require('client/assets/sabotagebutton.png')}
-            imagesize={'75%'}
+            imagesize={'65%'}
             roundness={50}
             backgroundcolor={'#00000000'}
             width={150}
@@ -114,7 +114,7 @@ function ControlPanel(props) {
             disabled={props.reportButtonState}
             onPress={props.reportButtonPress}
             image={require('client/assets/reportbutton.png')}
-            imagesize={'65%'}
+            imagesize={'75%'}
             roundness={50}
             backgroundcolor={'#00000000'}
             width={150}
