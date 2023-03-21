@@ -13,6 +13,13 @@ export class GameRoom extends Room {
         .location.update(loc.coords);
     });
 
+    this.onMessage('setUsername', (client, username) => {
+      const idx = this.state.players.findIndex(
+        (p) => p.sessionId === client.sessionId
+      );
+      this.state.players[idx].username = username;
+    });
+
     // Notify the lobby that this room has been created
     onCreateGameRoom(this);
   }

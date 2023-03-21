@@ -21,8 +21,9 @@ export default function GameScreen({ navigation }) {
     coords: { latitude: 0, longitude: 0 },
   });
   const testLocation = {
-    latitude: 10, longitude: 10
-  }
+    latitude: 10,
+    longitude: 10,
+  };
   const [errorMsg, setErrorMsg] = useState(null);
   const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
@@ -115,8 +116,6 @@ export default function GameScreen({ navigation }) {
         (loc) => {
           setLocation(loc), animate(loc);
 
-          console.log(JSON.stringify(loc, null, 1));
-
           // Send location to server
           getGameRoom()?.send('location', loc);
         }
@@ -191,7 +190,10 @@ export default function GameScreen({ navigation }) {
       />
       <Button
         title={'increase tasks'}
-        onPress={() => [setTaskCompletion(taskCompletion + 10), console.log(findDistance(location.coords, testLocation))]}
+        onPress={() => [
+          setTaskCompletion(taskCompletion + 10),
+          console.log(findDistance(location.coords, testLocation)),
+        ]}
       />
     </View>
   );
