@@ -28,7 +28,7 @@ function LobbyScreen({ navigation }) {
   const [prevKillCooldown, setPrevKillCooldown] = useState(60);
 
   const [roomState, setRoomState] = useState({});
-  const [roomCode, setRoomCode] = useState('XXXX');
+  const [roomCode, setRoomCode] = useState('0000');
 
   const [memberList, setMemberList] = useState([]);
   const [isHost, setIsHost] = useState(false);
@@ -93,7 +93,6 @@ function LobbyScreen({ navigation }) {
               source={require('client/assets/settings.png')}
             />
           </TouchableOpacity>
-
           <TextInput
             style={styles.nameContainer}
             onChangeText={changeNameText}
@@ -102,8 +101,8 @@ function LobbyScreen({ navigation }) {
             autoComplete="off"
             autoCorrect={false}
           />
-
-          <Text style={styles.codeText}>Code: {roomCode}</Text>
+          <Text style={styles.codeText}>Code: </Text>
+          <Text style={styles.codeNum}>{roomCode}</Text>
         </View>
 
         <View style={styles.playerContainer}>
@@ -210,7 +209,7 @@ const styles = StyleSheet.create({
   },
   nameContainer: {
     backgroundColor: '#BDC9C9',
-    fontSize: 20,
+    fontSize: 50,
     marginHorizontal: 10,
     borderRadius: 20,
     flex: 1,
@@ -218,8 +217,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
+    fontFamily: 'Impostograph-Regular',
   },
   codeText: {
+    fontSize: 50,
+    fontFamily: 'Impostograph-Regular',
+  },
+  codeNum: {
     fontSize: 25,
   },
   settingsModal: {
@@ -271,29 +275,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 50,
+    fontFamily: 'Impostograph-Regular',
   },
   dontSaveText: {
     color: 'red',
-    fontSize: 20,
+    fontSize: 50,
+    fontFamily: 'Impostograph-Regular',
   },
   nameText: {
-    fontSize: 30,
+    fontSize: 60,
+    fontFamily: 'Impostograph-Regular',
   },
   titleSettings: {
-    fontSize: 35,
+    fontSize: 70,
     textAlign: 'center',
     marginTop: 30,
     marginBottom: 40,
+    fontFamily: 'Impostograph-Regular',
   },
   item: {
     color: '#000000',
     textAlign: 'center',
     margin: 20,
     padding: 20,
-    fontSize: 25,
+    fontSize: 50,
     borderWidth: 2,
     borderRadius: 15,
+    fontFamily: 'Impostograph-Regular',
   },
 });
 

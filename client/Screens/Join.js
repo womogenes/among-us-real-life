@@ -106,10 +106,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleText: {
-    fontWeight: 'bold',
     color: 'white',
-    fontSize: 50,
+    fontSize: 100,
     letterSpacing: 1,
+    fontFamily: 'Impostograph-Regular',
   },
   bodyContainer: {
     flex: 0.3,
@@ -126,15 +126,18 @@ const styles = StyleSheet.create({
   },
   touchableButton: {
     color: 'black',
-    fontSize: 20,
+    fontSize: 40,
+    fontFamily: 'Impostograph-Regular',
   },
   textInput: {
     width: '40%',
     height: '25%',
     borderWidth: 1,
-    fontSize: 25,
+    fontSize: 50,
     borderColor: 'white',
     color: 'white',
+    fontFamily: 'Impostograph-Regular',
+    letterSpacing: 5,
   },
   roomListContainer: {
     flex: 0.5,
