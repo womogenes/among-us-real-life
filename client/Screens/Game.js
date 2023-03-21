@@ -20,9 +20,12 @@ export default function GameScreen({ navigation }) {
   const [location, setLocation] = useState({
     coords: { latitude: 0, longitude: 0 },
   });
-  const testLocation = {
-    latitude: 10, longitude: 10
-  }
+  const testLocation1 = {
+    latitude: -7, longitude: 6
+  };
+  const testLocation2 = {
+    latitude: -10, longitude: 2
+  };
   const [errorMsg, setErrorMsg] = useState(null);
   const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
@@ -33,9 +36,9 @@ export default function GameScreen({ navigation }) {
     { name: 'Door', key: 3, availability: true },
   ]);
   const [buttonState, setButtonState] = useState({
-    use: false, // These should all be true at the beginning of the game
-    report: false,
-    kill: false,
+    use: true, // These should all be true at the beginning of the game
+    report: true,
+    kill: true,
   });
   const [taskCompletion, setTaskCompletion] = useState(10);
 
@@ -191,7 +194,7 @@ export default function GameScreen({ navigation }) {
       />
       <Button
         title={'increase tasks'}
-        onPress={() => [setTaskCompletion(taskCompletion + 10), console.log(findDistance(location.coords, testLocation))]}
+        onPress={() => [setTaskCompletion(taskCompletion + 10), console.log(findDistance(testLocation1, testLocation2))]}
       />
     </View>
   );
