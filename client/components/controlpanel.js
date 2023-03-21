@@ -23,7 +23,11 @@ function ControlPanel(props) {
 
   function renderSabotageTasks() {
     return props.sabotageList.map((item) => {
-      return <TouchableOpacity style={styles.sabotageListButton} key={item.key}><Text>{item.name}</Text></TouchableOpacity>;
+      return (
+        <TouchableOpacity style={styles.sabotageListButton} key={item.key}>
+          <Text style={styles.sabotageListButtonText}>{item.name}</Text>
+        </TouchableOpacity>
+      );
     });
   }
 
@@ -124,11 +128,16 @@ function ControlPanel(props) {
           />
           <Modal isVisible={isModalVisible} style={styles.modal}>
             <View style={styles.modalBackground}>
-                <View style={styles.closeButtonContainer}>
-                    <TouchableOpacity style={styles.closeButton} onPress={closeSabotageTasks}><Text style={styles.closeButtonText}>&#x2716;</Text></TouchableOpacity>
-                </View>
-                <Text style={styles.modalTitle}>Sabotage</Text>
-                {renderSabotageTasks()}
+              <View style={styles.closeButtonContainer}>
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={closeSabotageTasks}
+                >
+                  <Text style={styles.closeButtonText}>&#x2716;</Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.modalTitle}>Sabotage</Text>
+              {renderSabotageTasks()}
             </View>
           </Modal>
         </View>
@@ -161,32 +170,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalBackground: {
-    width: '80%',
-    height: '60%',
-    padding: 10,
+    width: '95%',
+    height: '63%',
     backgroundColor: 'white',
     alignItems: 'center',
     position: 'absolute',
+    borderRadius: 20,
+    padding: 5,
   },
   modalTitle: {
-    fontSize: 50,
+    fontSize: 47,
+    marginBottom: 30,
   },
   closeButtonContainer: {
     width: '100%',
     alignItems: 'flex-end',
-  },
-  closeButton: {
   },
   closeButtonText: {
     fontSize: 20,
   },
   sabotageListButton: {
     width: '80%',
-    height: '10%',
+    height: '13%',
     borderWidth: 2,
     borderRadius: 10,
-    margin: 1,
+    margin: 25,
     alignItems: 'center',
     justifyContent: 'center',
-  }
+  },
+  sabotageListButtonText: {
+    fontSize: 23,
+  },
 });
