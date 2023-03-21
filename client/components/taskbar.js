@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: '#3b5735',
-    alignItems: 'left',
+    alignItems: 'flex-start',
   },
   taskbarGreen: {
     flex: 1,

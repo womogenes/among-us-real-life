@@ -12,12 +12,17 @@ import Minimap from '../components/minimap.js';
 
 import ControlPanel from '../components/controlpanel.js';
 
+import { findDistance } from '../utils.js';
+
 var mapView;
 
 export default function GameScreen({ navigation }) {
   const [location, setLocation] = useState({
     coords: { latitude: 0, longitude: 0 },
   });
+  const testLocation = {
+    latitude: 10, longitude: 10
+  }
   const [errorMsg, setErrorMsg] = useState(null);
   const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
@@ -144,10 +149,10 @@ export default function GameScreen({ navigation }) {
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
-        /* pitchEnabled={false}
+        pitchEnabled={false}
         rotateEnabled={false}
         scrollEnabled={false}
-        zoomEnabled={false} */
+        zoomEnabled={false}
         initialRegion={{
           latitude: 47.7326514,
           longitude: -122.3278194,
@@ -186,7 +191,7 @@ export default function GameScreen({ navigation }) {
       />
       <Button
         title={'increase tasks'}
-        onPress={() => setTaskCompletion(taskCompletion + 10)}
+        onPress={() => [setTaskCompletion(taskCompletion + 10), console.log(findDistance(location.coords, testLocation))]}
       />
     </View>
   );
