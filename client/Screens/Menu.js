@@ -36,7 +36,9 @@ function MenuScreen({ navigation }) {
         style={styles.backgroundImage}
       >
         <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Among Us</Text>
+          <Text numberOfLines={1} style={styles.titleText}>
+            Among Us
+          </Text>
           <Text style={styles.lakesideText}>(Lakeside Edition)</Text>
         </View>
         <View style={styles.buttonsContainer}>
@@ -65,9 +67,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleText: {
-    fontWeight: 'bold',
-    fontSize: 60,
+    fontSize: 100,
     letterSpacing: 3,
+    fontFamily: 'Impostograph-Regular',
   },
   lakesideText: {
     fontSize: 20,

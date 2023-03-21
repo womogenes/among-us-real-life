@@ -10,44 +10,53 @@ import { GameScreen } from './screens/Game.js';
 import { TestScreen } from './screens/Test.js';
 import { MenuScreen } from './screens/Menu.js';
 import { JoinScreen } from './screens/Join.js';
+import { useFonts } from 'expo-font';
+import { AppLoading } from 'expo';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [message, setMessage] = useState('Server connection test');
 
-  return (
-    <NavigationContainer>
-      {
-        <Stack.Navigator
-          initialRouteName="MenuScreen"
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="Menu" component={MenuScreen} />
-          <Stack.Screen name="Lobby" component={LobbyScreen} />
-          <Stack.Screen name="Game" component={GameScreen} />
-          <Stack.Screen name="Join" component={JoinScreen} />
-          <Stack.Screen
-            name="TestScreen"
-            component={TestScreen}
-            options={{ title: 'Dev things' }}
-            initialParams={{ msg: 'You came from nowhere!' }}
-          />
+  const [fontsLoaded] = useFonts({
+    'Impostograph-Regular': require('client/assets/Impostograph-Regular.ttf'),
+  });
 
-          {/* William's server ping stuff */}
-          {/* <View style={styles.container}>
+  if (fontsLoaded) {
+    console.log('fonts loaded');
+    return (
+      <NavigationContainer>
+        {
+          <Stack.Navigator
+            initialRouteName="MenuScreen"
+            screenOptions={{
+              headerShown: false,
+            }}
+          >
+            <Stack.Screen name="Menu" component={MenuScreen} />
+            <Stack.Screen name="Lobby" component={LobbyScreen} />
+            <Stack.Screen name="Game" component={GameScreen} />
+            <Stack.Screen name="Join" component={JoinScreen} />
+            <Stack.Screen
+              name="TestScreen"
+              component={TestScreen}
+              options={{ title: 'Dev things' }}
+              initialParams={{ msg: 'You came from nowhere!' }}
+            />
+
+            {/* William's server ping stuff */}
+            {/* <View style={styles.container}>
           <Text style={{ fontSize: 18, marginBottom: 8 }}>
             Connected to <Text style={{ fontWeight: 'bold' }}>{serverAddr}</Text>
           </Text>
           <Text>Ping time: {message} ms</Text>
           <StatusBar style="auto" />
         </View> */}
-        </Stack.Navigator>
-      }
-    </NavigationContainer>
-  );
+          </Stack.Navigator>
+        }
+      </NavigationContainer>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
