@@ -19,7 +19,7 @@ export class GameRoom extends Room {
 
   onJoin(client, options) {
     console.log(client.sessionId, 'joined!');
-    const isHost = this.state.players.size == 0;
+    const isHost = this.state.players.length === 0;
     this.state.players.push(new Player(client.sessionId, isHost));
 
     this.state.refresh += 1;

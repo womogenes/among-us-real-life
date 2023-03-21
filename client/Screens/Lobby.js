@@ -102,14 +102,13 @@ function LobbyScreen({ navigation }) {
         </View>
 
         <View style={styles.playerContainer}>
-          <Text>{JSON.stringify(memberList, null, 1)}</Text>
           <FlatList
             data={memberList}
             renderItem={({ item }) => (
               <TouchableWithoutFeedback>
                 <Text style={styles.item}>
-                  <Text></Text>
                   <Text>{item.sessionId}</Text>
+                  <Text>{isHost && ' (Host)'}</Text>
                 </Text>
               </TouchableWithoutFeedback>
             )}
@@ -241,7 +240,7 @@ const styles = StyleSheet.create({
     flex: 0.2,
   },
   playerContainer: {
-    backgroundColor: '#7ABAFA',
+    backgroundColor: '#fff',
     flex: 0.7,
   },
   bodyContainer: {
