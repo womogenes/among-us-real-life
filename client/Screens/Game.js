@@ -116,8 +116,6 @@ export default function GameScreen({ navigation }) {
         (loc) => {
           setLocation(loc), animate(loc);
 
-          console.log(JSON.stringify(loc, null, 1));
-
           // Send location to server
           getGameRoom()?.send('location', loc);
         }
@@ -192,7 +190,14 @@ export default function GameScreen({ navigation }) {
       />
       <Button
         title={'increase tasks'}
+<<<<<<< HEAD
         onPress={() => setTaskCompletion(taskCompletion + 10)}
+=======
+        onPress={() => [
+          setTaskCompletion(taskCompletion + 10),
+          console.log(findDistance(location.coords, testLocation)),
+        ]}
+>>>>>>> bdb8ea8138458177104a2ac20d9fd82bb476c8d1
       />
     </View>
   );

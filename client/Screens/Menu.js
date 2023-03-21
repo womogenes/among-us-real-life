@@ -39,7 +39,9 @@ function MenuScreen({ navigation }) {
           <Text numberOfLines={1} style={styles.titleText}>
             Among Us
           </Text>
-          <Text style={styles.lakesideText}>(Lakeside Edition)</Text>
+          <Text numberOfLines={1} style={styles.lakesideText}>
+            Lakeside Edition
+          </Text>
         </View>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity style={styles.button} onPress={joinGame}>
@@ -72,7 +74,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Impostograph-Regular',
   },
   lakesideText: {
-    fontSize: 20,
+    fontSize: 40,
+    fontFamily: 'Impostograph-Regular',
   },
   buttonsContainer: {
     color: '#505050',
@@ -91,7 +94,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'black',
-    fontSize: 27,
+    fontSize: 40,
+    fontFamily: 'Impostograph-Regular',
   },
 });
 

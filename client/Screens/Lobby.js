@@ -28,7 +28,7 @@ function LobbyScreen({ navigation }) {
   const [prevKillCooldown, setPrevKillCooldown] = useState(60);
 
   const [roomState, setRoomState] = useState({});
-  const [roomCode, setRoomCode] = useState('XXXX');
+  const [roomCode, setRoomCode] = useState('0000');
 
   const [memberList, setMemberList] = useState([]);
   const [isHost, setIsHost] = useState(false);
@@ -40,7 +40,7 @@ function LobbyScreen({ navigation }) {
     room.onStateChange((state) => {
       setRoomState(state);
       setRoomCode(state.code);
-      setMemberList(state.players);
+      setMemberList([...state.players]);
       setIsHost(
         state.players.find((p) => p.sessionId === room.sessionId).isHost
       );
@@ -49,7 +49,7 @@ function LobbyScreen({ navigation }) {
     return () => {
       // Disconnect from the room
       console.log(`Left game room ${room.sessionId}, code: ${room.state.code}`);
-      leaveGameRoom();
+      // leaveGameRoom();
     };
   }, []);
 
@@ -65,8 +65,13 @@ function LobbyScreen({ navigation }) {
 
   function changeNameText(changedName) {
     let newMemberList = [...memberList];
-    newMemberList[0] = { key: changedName };
+    const idx = memberList.findIndex(
+      (m) => m.sessionId === getGameRoom().sessionId
+    );
+    newMemberList[idx].username = changedName;
     setMemberList(newMemberList);
+
+    getGameRoom().send('setUsername', changedName);
   }
 
   const startGame = () => {
@@ -88,7 +93,6 @@ function LobbyScreen({ navigation }) {
               source={require('client/assets/settings.png')}
             />
           </TouchableOpacity>
-
           <TextInput
             style={styles.nameContainer}
             onChangeText={changeNameText}
@@ -97,8 +101,8 @@ function LobbyScreen({ navigation }) {
             autoComplete="off"
             autoCorrect={false}
           />
-
-          <Text style={styles.codeText}>Code: {roomCode}</Text>
+          <Text style={styles.codeText}>Code: </Text>
+          <Text style={styles.codeNum}>{roomCode}</Text>
         </View>
 
         <View style={styles.playerContainer}>
@@ -107,7 +111,7 @@ function LobbyScreen({ navigation }) {
             renderItem={({ item }) => (
               <TouchableWithoutFeedback>
                 <Text style={styles.item}>
-                  <Text>{item.sessionId}</Text>
+                  <Text>{item.username}</Text>
                   <Text>{isHost && ' (Host)'}</Text>
                 </Text>
               </TouchableWithoutFeedback>
@@ -205,7 +209,7 @@ const styles = StyleSheet.create({
   },
   nameContainer: {
     backgroundColor: '#BDC9C9',
-    fontSize: 20,
+    fontSize: 50,
     marginHorizontal: 10,
     borderRadius: 20,
     flex: 1,
@@ -213,8 +217,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
+    fontFamily: 'Impostograph-Regular',
   },
   codeText: {
+    fontSize: 50,
+    fontFamily: 'Impostograph-Regular',
+  },
+  codeNum: {
     fontSize: 25,
   },
   settingsModal: {
@@ -240,7 +249,8 @@ const styles = StyleSheet.create({
     flex: 0.2,
   },
   playerContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
+    color: '#000',
     flex: 0.7,
   },
   bodyContainer: {
@@ -265,29 +275,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 50,
+    fontFamily: 'Impostograph-Regular',
   },
   dontSaveText: {
     color: 'red',
-    fontSize: 20,
+    fontSize: 50,
+    fontFamily: 'Impostograph-Regular',
   },
   nameText: {
-    fontSize: 30,
+    fontSize: 60,
+    fontFamily: 'Impostograph-Regular',
   },
   titleSettings: {
-    fontSize: 35,
+    fontSize: 70,
     textAlign: 'center',
     marginTop: 30,
     marginBottom: 40,
+    fontFamily: 'Impostograph-Regular',
   },
   item: {
-    color: 'white',
+    color: '#000000',
     textAlign: 'center',
     margin: 20,
     padding: 20,
-    fontSize: 25,
+    fontSize: 50,
     borderWidth: 2,
     borderRadius: 15,
+    fontFamily: 'Impostograph-Regular',
   },
 });
 
