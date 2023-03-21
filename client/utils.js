@@ -17,4 +17,5 @@ export function distAll(myCoords, allCoords) {
             allCoords.set(key, myDist);
         }
     }
+    return myMap;
 }
