@@ -8,7 +8,9 @@ export class GameRoom extends Room {
     this.setState(new GameRoomState(options.code));
 
     this.onMessage('location', (client, loc) => {
-      this.state.players[client.sessionId].location.update(loc.coords);
+      this.state.players
+        .find((p) => p.sessionId === client.sessionId)
+        .location.update(loc.coords);
     });
 
     // Notify the lobby that this room has been created
@@ -18,21 +20,20 @@ export class GameRoom extends Room {
   onJoin(client, options) {
     console.log(client.sessionId, 'joined!');
     const isHost = this.state.players.size == 0;
-    this.state.players.set(
-      client.sessionId,
-      new Player(client.sessionId, isHost)
-    );
+    this.state.players.push(new Player(client.sessionId, isHost));
 
     this.state.refresh += 1;
   }
 
   onLeave(client, consented) {
     console.log(client.sessionId, 'left!');
-    this.state.players.delete(client.sessionId);
+    const removeIdx = this.state.players.findIndex(
+      (p) => p.sessionId === client.sessionId
+    );
+    this.state.players.splice(removeIdx, 1);
 
     if (this.state.players.size > 0) {
-      const newHostId = this.state.players.keys().next().value;
-      this.state[newHostId].isHost = true;
+      this.state[0].isHost = true;
     }
   }
 

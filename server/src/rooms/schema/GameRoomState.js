@@ -1,5 +1,5 @@
 import * as schema from '@colyseus/schema';
-const { Schema, MapSchema } = schema;
+const { Schema, ArraySchema } = schema;
 
 class Location extends Schema {
   constructor() {
@@ -41,14 +41,14 @@ export class GameRoomState extends Schema {
   constructor(code) {
     super();
 
-    this.players = new MapSchema();
+    this.players = new ArraySchema();
     this.code = code;
     this.refresh = 0;
   }
 }
 
 schema.defineTypes(GameRoomState, {
-  players: { map: Player },
+  players: [Player],
   code: 'string',
   refresh: 'number',
 });

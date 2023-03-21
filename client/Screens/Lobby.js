@@ -41,13 +41,15 @@ function LobbyScreen({ navigation }) {
       setRoomState(state);
       setRoomCode(state.code);
       setMemberList(state.players);
-      setIsHost(state.players[room.sessionId].isHost);
+      setIsHost(
+        state.players.find((p) => p.sessionId === room.sessionId).isHost
+      );
     });
 
     return () => {
       // Disconnect from the room
       console.log(`Left game room ${room.sessionId}, code: ${room.state.code}`);
-      leaveGameRoom();
+      // leaveGameRoom();
     };
   }, []);
 
@@ -100,11 +102,15 @@ function LobbyScreen({ navigation }) {
         </View>
 
         <View style={styles.playerContainer}>
+          <Text>{JSON.stringify(memberList, null, 1)}</Text>
           <FlatList
             data={memberList}
             renderItem={({ item }) => (
               <TouchableWithoutFeedback>
-                <Text style={styles.item}>{item.key}</Text>
+                <Text style={styles.item}>
+                  <Text></Text>
+                  <Text>{item.sessionId}</Text>
+                </Text>
               </TouchableWithoutFeedback>
             )}
           />
