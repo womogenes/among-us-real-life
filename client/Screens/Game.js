@@ -190,14 +190,7 @@ export default function GameScreen({ navigation }) {
       />
       <Button
         title={'increase tasks'}
-<<<<<<< HEAD
         onPress={() => setTaskCompletion(taskCompletion + 10)}
-=======
-        onPress={() => [
-          setTaskCompletion(taskCompletion + 10),
-          console.log(findDistance(location.coords, testLocation)),
-        ]}
->>>>>>> bdb8ea8138458177104a2ac20d9fd82bb476c8d1
       />
     </View>
   );
