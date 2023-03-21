@@ -31,7 +31,6 @@ function LobbyScreen({ navigation }) {
   const [roomCode, setRoomCode] = useState('XXXX');
 
   const [memberList, setMemberList] = useState([]);
-  const [name, setName] = useState('');
   const [isHost, setIsHost] = useState(false);
 
   useEffect(() => {
@@ -55,20 +54,16 @@ function LobbyScreen({ navigation }) {
   function storePrev() {
     setPrevKillRadius(killRadius);
     setPrevKillCooldown(killCooldown);
-    console.log('Hi' + prevKillRadius);
   }
 
   function dontSave() {
-    console.log(prevKillRadius);
     setKillRadius(prevKillRadius);
     setKillCooldown(prevKillCooldown);
   }
 
   function changeNameText(changedName) {
-    setName(changedName);
-
     let newMemberList = [...memberList];
-    newMemberList[0] = { key: name };
+    newMemberList[0] = { key: changedName };
     setMemberList(newMemberList);
   }
 
@@ -223,6 +218,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: 'white',
     alignItems: 'center',
+    marginTop: 25,
   },
   settingsModalSettings: {
     width: '80%',
