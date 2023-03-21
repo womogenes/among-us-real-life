@@ -12,7 +12,7 @@ import Minimap from '../components/minimap.js';
 
 import ControlPanel from '../components/controlpanel.js';
 
-import { findDistance } from '../utils.js';
+import { findDistance, distAll } from '../utils.js';
 
 var mapView;
 
@@ -20,12 +20,6 @@ export default function GameScreen({ navigation }) {
   const [location, setLocation] = useState({
     coords: { latitude: 0, longitude: 0 },
   });
-  const testLocation1 = {
-    latitude: -7, longitude: 6
-  };
-  const testLocation2 = {
-    latitude: -10, longitude: 2
-  };
   const [errorMsg, setErrorMsg] = useState(null);
   const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
@@ -41,6 +35,8 @@ export default function GameScreen({ navigation }) {
     kill: true,
   });
   const [taskCompletion, setTaskCompletion] = useState(10);
+
+  const [distMap, setDistMap] = useState(new Map());
 
   const animate = (loc) => {
     let r = {
@@ -87,6 +83,8 @@ export default function GameScreen({ navigation }) {
     room.onStateChange((state) => {
       setPlayers(state.players.$items);
     });
+
+    setDistMap(distAll(location.coords, players))
 
     return () => {
       room.removeAllListeners();
@@ -194,7 +192,7 @@ export default function GameScreen({ navigation }) {
       />
       <Button
         title={'increase tasks'}
-        onPress={() => [setTaskCompletion(taskCompletion + 10), console.log(findDistance(testLocation1, testLocation2))]}
+        onPress={() => setTaskCompletion(taskCompletion + 10)}
       />
     </View>
   );
