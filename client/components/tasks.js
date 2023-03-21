@@ -70,7 +70,7 @@ const myStyles = (fontScale) =>
       height: 120,
       bottom: 120,
       flexDirection: 'row',
-      justifyContent: 'right',
+      justifyContent: 'flex-end',
       position: 'absolute',
       alignItems: 'stretch',
     },
