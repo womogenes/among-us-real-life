@@ -27,12 +27,14 @@ export class Player extends Schema {
     super();
 
     this.sessionId = sessionId;
+    this.username = 'anonymous';
     this.location = new Location();
     this.isHost = isHost;
   }
 }
 schema.defineTypes(Player, {
   sessionId: 'string',
+  username: 'string',
   location: Location,
   isHost: 'boolean',
 });

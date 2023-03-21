@@ -40,7 +40,7 @@ function LobbyScreen({ navigation }) {
     room.onStateChange((state) => {
       setRoomState(state);
       setRoomCode(state.code);
-      setMemberList(state.players);
+      setMemberList([...state.players]);
       setIsHost(
         state.players.find((p) => p.sessionId === room.sessionId).isHost
       );
@@ -65,8 +65,13 @@ function LobbyScreen({ navigation }) {
 
   function changeNameText(changedName) {
     let newMemberList = [...memberList];
-    newMemberList[0] = { key: changedName };
+    const idx = memberList.findIndex(
+      (m) => m.sessionId === getGameRoom().sessionId
+    );
+    newMemberList[idx].username = changedName;
     setMemberList(newMemberList);
+
+    getGameRoom().send('setUsername', changedName);
   }
 
   const startGame = () => {
@@ -101,14 +106,13 @@ function LobbyScreen({ navigation }) {
         </View>
 
         <View style={styles.playerContainer}>
-          <Text>{JSON.stringify(memberList, null, 1)}</Text>
           <FlatList
             data={memberList}
             renderItem={({ item }) => (
               <TouchableWithoutFeedback>
                 <Text style={styles.item}>
-                  <Text></Text>
-                  <Text>{item.sessionId}</Text>
+                  <Text>{item.username}</Text>
+                  <Text>{isHost && ' (Host)'}</Text>
                 </Text>
               </TouchableWithoutFeedback>
             )}
@@ -245,7 +249,8 @@ const styles = StyleSheet.create({
     flex: 0.2,
   },
   playerContainer: {
-    backgroundColor: '#7ABAFA',
+    backgroundColor: '#FFFFFF',
+    color: '#000',
     flex: 0.7,
   },
   bodyContainer: {
@@ -290,7 +295,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Impostograph-Regular',
   },
   item: {
-    color: 'white',
+    color: '#000000',
     textAlign: 'center',
     margin: 20,
     padding: 20,
