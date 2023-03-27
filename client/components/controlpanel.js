@@ -186,7 +186,7 @@ function ControlPanel(props) {
       )}
       <Tasks />
       <TaskBar taskCompletion={props.taskCompletion} />
-    </View>  
+    </View>
   );
 }
 

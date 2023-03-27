@@ -23,7 +23,6 @@ export default function GameScreen({ navigation }) {
 
   const [playerState, setPlayerState] = useState('imposter'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
   const [errorMsg, setErrorMsg] = useState(null);
-  const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
   const [sabotageList, setSabotageList] = useState([
@@ -87,17 +86,17 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist() {
-    setDistMap(distAll(location.coords, players))
+    setDistMap(distAll(location.coords, players));
 
     if (distMap.size > 0) {
-      console.log("close");
-    }
-    else {
-      setButtonState({      
-      use: buttonState.use,
-      report: buttonState.report,
-      kill: true,})
-      console.log("far");
+      console.log('close');
+    } else {
+      setButtonState({
+        use: buttonState.use,
+        report: buttonState.report,
+        kill: true,
+      });
+      console.log('far');
     }
   }
 
@@ -161,19 +160,6 @@ export default function GameScreen({ navigation }) {
     <View style={styles.container}>
       <StatusBar style="auto" />
 
-      <View style={styles.debugContainer}>
-        {/* Debug container */}
-        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Debug</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Menu')}
-        >
-          <Text style={{ color: '#fff' }}>Back to menu</Text>
-        </TouchableOpacity>
-
-        <Text>{players.size - 1} other players connected</Text>
-      </View>
-
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
@@ -206,38 +192,38 @@ export default function GameScreen({ navigation }) {
         userCoords={[location.coords.latitude, location.coords.longitude]}
         taskCoords={tasks}
       />
-      {playerState == 'crewmate'?
-      <ControlPanel
-        userType={"crewmate"}
-        useButtonState={buttonState.use}
-        useButtonPress={useButton}
-        reportButtonState={buttonState.report}
-        reportButtonPress={reportButton}
-        taskCompletion={taskCompletion}
-      />
-      : playerState == 'imposter'?
-      <ControlPanel
-        userType={'imposter'}
-        killButtonState={buttonState.kill}
-        killButtonPress={killButton}
-        cooldown={10}
-        sabotageList={sabotageList}
-        reportButtonState={buttonState.report}
-        reportButtonPress={reportButton}
-        disguiseButtonPress={disguiseButton}
-        taskCompletion={taskCompletion}
-      />
-      : playerState == 'disguised'?
-      <ControlPanel
-        userType={"disguisedImposter"}
-        revealButtonPress={revealButton}
-        reportButtonState={buttonState.report}
-        reportButtonPress={reportButton}
-        taskCompletion={taskCompletion}
-      />
-      :
-      <ControlPanel/>
-      }
+      {playerState == 'crewmate' ? (
+        <ControlPanel
+          userType={'crewmate'}
+          useButtonState={buttonState.use}
+          useButtonPress={useButton}
+          reportButtonState={buttonState.report}
+          reportButtonPress={reportButton}
+          taskCompletion={taskCompletion}
+        />
+      ) : playerState == 'imposter' ? (
+        <ControlPanel
+          userType={'imposter'}
+          killButtonState={buttonState.kill}
+          killButtonPress={killButton}
+          cooldown={10}
+          sabotageList={sabotageList}
+          reportButtonState={buttonState.report}
+          reportButtonPress={reportButton}
+          disguiseButtonPress={disguiseButton}
+          taskCompletion={taskCompletion}
+        />
+      ) : playerState == 'disguised' ? (
+        <ControlPanel
+          userType={'disguisedImposter'}
+          revealButtonPress={revealButton}
+          reportButtonState={buttonState.report}
+          reportButtonPress={reportButton}
+          taskCompletion={taskCompletion}
+        />
+      ) : (
+        <ControlPanel />
+      )}
 
       <Button
         title={'increase tasks'}

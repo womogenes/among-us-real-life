@@ -97,7 +97,7 @@ function JoinScreen({ navigation }) {
 const styles = StyleSheet.create({
   menuContainer: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#000000',
     justifyContent: 'center',
   },
   titleContainer: {

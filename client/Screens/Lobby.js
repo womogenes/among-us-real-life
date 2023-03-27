@@ -75,6 +75,7 @@ function LobbyScreen({ navigation }) {
   }
 
   const startGame = () => {
+    getGameRoom().send('startGame');
     navigation.navigate('Game');
   };
 
@@ -110,8 +111,8 @@ function LobbyScreen({ navigation }) {
             renderItem={({ item }) => (
               <TouchableWithoutFeedback>
                 <Text style={styles.item}>
-                  <Text>{item.username}</Text>
-                  <Text>{isHost && ' (Host)'}</Text>
+                  <Text>{item.username || 'Anonymous'}</Text>
+                  <Text>{item.isHost && ' (Host)'}</Text>
                 </Text>
               </TouchableWithoutFeedback>
             )}
@@ -176,7 +177,7 @@ function LobbyScreen({ navigation }) {
                   handleModal();
                   dontSave();
                 }}
-                style={styles.closeDontSave}
+                style={styles.button}
               >
                 <Text style={[styles.dontSaveText]}>Close and Don't Save</Text>
               </TouchableOpacity>
@@ -222,9 +223,6 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontFamily: 'Impostograph-Regular',
   },
-  codeNum: {
-    fontSize: 25,
-  },
   settingsModal: {
     backgroundColor: 'white',
     borderRadius: 20,
@@ -238,14 +236,16 @@ const styles = StyleSheet.create({
     flex: 0.8,
   },
   settingsModalText: {
-    fontSize: 20,
     textAlign: 'center',
+    fontSize: 40,
+    fontFamily: 'Impostograph-Regular',
   },
   settingsModalExit: {
-    width: '100%',
+    width: '110%', // Cheeky override for the fact that button width is 80%
     alignItems: 'center',
     justifyContent: 'space-evenly',
     flex: 0.2,
+    marginBottom: 12,
   },
   playerContainer: {
     backgroundColor: '#FFFFFF',
@@ -258,14 +258,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    backgroundColor: '#BDC9C9',
-    borderRadius: 20,
-    width: '80%',
-    height: '40%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  closeDontSave: {
     backgroundColor: '#BDC9C9',
     borderRadius: 20,
     width: '80%',
@@ -296,8 +288,9 @@ const styles = StyleSheet.create({
   item: {
     color: '#000000',
     textAlign: 'center',
-    margin: 20,
-    padding: 20,
+    marginHorizontal: 20,
+    marginVertical: 10,
+    padding: 10,
     fontSize: 50,
     borderWidth: 2,
     borderRadius: 15,
