@@ -20,17 +20,21 @@ export class GameRoom extends Room {
       this.state.players[idx].username = username;
     });
 
-    this.onMessage('startGame', (client) => {
+    this.onMessage('startGame', (client, { settings }) => {
       console.log(`client ${client.sessionId} started`);
 
       // Verify that only host can start the game
-      if (
-        client.sessionId !== this.state.players.find((p) => p.isHost).sessionId
-      ) {
+      const isHost =
+        client.sessionId === this.state.players.find((p) => p.isHost).sessionId;
+      if (!isHost) {
         return;
       }
 
       this.broadcast('gameStarted');
+      this.state.gameStarted = true;
+
+      // Save the settings given by client
+      this.state.settings = settings;
     });
 
     this.onMessage('endGame', (client) => {
@@ -40,6 +44,10 @@ export class GameRoom extends Room {
 
     // Notify the lobby that this room has been created
     onCreateGameRoom(this);
+  }
+
+  onAuth(client, options, request) {
+    return !this.state.gameStarted;
   }
 
   onJoin(client, options) {

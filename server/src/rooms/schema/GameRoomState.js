@@ -1,6 +1,7 @@
 import * as schema from '@colyseus/schema';
 const { Schema, ArraySchema } = schema;
 
+// Location schema
 class Location extends Schema {
   constructor() {
     super();
@@ -22,6 +23,7 @@ schema.defineTypes(Location, {
   altitude: 'number', // altitude
 });
 
+// Player schema
 export class Player extends Schema {
   constructor(sessionId, isHost) {
     super();
@@ -39,18 +41,33 @@ schema.defineTypes(Player, {
   isHost: 'boolean',
 });
 
+// Settings schema
+class Settings extends Schema {
+  constructor(settings) {
+    Object.assign(settings, this);
+  }
+}
+schema.defineTypes(Settings, {
+  killRadius: 'number',
+  killCooldown: 'number',
+});
+
+// Final schema
 export class GameRoomState extends Schema {
   constructor(code) {
     super();
 
+    this.refresh = 0;
+
     this.players = new ArraySchema();
     this.code = code;
-    this.refresh = 0;
+    this.gameStarted = false;
   }
 }
-
 schema.defineTypes(GameRoomState, {
+  refresh: 'number',
+
   players: [Player],
   code: 'string',
-  refresh: 'number',
+  gameStarted: 'boolean',
 });
