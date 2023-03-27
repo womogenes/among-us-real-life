@@ -48,7 +48,7 @@ function LobbyScreen({ navigation }) {
     });
 
     room.onMessage('gameStarted', () => {
-      startGame();
+      navigation.navigate('Game');
     });
 
     return () => {
