@@ -21,6 +21,8 @@ import ControlPanel from '../components/controlpanel.js';
 
 import { findDistance, distAll } from '../utils.js';
 
+import CaptchaTask from '../components/tasks/recaptcha.js';
+
 var mapView;
 
 export default function GameScreen({ navigation }) {
@@ -32,6 +34,9 @@ export default function GameScreen({ navigation }) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+
+
+
   const [sabotageList, setSabotageList] = useState([
     { name: 'Reactor', key: 1, availability: true },
     { name: 'O2', key: 2, availability: true },
@@ -192,6 +197,18 @@ export default function GameScreen({ navigation }) {
             />
           );
         })}
+        {Array.from(tasks, ([task, location]) => {
+          return (
+            <Marker
+              key={task}
+              coordinate={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }}
+              title={title={task}}
+            />
+          );
+        })}
       </MapView>
       <Minimap
         userCoords={[location.coords.latitude, location.coords.longitude]}
@@ -234,6 +251,7 @@ export default function GameScreen({ navigation }) {
         title={'increase tasks'}
         onPress={() => setTaskCompletion(taskCompletion + 10)}
       />
+      <CaptchaTask/>
     </View>
   );
 }

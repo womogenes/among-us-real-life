@@ -51,6 +51,10 @@ function LobbyScreen({ navigation }) {
       navigation.navigate('Game');
     });
 
+    room.onMessage('gameEnded', () => {
+      navigation.navigate('Menu');
+    });
+
     return () => {
       // Disconnect from the room
       console.log(`Left game room ${room.sessionId}, code: ${room.state.code}`);
@@ -80,9 +84,19 @@ function LobbyScreen({ navigation }) {
   }
 
   const startGame = () => {
-    if (isHost) getGameRoom().send('startGame');
+    // In theory, only the host can click the "start game" button
+    // But let's do this check anyway
+    console.assert(isHost);
+
+    // Tell server to start game, also send settings
+    getGameRoom().send('startGame', {
+      settings: { killRadius, killCooldown },
+    });
   };
 
+  function endGame() {
+    getGameRoom().send('endGame');
+  }
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <KeyboardAvoidingView
@@ -173,7 +187,7 @@ function LobbyScreen({ navigation }) {
             </View>
             <View style={styles.settingsModalExit}>
               <TouchableOpacity onPress={handleModal} style={styles.button}>
-                <Text style={[styles.buttonText]}>Close and Save</Text>
+                <Text style={styles.buttonText}>Close and Save</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
@@ -182,8 +196,20 @@ function LobbyScreen({ navigation }) {
                 }}
                 style={styles.button}
               >
-                <Text style={[styles.dontSaveText]}>Close and Don't Save</Text>
+                <Text style={styles.redText}>Close and Don't Save</Text>
               </TouchableOpacity>
+              {!isHost && (
+                <TouchableOpacity
+                  onPress={endGame}
+                  style={[
+                    styles.button,
+                    isHost ? styles.button : styles.disabled,
+                  ]}
+                  disabled={!isHost}
+                >
+                  <Text style={styles.redText}>Close Room</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </Modal>
@@ -235,8 +261,8 @@ const styles = StyleSheet.create({
     marginVertical: 25,
   },
   settingsModalSettings: {
-    width: '80%',
-    flex: 0.8,
+    width: '85%',
+    flex: 0.75,
   },
   settingsModalText: {
     textAlign: 'center',
@@ -267,14 +293,15 @@ const styles = StyleSheet.create({
     height: '40%',
     alignItems: 'center',
     justifyContent: 'center',
+    margin: 60,
   },
   buttonText: {
-    fontSize: 50,
+    fontSize: 45,
     fontFamily: 'Impostograph-Regular',
   },
-  dontSaveText: {
+  redText: {
     color: 'red',
-    fontSize: 40,
+    fontSize: 45,
     fontFamily: 'Impostograph-Regular',
   },
   nameText: {
@@ -298,6 +325,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 15,
     fontFamily: 'Impostograph-Regular',
+  },
+  disabled: {
+    opacity: 0.5,
   },
 });
 
