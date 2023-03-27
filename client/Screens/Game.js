@@ -86,6 +86,17 @@ export default function GameScreen({ navigation }) {
 
     setDistMap(distAll(location.coords, players))
 
+    if (distMap.size > 0) {
+      console.log("close");
+    }
+    else {
+      setButtonState({      
+      use: buttonState.use,
+      report: buttonState.report,
+      kill: true,})
+      console.log("far");
+    }
+
     return () => {
       room.removeAllListeners();
     };
@@ -121,6 +132,21 @@ export default function GameScreen({ navigation }) {
         }
       );
     })();
+
+    setDistMap(distAll(location.coords, players))
+
+    console.log(distMap);
+
+    if (distMap.size > 0) {
+      console.log("close");
+    }
+    else {
+      setButtonState({      
+      use: buttonState.use,
+      report: buttonState.report,
+      kill: true,})
+      console.log("far");
+    }
 
     return async () => {
       // Unmount listener when component unmounts
