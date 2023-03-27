@@ -33,6 +33,11 @@ export class GameRoom extends Room {
       this.broadcast('gameStarted');
     });
 
+    this.onMessage('endGame', (client) => {
+      this.broadcast('gameEnded');
+      this.disconnect();
+    });
+
     // Notify the lobby that this room has been created
     onCreateGameRoom(this);
   }

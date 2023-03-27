@@ -51,6 +51,10 @@ function LobbyScreen({ navigation }) {
       navigation.navigate('Game');
     });
 
+    room.onMessage('gameEnded', () => {
+      navigation.navigate('Menu');
+    });
+
     return () => {
       // Disconnect from the room
       console.log(`Left game room ${room.sessionId}, code: ${room.state.code}`);
@@ -83,6 +87,9 @@ function LobbyScreen({ navigation }) {
     if (isHost) getGameRoom().send('startGame');
   };
 
+  function endGame() {
+    getGameRoom().send('endGame');
+  }
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <KeyboardAvoidingView
@@ -174,7 +181,7 @@ function LobbyScreen({ navigation }) {
             </View>
             <View style={styles.settingsModalExit}>
               <TouchableOpacity onPress={handleModal} style={styles.button}>
-                <Text style={[styles.buttonText]}>Close and Save</Text>
+                <Text style={styles.buttonText}>Close and Save</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
@@ -183,7 +190,14 @@ function LobbyScreen({ navigation }) {
                 }}
                 style={styles.button}
               >
-                <Text style={[styles.dontSaveText]}>Close and Don't Save</Text>
+                <Text style={styles.redText}>Close and Don't Save</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={endGame}
+                style={styles.button}
+                disabled={!isHost}
+              >
+                <Text style={styles.redText}>Close Room</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -236,8 +250,8 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   settingsModalSettings: {
-    width: '80%',
-    flex: 0.8,
+    width: '85%',
+    flex: 0.75,
   },
   settingsModalText: {
     textAlign: 'center',
@@ -268,12 +282,13 @@ const styles = StyleSheet.create({
     height: '40%',
     alignItems: 'center',
     justifyContent: 'center',
+    margin: 60,
   },
   buttonText: {
     fontSize: 50,
     fontFamily: 'Impostograph-Regular',
   },
-  dontSaveText: {
+  redText: {
     color: 'red',
     fontSize: 50,
     fontFamily: 'Impostograph-Regular',
