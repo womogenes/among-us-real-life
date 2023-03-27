@@ -14,6 +14,8 @@ import ControlPanel from '../components/controlpanel.js';
 
 import { findDistance, distAll } from '../utils.js';
 
+import CaptchaTask from '../components/tasks/recaptcha.js';
+
 var mapView;
 
 export default function GameScreen({ navigation }) {
@@ -229,6 +231,7 @@ export default function GameScreen({ navigation }) {
         title={'increase tasks'}
         onPress={() => setTaskCompletion(taskCompletion + 10)}
       />
+      <CaptchaTask/>
     </View>
   );
 }
