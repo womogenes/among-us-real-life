@@ -82,7 +82,16 @@ function JoinScreen({ navigation }) {
             <FlatList
               style={styles.roomList}
               data={roomList}
-              renderItem={({ item }) => <Text style={styles.room}>{item}</Text>}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    joinPressed(item);
+                  }}
+                >
+                  <Text style={styles.room}>{item}</Text>
+                </TouchableOpacity>
+              )}
               keyExtractor={(item) => item}
               snapToAlignment="start"
               decelerationRate={'fast'}
