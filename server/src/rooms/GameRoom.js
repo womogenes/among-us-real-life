@@ -22,7 +22,9 @@ export class GameRoom extends Room {
 
     this.onMessage('startGame', (client) => {
       // Verify that only host can start the game
-      if (client.sessionId !== this.players.find((p) => p.isHost).sessionId) {
+      if (
+        client.sessionId !== this.state.players.find((p) => p.isHost).sessionId
+      ) {
         return;
       }
 
