@@ -74,16 +74,7 @@ export default function GameScreen({ navigation }) {
     console.log('KILL');
   }
 
-  useEffect(() => {
-    // Status update loop
-    const room = getGameRoom();
-
-    setPlayers(room?.state?.players?.$items);
-
-    room.onStateChange((state) => {
-      setPlayers(state.players.$items);
-    });
-
+  function findAllDist() {
     setDistMap(distAll(location.coords, players))
 
     if (distMap.size > 0) {
@@ -96,6 +87,19 @@ export default function GameScreen({ navigation }) {
       kill: true,})
       console.log("far");
     }
+  }
+
+  useEffect(() => {
+    // Status update loop
+    const room = getGameRoom();
+
+    setPlayers(room?.state?.players?.$items);
+
+    room.onStateChange((state) => {
+      setPlayers(state.players.$items);
+    });
+
+    findAllDist();
 
     return () => {
       room.removeAllListeners();
@@ -129,24 +133,11 @@ export default function GameScreen({ navigation }) {
 
           // Send location to server
           getGameRoom()?.send('location', loc);
+          
+          findAllDist();
         }
       );
     })();
-
-    setDistMap(distAll(location.coords, players))
-
-    console.log(distMap);
-
-    if (distMap.size > 0) {
-      console.log("close");
-    }
-    else {
-      setButtonState({      
-      use: buttonState.use,
-      report: buttonState.report,
-      kill: true,})
-      console.log("far");
-    }
 
     return async () => {
       // Unmount listener when component unmounts
