@@ -17,6 +17,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Slider } from '@miblanchard/react-native-slider';
 
 import { getGameRoom, leaveGameRoom } from '../networking.js';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function LobbyScreen({ navigation }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -44,6 +45,10 @@ function LobbyScreen({ navigation }) {
       setIsHost(
         state.players.find((p) => p.sessionId === room.sessionId).isHost
       );
+    });
+
+    room.onMessage('gameStarted', () => {
+      startGame();
     });
 
     return () => {
@@ -75,8 +80,7 @@ function LobbyScreen({ navigation }) {
   }
 
   const startGame = () => {
-    getGameRoom().send('startGame');
-    navigation.navigate('Game');
+    if (isHost) getGameRoom().send('startGame');
   };
 
   return (
@@ -86,7 +90,7 @@ function LobbyScreen({ navigation }) {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         enabled={false}
       >
-        <StatusBar style="dark" />
+        <StatusBar style="dark" backgroundColor="#61dafb" />
         <View style={styles.settingsContainer}>
           <TouchableOpacity accessibilityRole="button" onPress={handleModal}>
             <Image
@@ -191,7 +195,7 @@ function LobbyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   lobbyContainer: {
-    marginTop: Constants.statusBarHeight,
+    paddingTop: Constants.statusBarHeight,
     flex: 1,
     backgroundColor: '#ffffff',
     flexDirection: 'column',

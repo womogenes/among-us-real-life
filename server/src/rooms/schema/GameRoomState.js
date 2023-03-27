@@ -27,7 +27,7 @@ export class Player extends Schema {
     super();
 
     this.sessionId = sessionId;
-    this.username = 'anonymous';
+    this.username = 'Anonymous';
     this.location = new Location();
     this.isHost = isHost;
   }
