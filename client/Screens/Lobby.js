@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   },
   dontSaveText: {
     color: 'red',
-    fontSize: 50,
+    fontSize: 40,
     fontFamily: 'Impostograph-Regular',
   },
   nameText: {
