@@ -80,7 +80,14 @@ function LobbyScreen({ navigation }) {
   }
 
   const startGame = () => {
-    if (isHost) getGameRoom().send('startGame');
+    // In theory, only the host can click the "start game" button
+    // But let's do this check anyway
+    assert(isHost);
+
+    // Tell server to start game, also send settings
+    getGameRoom().send('startGame', {
+      settings: { killRadius, killCooldown },
+    });
   };
 
   return (
