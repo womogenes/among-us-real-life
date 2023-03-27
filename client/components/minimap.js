@@ -36,15 +36,15 @@ function Minimap(props) {
             longitude: props.userCoords[1],
           }}
         />
-        {Array.from(props.taskCoords, ([name, task]) => {
+        {Array.from(props.taskCoords, ([task, location]) => {
           return (
             <Marker
-              key={name}
+              key={task}
               coordinate={{
-                latitude: task.location.latitude,
-                longitude: task.location.longitude,
+                latitude: location.latitude,
+                longitude: location.longitude,
               }}
-              title={name}
+              title={task}
             />
           );
         })}

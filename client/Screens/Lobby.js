@@ -86,7 +86,7 @@ function LobbyScreen({ navigation }) {
   const startGame = () => {
     // In theory, only the host can click the "start game" button
     // But let's do this check anyway
-    assert(isHost);
+    console.assert(isHost);
 
     // Tell server to start game, also send settings
     getGameRoom().send('startGame', {
