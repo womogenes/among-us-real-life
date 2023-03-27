@@ -20,6 +20,8 @@ export default function GameScreen({ navigation }) {
   const [location, setLocation] = useState({
     coords: { latitude: 0, longitude: 0 },
   });
+
+  const [playerState, setPlayerState] = useState('imposter'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
   const [errorMsg, setErrorMsg] = useState(null);
   const [debugMsg, setDebugMsg] = useState('');
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
@@ -72,6 +74,16 @@ export default function GameScreen({ navigation }) {
 
   function killButton() {
     console.log('KILL');
+  }
+
+  function disguiseButton() {
+    setPlayerState('disguised');
+    console.log('DISGUISE');
+  }
+
+  function revealButton() {
+    setPlayerState('imposter');
+    console.log('REVEAL');
   }
 
   function findAllDist() {
@@ -133,7 +145,7 @@ export default function GameScreen({ navigation }) {
 
           // Send location to server
           getGameRoom()?.send('location', loc);
-          
+
           findAllDist();
         }
       );
@@ -194,7 +206,16 @@ export default function GameScreen({ navigation }) {
         userCoords={[location.coords.latitude, location.coords.longitude]}
         taskCoords={tasks}
       />
-      {/*<ControlPanel userType={"crewmate"} useButtonState={buttonState.use} useButtonPress={useButton} reportButtonState={buttonState.report} reportButtonPress={reportButton} taskCompletion={taskCompletion}/>*/}
+      {playerState == 'crewmate'?
+      <ControlPanel
+        userType={"crewmate"}
+        useButtonState={buttonState.use}
+        useButtonPress={useButton}
+        reportButtonState={buttonState.report}
+        reportButtonPress={reportButton}
+        taskCompletion={taskCompletion}
+      />
+      : playerState == 'imposter'?
       <ControlPanel
         userType={'imposter'}
         killButtonState={buttonState.kill}
@@ -203,8 +224,21 @@ export default function GameScreen({ navigation }) {
         sabotageList={sabotageList}
         reportButtonState={buttonState.report}
         reportButtonPress={reportButton}
+        disguiseButtonPress={disguiseButton}
         taskCompletion={taskCompletion}
       />
+      : playerState == 'disguised'?
+      <ControlPanel
+        userType={"disguisedImposter"}
+        revealButtonPress={revealButton}
+        reportButtonState={buttonState.report}
+        reportButtonPress={reportButton}
+        taskCompletion={taskCompletion}
+      />
+      :
+      <ControlPanel/>
+      }
+
       <Button
         title={'increase tasks'}
         onPress={() => setTaskCompletion(taskCompletion + 10)}

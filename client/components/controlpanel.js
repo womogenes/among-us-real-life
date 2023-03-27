@@ -126,6 +126,18 @@ function ControlPanel(props) {
             right={-10}
             bottom={320}
           />
+          <CustomButton
+            type={'text'}
+            text={'DISGUISE'}
+            textsize={20}
+            onPress={props.disguiseButtonPress}
+            roundness={50}
+            backgroundcolor={'#00000000'}
+            width={150}
+            height={150}
+            right={-10}
+            bottom={420}
+          />
           <Modal isVisible={isModalVisible} style={styles.modal}>
             <View style={styles.modalBackground}>
               <View style={styles.closeButtonContainer}>
@@ -142,9 +154,39 @@ function ControlPanel(props) {
           </Modal>
         </View>
       )}
+      {props.userType == 'disguisedImposter' && (
+        <View style={styles.buttonContainer}>
+          <CustomButton
+            type={'image'}
+            disabled={0}
+            onPress={props.revealButtonPress}
+            image={require('client/assets/usebutton.png')}
+            imagesize={'75%'}
+            roundness={50}
+            backgroundcolor={'#00000000'}
+            width={150}
+            height={150}
+            right={-10}
+            bottom={200}
+          />
+          <CustomButton
+            type={'image'}
+            disabled={props.reportButtonState}
+            onPress={props.reportButtonPress}
+            image={require('client/assets/reportbutton.png')}
+            imagesize={'75%'}
+            roundness={50}
+            backgroundcolor={'#00000000'}
+            width={150}
+            height={150}
+            right={-10}
+            bottom={320}
+          />
+        </View>
+      )}
       <Tasks />
       <TaskBar taskCompletion={props.taskCompletion} />
-    </View>
+    </View>  
   );
 }
 

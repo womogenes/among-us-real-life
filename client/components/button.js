@@ -1,9 +1,9 @@
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 
 function CustomButton(props) {
-  var myOpacity = 1;
+  let myOpacity = 1;
 
-  if (props.disabled || props.cooldownTimer > 0) {
+  if (props.disabled || props.cooldownTimer > 0 || props.disabled == 0) {
     myOpacity = 0.5;
   } else {
     myOpacity = 1;
@@ -46,7 +46,7 @@ function CustomButton(props) {
             } /* prop example: require('client/assets/myimage.jpg') */
           />
         ) : props.type == 'text' ? (
-          <Text style={[styles.buttonText, { opacity: myOpacity }]}>
+          <Text style={[styles.buttonText, props.textsize && {fontSize: props.textsize }, { opacity: myOpacity }]}>
             {props.text}
           </Text>
         ) : props.type == 'cooldown' ? (
@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonText: {
+    margin: 10,
     color: 'black',
     position: 'absolute',
     fontSize: 40,
