@@ -27,6 +27,9 @@ export default function GameScreen({ navigation }) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+
+
+
   const [sabotageList, setSabotageList] = useState([
     { name: 'Reactor', key: 1, availability: true },
     { name: 'O2', key: 2, availability: true },
@@ -186,6 +189,18 @@ export default function GameScreen({ navigation }) {
                 longitude: player?.location?.longitude,
               }}
               title={`Player ${sessionId}`}
+            />
+          );
+        })}
+        {Array.from(tasks, ([task, location]) => {
+          return (
+            <Marker
+              key={task}
+              coordinate={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }}
+              title={title={task}}
             />
           );
         })}
