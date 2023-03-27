@@ -90,7 +90,6 @@ function LobbyScreen({ navigation }) {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         enabled={false}
       >
-        <StatusBar style="dark" />
         <View style={styles.settingsContainer}>
           <TouchableOpacity accessibilityRole="button" onPress={handleModal}>
             <Image
@@ -233,7 +232,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: 'white',
     alignItems: 'center',
-    marginTop: 25,
+    marginVertical: 25,
   },
   settingsModalSettings: {
     width: '80%',

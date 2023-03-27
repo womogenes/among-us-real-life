@@ -34,8 +34,16 @@ export default function App() {
             }}
           >
             <Stack.Screen name="Menu" component={MenuScreen} />
-            <Stack.Screen name="Lobby" component={LobbyScreen} />
-            <Stack.Screen name="Game" component={GameScreen} />
+            <Stack.Screen
+              name="Lobby"
+              component={LobbyScreen}
+              options={{ gestureEnabled: false }}
+            />
+            <Stack.Screen
+              name="Game"
+              component={GameScreen}
+              options={{ gestureEnabled: false }}
+            />
             <Stack.Screen name="Join" component={JoinScreen} />
             <Stack.Screen
               name="TestScreen"

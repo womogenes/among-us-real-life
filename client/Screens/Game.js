@@ -1,5 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Button,
+  Platform,
+} from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
@@ -158,8 +165,6 @@ export default function GameScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="auto" />
-
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
@@ -171,9 +176,9 @@ export default function GameScreen({ navigation }) {
           latitude: 47.7326514,
           longitude: -122.3278194,
           latitudeDelta: 0.001,
-          longitudeDelta: 0.0001,
+          longitudeDelta: 0.001,
         }}
-        mapType="standard"
+        mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
       >
         {Array.from(players, ([sessionId, player]) => {
           return (

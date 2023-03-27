@@ -158,7 +158,7 @@ function ControlPanel(props) {
         <View style={styles.buttonContainer}>
           <CustomButton
             type={'image'}
-            disabled={0}
+            disabled={null}
             onPress={props.revealButtonPress}
             image={require('client/assets/usebutton.png')}
             imagesize={'75%'}
