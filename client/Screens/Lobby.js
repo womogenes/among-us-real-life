@@ -199,13 +199,18 @@ function LobbyScreen({ navigation }) {
               >
                 <Text style={styles.redText}>Close and Don't Save</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={endGame}
-                style={styles.button}
-                disabled={!isHost}
-              >
-                <Text style={styles.redText}>Close Room</Text>
-              </TouchableOpacity>
+              {!isHost && (
+                <TouchableOpacity
+                  onPress={endGame}
+                  style={[
+                    styles.button,
+                    isHost ? styles.button : styles.disabled,
+                  ]}
+                  disabled={!isHost}
+                >
+                  <Text style={styles.redText}>Close Room</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </Modal>
@@ -292,12 +297,12 @@ const styles = StyleSheet.create({
     margin: 60,
   },
   buttonText: {
-    fontSize: 50,
+    fontSize: 45,
     fontFamily: 'Impostograph-Regular',
   },
   redText: {
     color: 'red',
-    fontSize: 40,
+    fontSize: 45,
     fontFamily: 'Impostograph-Regular',
   },
   nameText: {
@@ -321,6 +326,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 15,
     fontFamily: 'Impostograph-Regular',
+  },
+  disabled: {
+    opacity: 0.5,
   },
 });
 

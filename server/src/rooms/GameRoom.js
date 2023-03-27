@@ -38,6 +38,11 @@ export class GameRoom extends Room {
     });
 
     this.onMessage('endGame', (client) => {
+      const isHost =
+        client.sessionId === this.state.players.find((p) => p.isHost).sessionId;
+      if (!isHost) {
+        return;
+      }
       this.broadcast('gameEnded');
       this.disconnect();
     });
