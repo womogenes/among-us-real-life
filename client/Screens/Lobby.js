@@ -48,7 +48,7 @@ function LobbyScreen({ navigation }) {
     });
 
     room.onMessage('gameStarted', () => {
-      startGame();
+      navigation.navigate('Game');
     });
 
     return () => {
@@ -90,7 +90,7 @@ function LobbyScreen({ navigation }) {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         enabled={false}
       >
-        <StatusBar style="dark" backgroundColor="#61dafb" />
+        <StatusBar style="dark" />
         <View style={styles.settingsContainer}>
           <TouchableOpacity accessibilityRole="button" onPress={handleModal}>
             <Image
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
-    fontSize: 50,
+    fontSize: 45,
     fontFamily: 'Impostograph-Regular',
   },
   codeText: {
