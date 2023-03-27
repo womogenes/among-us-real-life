@@ -150,9 +150,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden', // For the borderRadius
     backgroundColor: '#BDC9C9',
     borderRadius: 5,
-    fontSize: 20,
     padding: 10,
     marginVertical: 2,
+    fontSize: 30,
+    fontFamily: 'Impostograph-Regular',
   },
   backgroundImage: {
     width: '100%',

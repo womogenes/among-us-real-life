@@ -37,7 +37,7 @@ function MenuScreen({ navigation }) {
       >
         <View style={styles.titleContainer}>
           <Text numberOfLines={1} style={styles.titleText}>
-            Among Us
+            AMONG US
           </Text>
           <Text numberOfLines={1} style={styles.lakesideText}>
             Lakeside Edition

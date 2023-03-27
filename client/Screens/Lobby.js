@@ -101,8 +101,7 @@ function LobbyScreen({ navigation }) {
             autoComplete="off"
             autoCorrect={false}
           />
-          <Text style={styles.codeText}>Code: </Text>
-          <Text style={styles.codeNum}>{roomCode}</Text>
+          <Text style={styles.codeText}>Code: {roomCode}</Text>
         </View>
 
         <View style={styles.playerContainer}>
@@ -209,7 +208,6 @@ const styles = StyleSheet.create({
   },
   nameContainer: {
     backgroundColor: '#BDC9C9',
-    fontSize: 50,
     marginHorizontal: 10,
     borderRadius: 20,
     flex: 1,
@@ -217,6 +215,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
+    fontSize: 50,
     fontFamily: 'Impostograph-Regular',
   },
   codeText: {
