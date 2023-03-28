@@ -97,6 +97,7 @@ function LobbyScreen({ navigation }) {
   function endGame() {
     getGameRoom().send('endGame');
   }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <KeyboardAvoidingView
@@ -185,6 +186,7 @@ function LobbyScreen({ navigation }) {
                 />
               </View>
             </View>
+
             <View style={styles.settingsModalExit}>
               <TouchableOpacity onPress={handleModal} style={styles.button}>
                 <Text style={styles.buttonText}>Close and Save</Text>
@@ -198,18 +200,15 @@ function LobbyScreen({ navigation }) {
               >
                 <Text style={styles.redText}>Close and Don't Save</Text>
               </TouchableOpacity>
-              {!isHost && (
-                <TouchableOpacity
-                  onPress={endGame}
-                  style={[
-                    styles.button,
-                    isHost ? styles.button : styles.disabled,
-                  ]}
-                  disabled={!isHost}
-                >
-                  <Text style={styles.redText}>Close Room</Text>
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                onPress={() => {
+                  leaveGameRoom();
+                  navigation.navigate('Menu');
+                }}
+                style={[styles.button]}
+              >
+                <Text style={styles.redText}>Leave Room</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -270,7 +269,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Impostograph-Regular',
   },
   settingsModalExit: {
-    width: '110%', // Cheeky override for the fact that button width is 80%
+    width: '110%', // Cheeky override for the fact that default button width is 80%
     alignItems: 'center',
     justifyContent: 'space-evenly',
     flex: 0.2,
@@ -293,7 +292,7 @@ const styles = StyleSheet.create({
     height: '40%',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 60,
+    margin: 40,
   },
   buttonText: {
     fontSize: 45,
@@ -325,9 +324,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 15,
     fontFamily: 'Impostograph-Regular',
-  },
-  disabled: {
-    opacity: 0.5,
   },
 });
 
