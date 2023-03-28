@@ -35,8 +35,6 @@ export default function GameScreen({ navigation }) {
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
-
-
   const [sabotageList, setSabotageList] = useState([
     { name: 'Reactor', key: 1, availability: true },
     { name: 'O2', key: 2, availability: true },
@@ -205,7 +203,7 @@ export default function GameScreen({ navigation }) {
                 latitude: location.latitude,
                 longitude: location.longitude,
               }}
-              title={title={task}}
+              title={(title = { task })}
             />
           );
         })}
@@ -251,7 +249,7 @@ export default function GameScreen({ navigation }) {
         title={'increase tasks'}
         onPress={() => setTaskCompletion(taskCompletion + 10)}
       />
-      <CaptchaTask/>
+      <CaptchaTask />
     </View>
   );
 }
