@@ -130,6 +130,7 @@ function ControlPanel(props) {
             type={'text'}
             text={'DISGUISE'}
             textsize={20}
+            disabled={props.disguiseButtonState}
             onPress={props.disguiseButtonPress}
             roundness={50}
             backgroundcolor={'#00000000'}

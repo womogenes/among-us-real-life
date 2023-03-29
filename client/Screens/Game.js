@@ -44,6 +44,8 @@ export default function GameScreen({ navigation }) {
     use: true, // These should all be true at the beginning of the game
     report: true,
     kill: true,
+    disguise: false,
+    sabotage: false,
   });
   const [taskCompletion, setTaskCompletion] = useState(10);
 
@@ -101,10 +103,12 @@ export default function GameScreen({ navigation }) {
     if (distMap.size > 0) {
       console.log('close');
     } else {
-      setButtonState({
+      changeButtonState({
         use: buttonState.use,
         report: buttonState.report,
         kill: true,
+        disguise: buttonState.disguise,
+        sabotage: buttonState.sabotage,
       });
       console.log('far');
     }
@@ -227,6 +231,8 @@ export default function GameScreen({ navigation }) {
           killButtonState={buttonState.kill}
           killButtonPress={killButton}
           cooldown={10}
+          disguiseButtonState={buttonState.disguise}
+          sabotageButtonState={buttonState.sabotage}
           sabotageList={sabotageList}
           reportButtonState={buttonState.report}
           reportButtonPress={reportButton}
