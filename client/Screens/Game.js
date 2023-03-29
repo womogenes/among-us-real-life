@@ -169,7 +169,6 @@ export default function GameScreen({ navigation }) {
     const room = getGameRoom();
 
     setPlayers(room?.state?.players);
-    console.log(`Initial players: ${room?.state?.players}`);
 
     room.onStateChange((state) => {
       setPlayers(state.players);
