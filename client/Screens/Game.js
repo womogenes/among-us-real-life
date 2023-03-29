@@ -19,7 +19,7 @@ import Minimap from '../components/minimap.js';
 
 import ControlPanel from '../components/controlpanel.js';
 
-import { findDistance, distAll } from '../utils.js';
+import { findDistance, distAll, findClosest } from '../utils.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 
@@ -32,7 +32,7 @@ export default function GameScreen({ navigation }) {
 
   const [playerState, setPlayerState] = useState('crewmate'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
   const [errorMsg, setErrorMsg] = useState(null);
-  const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
+  const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([
     {
       name: 'reCaptcha',
@@ -68,17 +68,15 @@ export default function GameScreen({ navigation }) {
 
   function taskMarkers() {
     return tasks.map((item) => {
-      const coords = {
-        latitude: item.location.latitude,
-        longitude: item.location.longitude,
-      };
-
       if (item.complete == false) {
         return (
           <Marker
             pinColor={'gold'}
             key={Math.random()}
-            coordinate={coords}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
             title={item.name}
           />
         );
@@ -87,7 +85,10 @@ export default function GameScreen({ navigation }) {
           <Marker
             pinColor={'turquoise'}
             key={Math.random()}
-            coordinate={coords}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
             title={item.name}
           />
         );
@@ -112,6 +113,7 @@ export default function GameScreen({ navigation }) {
 
   function useButton() {
     console.log('USE');
+    let closestTask = findClosest(distArr);
   }
 
   function reportButton() {
@@ -135,6 +137,7 @@ export default function GameScreen({ navigation }) {
   function findAllDist(loc) {
     let newArr = distAll(loc.coords, tasks);
     setDistArr(newArr);
+
   }
 
   function activateButton() {
@@ -159,8 +162,7 @@ export default function GameScreen({ navigation }) {
     }
   }
 
-  useEffect(() => {
-    // Detects when distArr is updated and reevaluates button activation
+  useEffect(() => { // Detects when distArr is updated and reevaluates button activation
     activateButton();
   }, [distArr]);
 
@@ -168,18 +170,17 @@ export default function GameScreen({ navigation }) {
     // Status update loop
     const room = getGameRoom();
 
-    setPlayers(room?.state?.players);
-    console.log(`Initial players: ${room?.state?.players}`);
+    setPlayers(room?.state?.players?.$items);
 
     room.onStateChange((state) => {
-      setPlayers(state.players);
+      setPlayers(state.players.$items);
 
-      // Get player tasks from room state
-      const tasks = state.players.find(
-        (p) => p.sessionId === room.sessionId
-      ).tasks;
-      setTasks(tasks);
-      console.log(`my tasks: ${JSON.stringify(tasks, null, 1)}`);
+      // // Get player tasks from room state
+      // const tasks = state.players.find(
+      //   (p) => p.sessionId === room.sessionId
+      // ).tasks;
+      // // setTasks(tasks);
+      // console.log(`my tasks: ${tasks}`);
     });
 
     findAllDist(location);
@@ -244,7 +245,7 @@ export default function GameScreen({ navigation }) {
         }}
         mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
       >
-        {players.map((player) => {
+        {players.forEach((player) => {
           return (
             <Marker
               key={player.sessionId}
