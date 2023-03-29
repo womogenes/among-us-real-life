@@ -186,7 +186,10 @@ function LobbyScreen({ navigation }) {
               </View>
             </View>
             <View style={styles.settingsModalExit}>
-              <TouchableOpacity onPress={handleModal} style={styles.button}>
+              <TouchableOpacity
+                onPress={handleModal}
+                style={[isHost ? styles.button : styles.disabled]}
+              >
                 <Text style={styles.buttonText}>Close and Save</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -201,10 +204,7 @@ function LobbyScreen({ navigation }) {
               {isHost && (
                 <TouchableOpacity
                   onPress={endGame}
-                  style={[
-                    styles.button,
-                    isHost ? styles.button : styles.disabled,
-                  ]}
+                  style={[isHost ? styles.button : styles.disabled]}
                   disabled={!isHost}
                 >
                   <Text style={styles.redText}>Close Room</Text>
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Impostograph-Regular',
   },
   disabled: {
-    opacity: 0.5,
+    display: 'none',
   },
 });
 
