@@ -32,7 +32,7 @@ export default function GameScreen({ navigation }) {
 
   const [playerState, setPlayerState] = useState('crewmate'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
   const [errorMsg, setErrorMsg] = useState(null);
-  const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
+  const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([
     {
       name: 'reCaptcha',
@@ -169,6 +169,7 @@ export default function GameScreen({ navigation }) {
     const room = getGameRoom();
 
     setPlayers(room?.state?.players);
+    console.log(`Initial players: ${room?.state?.players}`);
 
     room.onStateChange((state) => {
       setPlayers(state.players);
