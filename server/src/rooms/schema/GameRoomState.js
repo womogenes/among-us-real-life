@@ -3,12 +3,12 @@ const { Schema, ArraySchema } = schema;
 
 // Location schema
 class Location extends Schema {
-  constructor() {
+  constructor(latitude = 0, longitude = 0, altitude = 0) {
     super();
 
-    this.latitude = 0;
-    this.longitude = 0;
-    this.altitude = 0;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.altitude = altitude;
   }
 
   update(coords) {
@@ -23,6 +23,21 @@ schema.defineTypes(Location, {
   altitude: 'number', // altitude
 });
 
+class Task extends Schema {
+  constructor(name, location) {
+    super();
+
+    this.name = name;
+    this.location = location;
+    this.complete = true;
+  }
+}
+schema.defineTypes(Task, {
+  name: 'string',
+  location: Location,
+  complete: 'boolean',
+});
+
 // Player schema
 export class Player extends Schema {
   constructor(sessionId, isHost) {
@@ -32,6 +47,15 @@ export class Player extends Schema {
     this.username = 'Anonymous';
     this.location = new Location();
     this.isHost = isHost;
+
+    // Make a default test task
+    this.tasks = new ArraySchema();
+    this.tasks.push(
+      new Task(
+        'reCaptcha',
+        new Location(47.73730501931134, -122.33942051124151, 0)
+      )
+    );
   }
 }
 schema.defineTypes(Player, {
@@ -39,6 +63,8 @@ schema.defineTypes(Player, {
   username: 'string',
   location: Location,
   isHost: 'boolean',
+
+  tasks: [Task],
 });
 
 // Settings schema

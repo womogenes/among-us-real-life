@@ -32,14 +32,8 @@ export default function GameScreen({ navigation }) {
 
   const [playerState, setPlayerState] = useState('crewmate'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
   const [errorMsg, setErrorMsg] = useState(null);
-  const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
-  const [tasks, setTasks] = useState([
-    {
-      name: 'reCaptcha',
-      location: { latitude: 47.73730501931134, longitude: -122.33942051124151 },
-      complete: true,
-    }, // Test instance
-  ]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+  const [players, setPlayers] = useState([]);
+  const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
   const [sabotageList, setSabotageList] = useState([
     { name: 'Reactor', key: 1, availability: true },
@@ -68,15 +62,17 @@ export default function GameScreen({ navigation }) {
 
   function taskMarkers() {
     return tasks.map((item) => {
+      const coords = {
+        latitude: item.location.latitude,
+        longitude: item.location.longitude,
+      };
+
       if (item.complete == false) {
         return (
           <Marker
             pinColor={'gold'}
             key={Math.random()}
-            coordinate={{
-              latitude: item.location.latitude,
-              longitude: item.location.longitude,
-            }}
+            coordinate={coords}
             title={item.name}
           />
         );
@@ -85,10 +81,7 @@ export default function GameScreen({ navigation }) {
           <Marker
             pinColor={'turquoise'}
             key={Math.random()}
-            coordinate={{
-              latitude: item.location.latitude,
-              longitude: item.location.longitude,
-            }}
+            coordinate={coords}
             title={item.name}
           />
         );
@@ -161,17 +154,17 @@ export default function GameScreen({ navigation }) {
     // Status update loop
     const room = getGameRoom();
 
-    setPlayers(room?.state?.players?.$items);
+    setPlayers(room?.state?.players);
 
     room.onStateChange((state) => {
-      setPlayers(state.players.$items);
+      setPlayers(state.players);
 
       // Get player tasks from room state
       const tasks = state.players.find(
         (p) => p.sessionId === room.sessionId
       ).tasks;
-      // setTasks(tasks);
-      console.log(`my tasks: ${tasks}`);
+      setTasks(tasks);
+      console.log(`my tasks: ${JSON.stringify(tasks, null, 1)}`);
     });
 
     findAllDist(location);
@@ -236,7 +229,7 @@ export default function GameScreen({ navigation }) {
         }}
         mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
       >
-        {players.forEach((player) => {
+        {players.map((player) => {
           return (
             <Marker
               key={player.sessionId}
