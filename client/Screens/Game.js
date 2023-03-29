@@ -36,7 +36,7 @@ export default function GameScreen({ navigation }) {
   const [tasks, setTasks] = useState([
     {
       name: 'reCaptcha',
-      location: { latitude: 47.73730501931134, longitude: -122.33942051124151 },
+      location: { latitude: 47.731475, longitude: -122.328036 }, // Felix's house test coords: 47.73730501931134, -122.33942051124151
       complete: true,
     }, // Test instance
   ]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
@@ -134,8 +134,12 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist(loc) {
-    setDistArr(distAll(loc.coords, tasks));
+    let newArr = distAll(loc.coords, tasks);
+    setDistArr(newArr);
 
+  }
+
+  function activateButton() {
     if (distArr.length > 0) {
       setButtonState({
         use: false,
@@ -157,6 +161,10 @@ export default function GameScreen({ navigation }) {
     }
   }
 
+  useEffect(() => { // Detects when distArr is updated and reevaluates button activation
+    activateButton();
+  }, [distArr]);
+
   useEffect(() => {
     // Status update loop
     const room = getGameRoom();
@@ -166,12 +174,12 @@ export default function GameScreen({ navigation }) {
     room.onStateChange((state) => {
       setPlayers(state.players.$items);
 
-      // Get player tasks from room state
-      const tasks = state.players.find(
-        (p) => p.sessionId === room.sessionId
-      ).tasks;
-      // setTasks(tasks);
-      console.log(`my tasks: ${tasks}`);
+      // // Get player tasks from room state
+      // const tasks = state.players.find(
+      //   (p) => p.sessionId === room.sessionId
+      // ).tasks;
+      // // setTasks(tasks);
+      // console.log(`my tasks: ${tasks}`);
     });
 
     findAllDist(location);
