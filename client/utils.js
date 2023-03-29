@@ -27,3 +27,18 @@ export function distAll(myCoords, allCoords) {
   })
   return myArr;
 }
+
+export function findClosest(distArr) {
+  if(distArr.length == 0){
+    return []
+  }
+  let min = distArr[0].distance;
+  let minTask = distArr[0];
+  distArr.forEach((item) => {
+    if(item.distance < min){
+      min = item.distance;
+      minTask = item;
+    }
+  })
+  return minTask;
+}

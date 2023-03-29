@@ -97,6 +97,7 @@ function LobbyScreen({ navigation }) {
   function endGame() {
     getGameRoom().send('endGame');
   }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <KeyboardAvoidingView
@@ -185,6 +186,7 @@ function LobbyScreen({ navigation }) {
                 />
               </View>
             </View>
+
             <View style={styles.settingsModalExit}>
               <TouchableOpacity
                 onPress={handleModal}
@@ -270,7 +272,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Impostograph-Regular',
   },
   settingsModalExit: {
-    width: '110%', // Cheeky override for the fact that button width is 80%
+    width: '110%', // Cheeky override for the fact that default button width is 80%
     alignItems: 'center',
     justifyContent: 'space-evenly',
     flex: 0.2,
@@ -293,7 +295,7 @@ const styles = StyleSheet.create({
     height: '40%',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 60,
+    margin: 40,
   },
   buttonText: {
     fontSize: 45,
@@ -326,9 +328,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     fontFamily: 'Impostograph-Regular',
   },
+<<<<<<< HEAD
   disabled: {
     display: 'none',
   },
+=======
+>>>>>>> ecb38314192a9fa3b1b38e4c5afd5f70c888aaf3
 });
 
 export { LobbyScreen };

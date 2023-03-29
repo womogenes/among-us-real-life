@@ -19,7 +19,7 @@ import Minimap from '../components/minimap.js';
 
 import ControlPanel from '../components/controlpanel.js';
 
-import { findDistance, distAll } from '../utils.js';
+import { findDistance, distAll, findClosest } from '../utils.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 
@@ -34,7 +34,11 @@ export default function GameScreen({ navigation }) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([
-    { name: 'reCaptcha', location: {latitude: 47.73730501931134, longitude: -122.33942051124151}, complete: true }, // Test instance
+    {
+      name: 'reCaptcha',
+      location: { latitude: 47.731475, longitude: -122.328036 }, // Felix's house test coords: 47.73730501931134, -122.33942051124151
+      complete: true,
+    }, // Test instance
   ]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
   const [sabotageList, setSabotageList] = useState([
@@ -65,19 +69,18 @@ export default function GameScreen({ navigation }) {
   function taskMarkers() {
     return tasks.map((item) => {
       if (item.complete == false) {
-          return (
-            <Marker
-              pinColor={'gold'}
-              key={Math.random()}
-              coordinate={{
-                latitude: item.location.latitude,
-                longitude: item.location.longitude,
-              }}
-              title={item.name}
-            />
-          ); 
-      }
-      else{
+        return (
+          <Marker
+            pinColor={'gold'}
+            key={Math.random()}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={item.name}
+          />
+        );
+      } else {
         return (
           <Marker
             pinColor={'turquoise'}
@@ -88,11 +91,11 @@ export default function GameScreen({ navigation }) {
             }}
             title={item.name}
           />
-        ); 
+        );
       }
     });
   }
-  
+
   function changeButtonState(button) {
     if (button == 'use') {
       setButtonState((prevButtonState) => ({
@@ -110,6 +113,7 @@ export default function GameScreen({ navigation }) {
 
   function useButton() {
     console.log('USE');
+    let closestTask = findClosest(distArr);
   }
 
   function reportButton() {
@@ -131,8 +135,12 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist(loc) {
-    setDistArr(distAll(loc.coords, tasks));
+    let newArr = distAll(loc.coords, tasks);
+    setDistArr(newArr);
 
+  }
+
+  function activateButton() {
     if (distArr.length > 0) {
       setButtonState({
         use: false,
@@ -154,14 +162,25 @@ export default function GameScreen({ navigation }) {
     }
   }
 
+  useEffect(() => { // Detects when distArr is updated and reevaluates button activation
+    activateButton();
+  }, [distArr]);
+
   useEffect(() => {
     // Status update loop
     const room = getGameRoom();
 
-    setPlayers(room?.state?.players?.$items);
+    setPlayers(room?.state?.players);
 
     room.onStateChange((state) => {
       setPlayers(state.players.$items);
+
+      // // Get player tasks from room state
+      // const tasks = state.players.find(
+      //   (p) => p.sessionId === room.sessionId
+      // ).tasks;
+      // // setTasks(tasks);
+      // console.log(`my tasks: ${tasks}`);
     });
 
     findAllDist(location);
@@ -180,7 +199,6 @@ export default function GameScreen({ navigation }) {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
         return;
       }
 
@@ -227,15 +245,15 @@ export default function GameScreen({ navigation }) {
         }}
         mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
       >
-        {Array.from(players, ([sessionId, player]) => {
+        {players.forEach((player) => {
           return (
             <Marker
-              key={sessionId}
+              key={player.sessionId}
               coordinate={{
                 latitude: player?.location?.latitude,
                 longitude: player?.location?.longitude,
               }}
-              title={`Player ${sessionId}`}
+              title={`Player ${player.sessionId}`}
             />
           );
         })}
