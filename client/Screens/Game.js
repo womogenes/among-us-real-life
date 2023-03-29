@@ -33,7 +33,9 @@ export default function GameScreen({ navigation }) {
   const [playerState, setPlayerState] = useState('imposter'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
   const [errorMsg, setErrorMsg] = useState(null);
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
-  const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+  const [tasks, setTasks] = useState([
+    { name: 'reCaptcha', location: {latitude: 47.73730501931134, longitude: -122.33942051124151}, complete: true }, // Test instance
+  ]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
   const [sabotageList, setSabotageList] = useState([
     { name: 'Reactor', key: 1, availability: true },
@@ -60,6 +62,37 @@ export default function GameScreen({ navigation }) {
     mapView?.animateToRegion(r, 500);
   };
 
+  function taskMarkers() {
+    return tasks.map((item) => {
+      if (item.complete == false) {
+          return (
+            <Marker
+              pinColor={'gold'}
+              key={Math.random()}
+              coordinate={{
+                latitude: item.location.latitude,
+                longitude: item.location.longitude,
+              }}
+              title={item.name}
+            />
+          ); 
+      }
+      else{
+        return (
+          <Marker
+            pinColor={'turquoise'}
+            key={Math.random()}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={item.name}
+          />
+        ); 
+      }
+    });
+  }
+  
   function changeButtonState(button) {
     if (button == 'use') {
       setButtonState((prevButtonState) => ({
@@ -199,22 +232,11 @@ export default function GameScreen({ navigation }) {
             />
           );
         })}
-        {Array.from(tasks, ([task, location]) => {
-          return (
-            <Marker
-              key={task}
-              coordinate={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-              }}
-              title={(title = { task })}
-            />
-          );
-        })}
+        {taskMarkers()}
       </MapView>
       <Minimap
         userCoords={[location.coords.latitude, location.coords.longitude]}
-        taskCoords={tasks}
+        taskCoords={tasks.location}
       />
       {playerState == 'crewmate' ? (
         <ControlPanel

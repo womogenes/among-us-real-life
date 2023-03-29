@@ -36,18 +36,6 @@ function Minimap(props) {
             longitude: props.userCoords[1],
           }}
         />
-        {Array.from(props.taskCoords, ([task, location]) => {
-          return (
-            <Marker
-              key={task}
-              coordinate={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-              }}
-              title={task}
-            />
-          );
-        })}
       </MapView>
     </View>
   );
