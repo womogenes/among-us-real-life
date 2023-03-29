@@ -51,10 +51,7 @@ export class Player extends Schema {
     // Make a default test task
     this.tasks = new ArraySchema();
     this.tasks.push(
-      new Task(
-        'reCaptcha',
-        new Location(47.73730501931134, -122.33942051124151, 0)
-      )
+      new Task('reCaptcha', new Location(47.731475, -122.328036, 0))
     );
   }
 }

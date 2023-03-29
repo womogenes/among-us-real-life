@@ -170,7 +170,7 @@ export default function GameScreen({ navigation }) {
     // Status update loop
     const room = getGameRoom();
 
-    setPlayers(room?.state?.players?.$items);
+    setPlayers(room?.state?.players);
 
     room.onStateChange((state) => {
       setPlayers(state.players.$items);
