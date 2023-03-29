@@ -170,7 +170,7 @@ export default function GameScreen({ navigation }) {
       const tasks = state.players.find(
         (p) => p.sessionId === room.sessionId
       ).tasks;
-      setTasks(tasks);
+      // setTasks(tasks);
       console.log(`my tasks: ${tasks}`);
     });
 
@@ -236,15 +236,15 @@ export default function GameScreen({ navigation }) {
         }}
         mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
       >
-        {Array.from(players, ([sessionId, player]) => {
+        {players.forEach((player) => {
           return (
             <Marker
-              key={sessionId}
+              key={player.sessionId}
               coordinate={{
                 latitude: player?.location?.latitude,
                 longitude: player?.location?.longitude,
               }}
-              title={`Player ${sessionId}`}
+              title={`Player ${player.sessionId}`}
             />
           );
         })}
