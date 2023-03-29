@@ -31,9 +31,8 @@ export default function GameScreen({ navigation }) {
   });
 
   const [playerState, setPlayerState] = useState('imposter'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
-  const [tasks, setTasks] = useState(new Map()); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+  const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
+  const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
   const [sabotageList, setSabotageList] = useState([
     { name: 'Reactor', key: 1, availability: true },
@@ -118,6 +117,13 @@ export default function GameScreen({ navigation }) {
 
     room.onStateChange((state) => {
       setPlayers(state.players.$items);
+
+      // Get player tasks from room state
+      const tasks = state.players.find(
+        (p) => p.sessionId === room.sessionId
+      ).tasks;
+      setTasks(tasks);
+      console.log(`my tasks: ${tasks}`);
     });
 
     findAllDist();
@@ -136,7 +142,6 @@ export default function GameScreen({ navigation }) {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
         return;
       }
 
