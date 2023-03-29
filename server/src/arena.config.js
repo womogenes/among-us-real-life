@@ -25,7 +25,7 @@ export default Arena.default({
      * Bind your custom express routes here:
      */
     app.get('/', (req, res) => {
-      res.send("It's time to kick ass and chew bubblegum!");
+      res.sendFile('src/testClient/client.html', { root: '.' });
     });
 
     /**

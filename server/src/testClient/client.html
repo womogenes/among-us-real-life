@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html>
+    <script type="module">
+        import { connectToGameRoom } from '../../../client/networking';
+
+        async function createRoom() {
+            var newRoomCode = document.getElementById('newRoomCode').value;
+            await connectToGameRoom(newRoomCode);
+            document.getElementById('createRoommsg').innerHTML = newRoomCode;
+        }
+    </script>
     <head>
-        <script src="room_create_test.js"></script>     
+        <!-- <script type="module" src="testClient/roomCreateTest.js"></script>      -->
         <title>hello world</title>
     </head>
     <body>
