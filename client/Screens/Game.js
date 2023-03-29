@@ -30,7 +30,7 @@ export default function GameScreen({ navigation }) {
     coords: { latitude: 0, longitude: 0 },
   });
 
-  const [playerState, setPlayerState] = useState('imposter'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
+  const [playerState, setPlayerState] = useState('crewmate'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
   const [errorMsg, setErrorMsg] = useState(null);
   const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([
@@ -51,7 +51,7 @@ export default function GameScreen({ navigation }) {
   });
   const [taskCompletion, setTaskCompletion] = useState(10);
 
-  const [distMap, setDistMap] = useState(new Map());
+  const [distArr, setDistArr] = useState([]);
 
   const animate = (loc) => {
     let r = {
@@ -130,16 +130,23 @@ export default function GameScreen({ navigation }) {
     console.log('REVEAL');
   }
 
-  function findAllDist() {
-    setDistMap(distAll(location.coords, players));
+  function findAllDist(loc) {
+    setDistArr(distAll(loc.coords, tasks));
 
-    if (distMap.size > 0) {
+    if (distArr.length > 0) {
+      setButtonState({
+        use: false,
+        report: buttonState.report,
+        kill: buttonState.kill,
+        disguise: buttonState.disguise,
+        sabotage: buttonState.sabotage,
+      });
       console.log('close');
     } else {
-      changeButtonState({
-        use: buttonState.use,
+      setButtonState({
+        use: true,
         report: buttonState.report,
-        kill: true,
+        kill: buttonState.kill,
         disguise: buttonState.disguise,
         sabotage: buttonState.sabotage,
       });
@@ -157,7 +164,7 @@ export default function GameScreen({ navigation }) {
       setPlayers(state.players.$items);
     });
 
-    findAllDist();
+    findAllDist(location);
 
     return () => {
       room.removeAllListeners();
@@ -177,8 +184,8 @@ export default function GameScreen({ navigation }) {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      let newLocation = await Location.getCurrentPositionAsync({});
+      setLocation(newLocation);
 
       locationWatcher = await Location.watchPositionAsync(
         {
@@ -192,7 +199,7 @@ export default function GameScreen({ navigation }) {
           // Send location to server
           getGameRoom()?.send('location', loc);
 
-          findAllDist();
+          findAllDist(loc);
         }
       );
     })();

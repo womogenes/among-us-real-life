@@ -11,14 +11,19 @@ export function findDistance(myCoords, yourCoords) {
 }
 
 export function distAll(myCoords, allCoords) {
-  let myMap = [];
+  let myArr = [];
   let myDist = 0;
-  /* allCoords is a Map of all entities on the map not including yourself */
-  for (let [key, value] of allCoords.entries()) {
-    myDist = findDistance(myCoords, value);
-    if (myDist <= 5) {
-      myMap.push(key, myDist);
+  let myObject = {};
+  /* allCoords is a Array of all entities on the map not including yourself */
+  allCoords.forEach((item) =>  {
+    myDist = findDistance(myCoords, item.location);
+    if (myDist <= 10) {
+        console.log(myDist);
+        console.log(myCoords.latitude);
+        console.log(myCoords.longitude);
+        myObject = {name: item.name, distance: myDist}
+        myArr.push(myObject);
     }
-  }
-  return myMap;
+  })
+  return myArr;
 }
