@@ -30,9 +30,16 @@ export default function GameScreen({ navigation }) {
     coords: { latitude: 0, longitude: 0 },
   });
 
-  const [playerState, setPlayerState] = useState('imposter'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
-  const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
-  const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+  const [playerState, setPlayerState] = useState('crewmate'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
+  const [tasks, setTasks] = useState([
+    {
+      name: 'reCaptcha',
+      location: { latitude: 47.73730501931134, longitude: -122.33942051124151 },
+      complete: true,
+    }, // Test instance
+  ]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
   const [sabotageList, setSabotageList] = useState([
     { name: 'Reactor', key: 1, availability: true },
@@ -43,10 +50,12 @@ export default function GameScreen({ navigation }) {
     use: true, // These should all be true at the beginning of the game
     report: true,
     kill: true,
+    disguise: false,
+    sabotage: false,
   });
   const [taskCompletion, setTaskCompletion] = useState(10);
 
-  const [distMap, setDistMap] = useState(new Map());
+  const [distArr, setDistArr] = useState([]);
 
   const animate = (loc) => {
     let r = {
@@ -56,6 +65,36 @@ export default function GameScreen({ navigation }) {
 
     mapView?.animateToRegion(r, 500);
   };
+
+  function taskMarkers() {
+    return tasks.map((item) => {
+      if (item.complete == false) {
+        return (
+          <Marker
+            pinColor={'gold'}
+            key={Math.random()}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={item.name}
+          />
+        );
+      } else {
+        return (
+          <Marker
+            pinColor={'turquoise'}
+            key={Math.random()}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={item.name}
+          />
+        );
+      }
+    });
+  }
 
   function changeButtonState(button) {
     if (button == 'use') {
@@ -94,16 +133,25 @@ export default function GameScreen({ navigation }) {
     console.log('REVEAL');
   }
 
-  function findAllDist() {
-    setDistMap(distAll(location.coords, players));
+  function findAllDist(loc) {
+    setDistArr(distAll(loc.coords, tasks));
 
-    if (distMap.size > 0) {
+    if (distArr.length > 0) {
+      setButtonState({
+        use: false,
+        report: buttonState.report,
+        kill: buttonState.kill,
+        disguise: buttonState.disguise,
+        sabotage: buttonState.sabotage,
+      });
       console.log('close');
     } else {
       setButtonState({
-        use: buttonState.use,
+        use: true,
         report: buttonState.report,
-        kill: true,
+        kill: buttonState.kill,
+        disguise: buttonState.disguise,
+        sabotage: buttonState.sabotage,
       });
       console.log('far');
     }
@@ -126,7 +174,7 @@ export default function GameScreen({ navigation }) {
       console.log(`my tasks: ${tasks}`);
     });
 
-    findAllDist();
+    findAllDist(location);
 
     return () => {
       room.removeAllListeners();
@@ -145,8 +193,8 @@ export default function GameScreen({ navigation }) {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      let newLocation = await Location.getCurrentPositionAsync({});
+      setLocation(newLocation);
 
       locationWatcher = await Location.watchPositionAsync(
         {
@@ -160,7 +208,7 @@ export default function GameScreen({ navigation }) {
           // Send location to server
           getGameRoom()?.send('location', loc);
 
-          findAllDist();
+          findAllDist(loc);
         }
       );
     })();
@@ -200,22 +248,11 @@ export default function GameScreen({ navigation }) {
             />
           );
         })}
-        {Array.from(tasks, ([task, location]) => {
-          return (
-            <Marker
-              key={task}
-              coordinate={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-              }}
-              title={(title = { task })}
-            />
-          );
-        })}
+        {taskMarkers()}
       </MapView>
       <Minimap
         userCoords={[location.coords.latitude, location.coords.longitude]}
-        taskCoords={tasks}
+        taskCoords={tasks.location}
       />
       {playerState == 'crewmate' ? (
         <ControlPanel
@@ -232,6 +269,8 @@ export default function GameScreen({ navigation }) {
           killButtonState={buttonState.kill}
           killButtonPress={killButton}
           cooldown={10}
+          disguiseButtonState={buttonState.disguise}
+          sabotageButtonState={buttonState.sabotage}
           sabotageList={sabotageList}
           reportButtonState={buttonState.report}
           reportButtonPress={reportButton}
