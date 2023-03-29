@@ -198,7 +198,7 @@ function LobbyScreen({ navigation }) {
               >
                 <Text style={styles.redText}>Close and Don't Save</Text>
               </TouchableOpacity>
-              {!isHost && (
+              {isHost && (
                 <TouchableOpacity
                   onPress={endGame}
                   style={[
