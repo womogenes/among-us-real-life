@@ -94,10 +94,6 @@ function LobbyScreen({ navigation }) {
     });
   };
 
-  function endGame() {
-    getGameRoom().send('endGame');
-  }
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <KeyboardAvoidingView
@@ -203,15 +199,15 @@ function LobbyScreen({ navigation }) {
               >
                 <Text style={styles.redText}>Close and Don't Save</Text>
               </TouchableOpacity>
-              {isHost && (
-                <TouchableOpacity
-                  onPress={endGame}
-                  style={[isHost ? styles.button : styles.disabled]}
-                  disabled={!isHost}
-                >
-                  <Text style={styles.redText}>Close Room</Text>
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                onPress={() => {
+                  leaveGameRoom();
+                  navigation.navigate('Menu');
+                }}
+                style={[styles.button]}
+              >
+                <Text style={styles.redText}>Leave Room</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
