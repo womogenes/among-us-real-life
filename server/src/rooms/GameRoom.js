@@ -37,6 +37,7 @@ export class GameRoom extends Room {
       this.state.settings = settings;
     });
 
+    // Currently not used
     this.onMessage('endGame', (client) => {
       const isHost =
         client.sessionId === this.state.players.find((p) => p.isHost).sessionId;
