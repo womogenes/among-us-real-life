@@ -47,6 +47,7 @@ export class Player extends Schema {
     this.username = 'Anonymous';
     this.location = new Location();
     this.isHost = isHost;
+    this.isImpostor = false;
 
     // Make a default test task
     this.tasks = new ArraySchema();
@@ -63,6 +64,7 @@ schema.defineTypes(Player, {
   username: 'string',
   location: Location,
   isHost: 'boolean',
+  isImpostor: 'boolean',
 
   tasks: [Task],
 });

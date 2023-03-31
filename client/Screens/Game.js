@@ -30,7 +30,7 @@ export default function GameScreen({ navigation }) {
     coords: { latitude: 0, longitude: 0 },
   });
 
-  const [playerState, setPlayerState] = useState('imposter'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
+  const [playerState, setPlayerState] = useState('impostor'); // Change this to change the player type (e.g. crewmate, impostor, disguised)
   const [errorMsg, setErrorMsg] = useState(null);
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
@@ -131,34 +131,34 @@ export default function GameScreen({ navigation }) {
   }
 
   function revealButton() {
-    setPlayerState('imposter');
+    setPlayerState('impostor');
     console.log('REVEAL');
   }
 
   function findAllDist(loc) {
     let taskArr = distAll(loc.coords, tasks, 10);
-    let playerArr = distAll(loc.coords, players, 0.1)
+    let playerArr = distAll(loc.coords, players, 0.1);
     setDistTask(taskArr);
     setDistPlayer(playerArr);
   }
 
   function activateUseButton() {
     if (distTask.length > 0) {
-      changeButtonState('use', false)
+      changeButtonState('use', false);
     } else {
-      changeButtonState('use', true)
+      changeButtonState('use', true);
     }
   }
 
   function activateKillButton() {
-    if(playerState == 'imposter'){
+    if (playerState == 'impostor') {
       console.log(distPlayer);
       if (distPlayer.length > 0) {
         console.log('<<<close>>>');
-        changeButtonState('kill', false)
+        changeButtonState('kill', false);
       } else {
         console.log('<<<far>>>');
-        changeButtonState('kill', true)
+        changeButtonState('kill', true);
       }
     }
   }
@@ -180,7 +180,6 @@ export default function GameScreen({ navigation }) {
   useEffect(() => {
     findAllDist(location);
   }, [players]);
-
 
   useEffect(() => {
     // Status update loop
@@ -283,9 +282,9 @@ export default function GameScreen({ navigation }) {
           reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
         />
-      ) : playerState == 'imposter' ? (
+      ) : playerState == 'impostor' ? (
         <ControlPanel
-          userType={'imposter'}
+          userType={'impostor'}
           killButtonState={buttonState.kill}
           killButtonPress={killButton}
           cooldown={10}
@@ -299,7 +298,7 @@ export default function GameScreen({ navigation }) {
         />
       ) : playerState == 'disguised' ? (
         <ControlPanel
-          userType={'disguisedImposter'}
+          userType={'disguisedimpostor'}
           revealButtonPress={revealButton}
           reportButtonState={buttonState.report}
           reportButtonPress={reportButton}
