@@ -19,7 +19,7 @@ import Minimap from '../components/minimap.js';
 
 import ControlPanel from '../components/controlpanel.js';
 
-import { findDistance, distAll, findClosest } from '../utils.js';
+import { findDistance, distAll, findClosestTask } from '../utils.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 
@@ -30,7 +30,7 @@ export default function GameScreen({ navigation }) {
     coords: { latitude: 0, longitude: 0 },
   });
 
-  const [playerState, setPlayerState] = useState('crewmate'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
+  const [playerState, setPlayerState] = useState('imposter'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
   const [errorMsg, setErrorMsg] = useState(null);
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
@@ -49,7 +49,8 @@ export default function GameScreen({ navigation }) {
   });
   const [taskCompletion, setTaskCompletion] = useState(10);
 
-  const [distArr, setDistArr] = useState([]);
+  const [distTask, setDistTask] = useState([]);
+  const [distPlayer, setDistPlayer] = useState([]);
 
   const animate = (loc) => {
     let r = {
@@ -90,24 +91,30 @@ export default function GameScreen({ navigation }) {
     });
   }
 
-  function changeButtonState(button) {
+  function changeButtonState(button, state) {
     if (button == 'use') {
       setButtonState((prevButtonState) => ({
         ...prevButtonState,
-        use: !buttonState.use,
+        use: state,
       }));
     }
     if (button == 'report') {
       setButtonState((prevButtonState) => ({
         ...prevButtonState,
-        report: !buttonState.report,
+        report: state,
+      }));
+    }
+    if (button == 'kill') {
+      setButtonState((prevButtonState) => ({
+        ...prevButtonState,
+        kill: state,
       }));
     }
   }
 
   function useButton() {
     console.log('USE');
-    let closestTask = findClosest(distArr);
+    let closestTask = findClosest(distTask);
   }
 
   function reportButton() {
@@ -129,36 +136,51 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist(loc) {
-    let newArr = distAll(loc.coords, tasks);
-    setDistArr(newArr);
+    let taskArr = distAll(loc.coords, tasks, 10);
+    let playerArr = distAll(loc.coords, players, 0.1)
+    setDistTask(taskArr);
+    setDistPlayer(playerArr);
   }
 
-  function activateButton() {
-    if (distArr.length > 0) {
-      setButtonState({
-        use: false,
-        report: buttonState.report,
-        kill: buttonState.kill,
-        disguise: buttonState.disguise,
-        sabotage: buttonState.sabotage,
-      });
-      console.log('close');
+  function activateUseButton() {
+    if (distTask.length > 0) {
+      changeButtonState('use', false)
     } else {
-      setButtonState({
-        use: true,
-        report: buttonState.report,
-        kill: buttonState.kill,
-        disguise: buttonState.disguise,
-        sabotage: buttonState.sabotage,
-      });
-      console.log('far');
+      changeButtonState('use', true)
+    }
+  }
+
+  function activateKillButton() {
+    if(playerState == 'imposter'){
+      console.log(distPlayer);
+      if (distPlayer.length > 0) {
+        console.log('<<<close>>>');
+        changeButtonState('kill', false)
+      } else {
+        console.log('<<<far>>>');
+        changeButtonState('kill', true)
+      }
     }
   }
 
   useEffect(() => {
-    // Detects when distArr is updated and reevaluates button activation
-    activateButton();
-  }, [distArr]);
+    // Detects when distTask is updated and reevaluates USE button activation
+    activateUseButton();
+  }, [distTask]);
+
+  useEffect(() => {
+    // Detects when distPlayer is updated and reevaluates KILL button activation
+    activateKillButton();
+  }, [distPlayer]);
+
+  useEffect(() => {
+    findAllDist(location);
+  }, [location]);
+
+  useEffect(() => {
+    findAllDist(location);
+  }, [players]);
+
 
   useEffect(() => {
     // Status update loop
@@ -175,8 +197,6 @@ export default function GameScreen({ navigation }) {
       ).tasks;
       setTasks(tasks);
     });
-
-    findAllDist(location);
 
     return () => {
       room.removeAllListeners();
@@ -202,15 +222,13 @@ export default function GameScreen({ navigation }) {
         {
           accuracy: Location.Accuracy.High,
           distanceInterval: 0.1,
-          timeInterval: 100,
+          timeInterval: 10,
         },
         (loc) => {
           setLocation(loc), animate(loc);
 
           // Send location to server
           getGameRoom()?.send('location', loc);
-
-          findAllDist(loc);
         }
       );
     })();
