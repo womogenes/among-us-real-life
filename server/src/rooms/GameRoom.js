@@ -40,6 +40,10 @@ export class GameRoom extends Room {
       this.state.players.find((p) => p.isHost).isImpostor = true;
     });
 
+    this.onMessage('settingsUpdated', (client, settings) => {
+      this.state.settings.update(settings);
+    });
+
     // Currently not used
     this.onMessage('endGame', (client) => {
       const isHost =
@@ -68,6 +72,7 @@ export class GameRoom extends Room {
     this.state.players.push(new Player(client.sessionId, isHost));
 
     this.state.refresh += 1;
+    this.broadcast('updateClientSettings', this.state.settings);
   }
 
   onLeave(client, consented) {
