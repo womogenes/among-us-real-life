@@ -79,7 +79,7 @@ class Settings extends Schema {
   }
 
   update(newSettings) {
-    for (key in newSettings) {
+    for (let key in newSettings) {
       if (newSettings[key]) this[key] = newSettings[key];
     }
   }
@@ -106,6 +106,7 @@ schema.defineTypes(GameRoomState, {
   refresh: 'number',
   code: 'string',
   gameStarted: 'boolean',
+  settings: Settings,
 
   players: [Player],
 });

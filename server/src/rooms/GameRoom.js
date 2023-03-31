@@ -42,6 +42,7 @@ export class GameRoom extends Room {
 
     this.onMessage('settingsUpdated', (client, settings) => {
       this.state.settings.update(settings);
+      this.state.refresh++;
     });
 
     // Currently not used
@@ -72,7 +73,6 @@ export class GameRoom extends Room {
     this.state.players.push(new Player(client.sessionId, isHost));
 
     this.state.refresh += 1;
-    this.broadcast('updateClientSettings', this.state.settings);
   }
 
   onLeave(client, consented) {
