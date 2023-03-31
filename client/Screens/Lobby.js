@@ -56,10 +56,9 @@ function LobbyScreen({ navigation }) {
     });
 
     room.onMessage('updateClientSettings', (newSettings) => {
-      if (newSettings != undefined) {
-        console.log(newSettings['settings']['killCooldown']);
-        setKillRadius(newSettings['settings']['killRadius']);
-        setKillCooldown(newSettings['settings']['killCooldown']);
+      if (newSettings) {
+        setKillRadius(newSettings['killRadius']);
+        setKillCooldown(newSettings['killCooldown']);
       }
     });
 
