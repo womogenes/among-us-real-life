@@ -167,7 +167,7 @@ export default function GameScreen({ navigation }) {
     setPlayers(room?.state?.players);
 
     room.onStateChange((state) => {
-      setPlayers(state.players.$items);
+      setPlayers(state.players);
 
       // Get player tasks from room state
       const tasks = state.players.find(
@@ -238,7 +238,7 @@ export default function GameScreen({ navigation }) {
         }}
         mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
       >
-        {players.forEach((player) => {
+        {players.map((player) => {
           return (
             <Marker
               key={player.sessionId}
