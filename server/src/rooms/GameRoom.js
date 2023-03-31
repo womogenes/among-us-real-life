@@ -20,7 +20,7 @@ export class GameRoom extends Room {
       this.state.players[idx].username = username;
     });
 
-    this.onMessage('startGame', (client, settings) => {
+    this.onMessage('startGame', (client) => {
       console.log(`client ${client.sessionId} started`);
 
       // Verify that only host can start the game
@@ -32,9 +32,6 @@ export class GameRoom extends Room {
 
       this.broadcast('gameStarted');
       this.state.gameStarted = true;
-
-      // Save the settings given by client
-      this.state.settings.update(settings);
 
       // Assign an impostor (for now, make it the host)
       this.state.players.find((p) => p.isHost).isImpostor = true;

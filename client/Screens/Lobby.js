@@ -108,11 +108,8 @@ function LobbyScreen({ navigation }) {
     // But let's do this check anyway
     console.assert(isHost);
 
-    // Tell server to start game, also send settings
-    getGameRoom().send('startGame', {
-      killRadius,
-      killCooldown,
-    });
+    // Tell server to start game
+    getGameRoom().send('startGame');
   };
 
   return (
