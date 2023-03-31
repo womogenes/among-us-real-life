@@ -1,6 +1,8 @@
 const client = new Colyseus.Client(`ws://${window.location.host}`);
 const $ = document.querySelector.bind(document);
 
+let getGameRoom = () => {};
+
 // Set some default room code
 $('#new-room-code').value = '1234';
 
@@ -24,18 +26,33 @@ $('#join-game-form').addEventListener('submit', async (e) => {
 
   gameRoom.onStateChange((state) => {
     $('#room-state-output').innerText = JSON.stringify(state, null, 2);
+
+    $('#start-game-btn').disabled =
+      state.gameStarted ||
+      !state.players.find((p) => p.sessionId === gameRoom.sessionId).isHost;
   }, 100);
 
   gameRoom.onMessage('gameStarted', () => {
     // Game has started, send random locations
-    window.setInterval(() => {
-      gameRoom.send('location', {
-        coords: {
-          latitude: 47.6375873 + Math.cos(Date.now() * 1e-4) * 1e-4,
-          longitude: -122.1697458 + Math.sin(Date.now() * 1e-4) * 1e-4,
-        },
-      });
-    }, 100);
+    const baseLocation = {
+      latitude: 47.7313982,
+      longitude: -122.3283326,
+    };
+
+    const handle = window.setInterval(() => {
+      try {
+        gameRoom.send('location', {
+          coords: {
+            latitude:
+              baseLocation.latitude + Math.cos(Date.now() * 1e-4) * 1e-4,
+            longitude:
+              baseLocation.longitude + Math.sin(Date.now() * 1e-4) * 1e-4,
+          },
+        });
+      } catch {
+        window.clearInterval(handle);
+      }
+    }, 200);
   });
 });
 
@@ -45,6 +62,11 @@ const connectToGameRoom = (code) => {
       console.log(`Joined game room ${gameRoom.sessionId}, code: ${code}`);
 
       resolve(gameRoom);
+      getGameRoom = () => gameRoom;
     });
   });
+};
+
+const startGame = () => {
+  getGameRoom().send('startGame');
 };

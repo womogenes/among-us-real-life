@@ -11,6 +11,9 @@
 
     <!-- Simple css styling -->
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" />
+
+    <!-- Our own stylesheet -->
+    <link rel="stylesheet" href="./main.css" />
   </head>
 
   <body>
@@ -27,6 +30,12 @@
       <input id="new-room-code" pattern="[0-9]{4}" />
       <input id="new-room-btn" type="submit" />
     </form>
+
+    <div>
+      <button id="start-game-btn" onclick="startGame()" disabled>
+        Start game
+      </button>
+    </div>
 
     <div>
       <h3>Room state</h3>

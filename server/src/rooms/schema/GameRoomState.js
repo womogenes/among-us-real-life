@@ -71,8 +71,17 @@ schema.defineTypes(Player, {
 
 // Settings schema
 class Settings extends Schema {
-  constructor(settings) {
-    Object.assign(settings, this);
+  constructor() {
+    super();
+
+    this.killRadius = 5;
+    this.killCooldown = 10;
+  }
+
+  update(newSettings) {
+    for (key in newSettings) {
+      if (newSettings[key]) this[key] = newSettings[key];
+    }
   }
 }
 schema.defineTypes(Settings, {
@@ -86,16 +95,17 @@ export class GameRoomState extends Schema {
     super();
 
     this.refresh = 0;
-
-    this.players = new ArraySchema();
     this.code = code;
     this.gameStarted = false;
+    this.settings = new Settings();
+
+    this.players = new ArraySchema();
   }
 }
 schema.defineTypes(GameRoomState, {
   refresh: 'number',
-
-  players: [Player],
   code: 'string',
   gameStarted: 'boolean',
+
+  players: [Player],
 });

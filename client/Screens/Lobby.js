@@ -90,7 +90,8 @@ function LobbyScreen({ navigation }) {
 
     // Tell server to start game, also send settings
     getGameRoom().send('startGame', {
-      settings: { killRadius, killCooldown },
+      killRadius,
+      killCooldown,
     });
   };
 
