@@ -1,8 +1,13 @@
+import express from 'express';
+import path from 'path';
+
 import Arena from '@colyseus/arena';
 import { monitor } from '@colyseus/monitor';
 
 import { GameRoom } from './rooms/GameRoom.js';
 import { LobbyRoom } from './rooms/LobbyRoom.js';
+
+const __dirname = path.resolve();
 
 export default Arena.default({
   getId: () => 'Your Colyseus App',
@@ -24,9 +29,12 @@ export default Arena.default({
     /**
      * Bind your custom express routes here:
      */
+
     app.get('/', (req, res) => {
-      res.send("It's time to kick ass and chew bubblegum!");
+      res.sendFile(path.join(__dirname, 'src/test-client/client.html'));
     });
+
+    app.use(express.static(path.join(__dirname, 'src/test-client')));
 
     /**
      * Bind @colyseus/monitor

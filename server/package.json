@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "dev": "nodemon src/index.js --ignore src/test-client -e js",
     "build": "npm run clean && node node_modules/copyfiles/copyfiles -u 1 -a './src/**/*.js' ./src/**/*.js ./upload && node node_modules/copyfiles/copyfiles package.json ./upload && node node_modules/copyfiles/copyfiles arena.env ./upload",
     "clean": "node node_modules/rimraf/bin upload"
   },
@@ -23,6 +23,7 @@
   "dependencies": {
     "@colyseus/arena": "^0.14.7",
     "@colyseus/monitor": "^0.14.0",
-    "colyseus": "^0.14.9"
+    "colyseus": "^0.14.9",
+    "express": "^4.18.2"
   }
 }

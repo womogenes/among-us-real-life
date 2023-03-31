@@ -114,10 +114,6 @@ function LobbyScreen({ navigation }) {
     });
   };
 
-  function endGame() {
-    getGameRoom().send('endGame');
-  }
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <KeyboardAvoidingView
@@ -367,6 +363,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 15,
     fontFamily: 'Impostograph-Regular',
+  },
+  disabled: {
+    display: 'none',
   },
 });
 

@@ -46,6 +46,7 @@ export class GameRoom extends Room {
       this.state.settings = settings;
     });
 
+    // Currently not used
     this.onMessage('endGame', (client) => {
       const isHost =
         client.sessionId === this.state.players.find((p) => p.isHost).sessionId;
@@ -61,11 +62,14 @@ export class GameRoom extends Room {
   }
 
   onAuth(client, options, request) {
+    return true;
+
+    // Temporarily allow joining an in-progress game for the sake of testing
     return !this.state.gameStarted;
   }
 
   onJoin(client, options) {
-    console.log(client.sessionId, 'joined!');
+    console.log(`${client.sessionId} joined room ${this.state.code}!`);
     const isHost = this.state.players.length === 0;
     this.state.players.push(new Player(client.sessionId, isHost));
 
@@ -80,7 +84,7 @@ export class GameRoom extends Room {
     );
     this.state.players.splice(removeIdx, 1);
 
-    if (this.state.players.size > 0) {
+    if (this.state.players.length > 0) {
       this.state.players[0].isHost = true;
     }
   }

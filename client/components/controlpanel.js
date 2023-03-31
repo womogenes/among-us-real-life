@@ -78,7 +78,7 @@ function ControlPanel(props) {
           />
         </View>
       )}
-      {props.userType == 'imposter' && (
+      {props.userType == 'impostor' && (
         <View style={styles.buttonContainer}>
           <CustomButton
             type={'cooldown'}
@@ -155,7 +155,7 @@ function ControlPanel(props) {
           </Modal>
         </View>
       )}
-      {props.userType == 'disguisedImposter' && (
+      {props.userType == 'disguisedimpostor' && (
         <View style={styles.buttonContainer}>
           <CustomButton
             type={'image'}
