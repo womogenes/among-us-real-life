@@ -29,7 +29,7 @@ class Task extends Schema {
 
     this.name = name;
     this.location = location;
-    this.complete = true;
+    this.complete = false;
   }
 }
 schema.defineTypes(Task, {

@@ -47,7 +47,12 @@ export default function GameScreen({ navigation }) {
     disguise: false,
     sabotage: false,
   });
+
   const [taskCompletion, setTaskCompletion] = useState(10);
+
+  const [activeTask, setActiveTask] = useState({
+    reCaptcha: false,
+  });
 
   const [distTask, setDistTask] = useState([]);
   const [distPlayer, setDistPlayer] = useState([]);
@@ -91,6 +96,16 @@ export default function GameScreen({ navigation }) {
     });
   }
 
+  function completeTask(task) {
+    if(task == 'reCaptcha') {
+      console.log('reCaptcha deactivate');
+      setActiveTask((prevArrState) => ({
+        ...prevArrState,
+        reCaptcha: false,
+      }));
+    }
+  }
+
   function changeButtonState(button, state) {
     if (button == 'use') {
       setButtonState((prevButtonState) => ({
@@ -114,7 +129,13 @@ export default function GameScreen({ navigation }) {
 
   function useButton() {
     console.log('USE');
-    let closestTask = findClosest(distTask);
+    let closestTask = findClosestTask(distTask);
+    if (closestTask.name == 'reCaptcha') {
+      setActiveTask((prevArrState) => ({
+        ...prevArrState,
+        reCaptcha: true,
+      }));
+    }
   }
 
   function reportButton() {
@@ -312,7 +333,10 @@ export default function GameScreen({ navigation }) {
         title={'increase tasks'}
         onPress={() => setTaskCompletion(taskCompletion + 10)}
       />
-      <CaptchaTask />
+      <CaptchaTask
+        active={activeTask.reCaptcha}
+        complete={completeTask}
+      />
     </View>
   );
 }
