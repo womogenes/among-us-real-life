@@ -57,7 +57,7 @@ export class GameRoom extends Room {
   }
 
   onJoin(client, options) {
-    console.log(client.sessionId, 'joined!');
+    console.log(`${client.sessionId} joined room ${this.state.code}!`);
     const isHost = this.state.players.length === 0;
     this.state.players.push(new Player(client.sessionId, isHost));
 
@@ -69,9 +69,10 @@ export class GameRoom extends Room {
     const removeIdx = this.state.players.findIndex(
       (p) => p.sessionId === client.sessionId
     );
+    console.log(`  removing index ${removeIdx}`);
     this.state.players.splice(removeIdx, 1);
 
-    if (this.state.players.size > 0) {
+    if (this.state.players.length > 0) {
       this.state.players[0].isHost = true;
     }
   }
