@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Among Us Real Life Test Client</title>
+
+    <script
+      src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"
+      defer
+    ></script>
+    <script src="./room-create-test.js" defer></script>
+
+    <!-- Simple css styling -->
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" />
+  </head>
+
+  <body>
+    <h1>Client</h1>
+
+    <span id="status-message">Connecting to server...<code></code></span>
+    <span id="status-message-2">[status message]</span>
+
+    <br /><br />
+
+    <form id="join-game-form">
+      <span>Join a game room:</span><br />
+      <small>(Must be 4 digits)</small><br />
+      <input id="new-room-code" pattern="[0-9]{4}" />
+      <input id="new-room-btn" type="submit" />
+    </form>
+
+    <div>
+      <h3>Room state</h3>
+      <span>Room sessionId: <code id="room-session-id"></code></span>
+      <pre id="room-state-output" style="font-size: 11pt"></pre>
+    </div>
+  </body>
+</html>
