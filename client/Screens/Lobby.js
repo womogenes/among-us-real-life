@@ -23,10 +23,10 @@ function LobbyScreen({ navigation }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const handleModal = () => setIsModalVisible(() => !isModalVisible);
 
-  const [killRadius, setKillRadius] = useState(5);
-  const [killCooldown, setKillCooldown] = useState(60);
-  const [prevKillRadius, setPrevKillRadius] = useState(5);
-  const [prevKillCooldown, setPrevKillCooldown] = useState(60);
+  const [killRadius, setKillRadius] = useState([5]);
+  const [killCooldown, setKillCooldown] = useState([60]);
+  const [prevKillRadius, setPrevKillRadius] = useState([5]);
+  const [prevKillCooldown, setPrevKillCooldown] = useState([60]);
 
   const [roomState, setRoomState] = useState({});
   const [roomCode, setRoomCode] = useState('0000');
@@ -55,6 +55,13 @@ function LobbyScreen({ navigation }) {
       navigation.navigate('Menu');
     });
 
+    room.onMessage('updateClientSettings', (newSettings) => {
+      if (newSettings) {
+        setKillRadius(newSettings['killRadius']);
+        setKillCooldown(newSettings['killCooldown']);
+      }
+    });
+
     return () => {
       // Disconnect from the room
       console.log(`Left game room ${room.sessionId}, code: ${room.state.code}`);
@@ -70,6 +77,12 @@ function LobbyScreen({ navigation }) {
   function dontSave() {
     setKillRadius(prevKillRadius);
     setKillCooldown(prevKillCooldown);
+    getGameRoom().send('settingsUpdated', {
+      settings: {
+        killRadius: prevKillRadius[0],
+        killCooldown: prevKillCooldown[0],
+      },
+    });
   }
 
   function changeNameText(changedName) {
@@ -83,6 +96,12 @@ function LobbyScreen({ navigation }) {
     getGameRoom().send('setUsername', changedName);
   }
 
+  function settingsUpdated() {
+    getGameRoom().send('settingsUpdated', {
+      settings: { killRadius: killRadius[0], killCooldown: killCooldown[0] },
+    });
+  }
+
   const startGame = () => {
     // In theory, only the host can click the "start game" button
     // But let's do this check anyway
@@ -90,7 +109,8 @@ function LobbyScreen({ navigation }) {
 
     // Tell server to start game, also send settings
     getGameRoom().send('startGame', {
-      settings: { killRadius, killCooldown },
+      killRadius,
+      killCooldown,
     });
   };
 
@@ -155,15 +175,19 @@ function LobbyScreen({ navigation }) {
               <Text style={styles.titleSettings}>Settings</Text>
               <View>
                 <Text style={styles.settingsModalText}>
-                  Kill Radius: {killRadius}
+                  Kill Radius: {killRadius}m
                 </Text>
                 <Slider
                   value={killRadius}
                   minimumValue={2}
                   maximumValue={10}
                   step={1}
-                  onValueChange={(killRadius) => setKillRadius(killRadius)}
+                  onValueChange={(killRadius) => {
+                    setKillRadius(killRadius);
+                    settingsUpdated();
+                  }}
                   trackClickable={true}
+                  disabled={!isHost}
                 />
               </View>
               <View>
@@ -175,40 +199,56 @@ function LobbyScreen({ navigation }) {
                   minimumValue={10}
                   maximumValue={240}
                   step={10}
-                  onValueChange={(killCooldown) =>
-                    setKillCooldown(killCooldown)
-                  }
+                  onValueChange={(killCooldown) => {
+                    setKillCooldown(killCooldown);
+                    settingsUpdated();
+                  }}
                   trackClickable={true}
+                  disabled={!isHost}
                 />
               </View>
             </View>
 
-            <View style={styles.settingsModalExit}>
-              <TouchableOpacity
-                onPress={handleModal}
-                style={[isHost ? styles.button : styles.disabled]}
-              >
-                <Text style={styles.buttonText}>Close and Save</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  handleModal();
-                  dontSave();
-                }}
-                style={styles.button}
-              >
-                <Text style={styles.redText}>Close and Don't Save</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  leaveGameRoom();
-                  navigation.navigate('Menu');
-                }}
-                style={[styles.button]}
-              >
-                <Text style={styles.redText}>Leave Room</Text>
-              </TouchableOpacity>
-            </View>
+            {isHost ? (
+              <View style={styles.settingsModalExit}>
+                <TouchableOpacity onPress={handleModal} style={styles.button}>
+                  <Text style={styles.buttonText}>Close and Save</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleModal();
+                    dontSave();
+                  }}
+                  style={styles.button}
+                >
+                  <Text style={styles.redText}>Close and Don't Save</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    leaveGameRoom();
+                    navigation.navigate('Menu');
+                  }}
+                  style={[styles.button]}
+                >
+                  <Text style={styles.redText}>Leave Room</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.settingsModalExit}>
+                <TouchableOpacity onPress={handleModal} style={styles.button}>
+                  <Text style={styles.buttonText}>Close</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    leaveGameRoom();
+                    navigation.navigate('Menu');
+                  }}
+                  style={[styles.button]}
+                >
+                  <Text style={styles.redText}>Leave Room</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </Modal>
       </KeyboardAvoidingView>
