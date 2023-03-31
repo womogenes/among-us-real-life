@@ -4,6 +4,8 @@ import { monitor } from '@colyseus/monitor';
 import { GameRoom } from './rooms/GameRoom.js';
 import { LobbyRoom } from './rooms/LobbyRoom.js';
 
+import createRoom from './testClient/roomCreateTest.js';
+
 export default Arena.default({
   getId: () => 'Your Colyseus App',
 
@@ -24,8 +26,10 @@ export default Arena.default({
     /**
      * Bind your custom express routes here:
      */
+
+    app.get('/createRoom', createRoom);
     app.get('/', (req, res) => {
-      res.send("It's time to kick ass and chew bubblegum!");
+      res.sendFile('src/testClient/client.html', { root: '.' });
     });
 
     /**

@@ -31,7 +31,10 @@ function JoinScreen({ navigation }) {
     // Keep roomList in sync with the server
     setRoomList(lobby.state.rooms);
 
+    console.log(lobby.state.rooms);
+
     lobby.onStateChange((state) => {
+      console.log(state.rooms.$items);
       setRoomList(state.rooms.$items);
     });
 
@@ -69,6 +72,7 @@ function JoinScreen({ navigation }) {
             />
             <TouchableOpacity
               style={styles.button}
+              disabled={!(/\d/.test(code) && code.length == 4)}
               onPress={() => {
                 joinPressed(code);
               }}

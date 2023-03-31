@@ -188,7 +188,10 @@ function LobbyScreen({ navigation }) {
             </View>
 
             <View style={styles.settingsModalExit}>
-              <TouchableOpacity onPress={handleModal} style={styles.button}>
+              <TouchableOpacity
+                onPress={handleModal}
+                style={[isHost ? styles.button : styles.disabled]}
+              >
                 <Text style={styles.buttonText}>Close and Save</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -200,15 +203,15 @@ function LobbyScreen({ navigation }) {
               >
                 <Text style={styles.redText}>Close and Don't Save</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  leaveGameRoom();
-                  navigation.navigate('Menu');
-                }}
-                style={[styles.button]}
-              >
-                <Text style={styles.redText}>Leave Room</Text>
-              </TouchableOpacity>
+              {isHost && (
+                <TouchableOpacity
+                  onPress={endGame}
+                  style={[isHost ? styles.button : styles.disabled]}
+                  disabled={!isHost}
+                >
+                  <Text style={styles.redText}>Close Room</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </Modal>
@@ -325,6 +328,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     fontFamily: 'Impostograph-Regular',
   },
+<<<<<<< HEAD
+  disabled: {
+    display: 'none',
+  },
+=======
+>>>>>>> ecb38314192a9fa3b1b38e4c5afd5f70c888aaf3
 });
 
 export { LobbyScreen };
