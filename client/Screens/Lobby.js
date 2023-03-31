@@ -42,12 +42,18 @@ function LobbyScreen({ navigation }) {
       setRoomState(state);
       setRoomCode(state.code);
       setMemberList([...state.players]);
-      setIsHost(
-        state.players.find((p) => p.sessionId === room.sessionId).isHost
-      );
 
-      setKillRadius(state.settings.killRadius);
-      setKillCooldown(state.settings.killCooldown);
+      const isHost = state.players.find(
+        (p) => p.sessionId === room.sessionId
+      ).isHost;
+      setIsHost(isHost);
+
+      // If not host, update this info
+      // (Host has control over this info on their end)
+      if (!isHost) {
+        setKillRadius(state.settings.killRadius);
+        setKillCooldown(state.settings.killCooldown);
+      }
     });
 
     room.onMessage('gameStarted', () => {
@@ -74,10 +80,8 @@ function LobbyScreen({ navigation }) {
     setKillRadius(prevKillRadius);
     setKillCooldown(prevKillCooldown);
     getGameRoom().send('settingsUpdated', {
-      settings: {
-        killRadius: prevKillRadius[0],
-        killCooldown: prevKillCooldown[0],
-      },
+      killRadius: prevKillRadius[0],
+      killCooldown: prevKillCooldown[0],
     });
   }
 
