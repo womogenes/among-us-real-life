@@ -31,10 +31,10 @@ export default Arena.default({
      */
 
     app.get('/', (req, res) => {
-      res.sendFile('src/test-client/client.html');
+      res.sendFile(path.join(__dirname, 'src/test-client/client.html'));
     });
 
-    app.use('/static', express.static(path.join(__dirname, 'src/test-client')));
+    app.use(express.static(path.join(__dirname, 'src/test-client')));
 
     /**
      * Bind @colyseus/monitor
