@@ -29,17 +29,13 @@ $('#join-game-form').addEventListener('submit', async (e) => {
   gameRoom.onMessage('gameStarted', () => {
     // Game has started, send random locations
     window.setInterval(() => {
-      gameRoom.send(
-        'location',
-        {
-          coords: {
-            latitude: 47.6375873,
-            longitude: -122.1697458,
-          },
+      gameRoom.send('location', {
+        coords: {
+          latitude: 47.6375873 + Math.cos(Date.now() * 1e-4) * 1e-4,
+          longitude: -122.1697458 + Math.sin(Date.now() * 1e-4) * 1e-4,
         },
-        1000
-      );
-    });
+      });
+    }, 100);
   });
 });
 

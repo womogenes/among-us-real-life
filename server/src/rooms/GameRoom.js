@@ -53,6 +53,9 @@ export class GameRoom extends Room {
   }
 
   onAuth(client, options, request) {
+    return true;
+
+    // Temporarily allow joining an in-progress game for the sake of testing
     return !this.state.gameStarted;
   }
 
@@ -69,7 +72,6 @@ export class GameRoom extends Room {
     const removeIdx = this.state.players.findIndex(
       (p) => p.sessionId === client.sessionId
     );
-    console.log(`  removing index ${removeIdx}`);
     this.state.players.splice(removeIdx, 1);
 
     if (this.state.players.length > 0) {
