@@ -32,19 +32,8 @@ export default function GameScreen({ navigation }) {
 
   const [playerState, setPlayerState] = useState('crewmate'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
   const [errorMsg, setErrorMsg] = useState(null);
-<<<<<<< HEAD
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
-=======
-  const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
-  const [tasks, setTasks] = useState([
-    {
-      name: 'reCaptcha',
-      location: { latitude: 47.731475, longitude: -122.328036 }, // Felix's house test coords: 47.73730501931134, -122.33942051124151
-      complete: true,
-    }, // Test instance
-  ]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
->>>>>>> 9221a1c8fe5eee9e739258ae668bd256bd9b2472
 
   const [sabotageList, setSabotageList] = useState([
     { name: 'Reactor', key: 1, availability: true },
@@ -142,7 +131,6 @@ export default function GameScreen({ navigation }) {
   function findAllDist(loc) {
     let newArr = distAll(loc.coords, tasks);
     setDistArr(newArr);
-
   }
 
   function activateButton() {
@@ -167,7 +155,8 @@ export default function GameScreen({ navigation }) {
     }
   }
 
-  useEffect(() => { // Detects when distArr is updated and reevaluates button activation
+  useEffect(() => {
+    // Detects when distArr is updated and reevaluates button activation
     activateButton();
   }, [distArr]);
 
