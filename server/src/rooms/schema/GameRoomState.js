@@ -51,7 +51,10 @@ export class Player extends Schema {
     // Make a default test task
     this.tasks = new ArraySchema();
     this.tasks.push(
-      new Task('reCaptcha', new Location(47.731475, -122.328036, 0))
+      new Task('reCaptcha', new Location(47.731475, -122.328036, 0)), // AG
+      new Task('reCaptcha', new Location(47.731265, -122.327709, 0)), // Lower-right of AG
+      new Task('reCaptcha', new Location(47.731838, -122.327802, 0)), // Fix
+      new Task('reCaptcha', new Location(47.731639, -122.327612, 0)) // Red square
     );
   }
 }
