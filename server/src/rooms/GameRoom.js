@@ -20,7 +20,7 @@ export class GameRoom extends Room {
       this.state.players[idx].username = username;
     });
 
-    this.onMessage('startGame', (client, { settings }) => {
+    this.onMessage('startGame', (client, settings) => {
       console.log(`client ${client.sessionId} started`);
 
       // Verify that only host can start the game
@@ -34,6 +34,15 @@ export class GameRoom extends Room {
       this.state.gameStarted = true;
 
       // Save the settings given by client
+
+      this.state.settings = settings;
+      console.log(this.state.settings);
+      console.log('YESS');
+    });
+
+    this.onMessage('settingsUpdated', (client, settings) => {
+      console.log(settings);
+      console.log('hello');
       this.state.settings = settings;
     });
 
@@ -61,6 +70,7 @@ export class GameRoom extends Room {
     this.state.players.push(new Player(client.sessionId, isHost));
 
     this.state.refresh += 1;
+    this.broadcast('updateClientSettings', this.state.settings);
   }
 
   onLeave(client, consented) {
