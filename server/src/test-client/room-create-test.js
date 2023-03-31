@@ -34,25 +34,7 @@ $('#join-game-form').addEventListener('submit', async (e) => {
 
   gameRoom.onMessage('gameStarted', () => {
     // Game has started, send random locations
-    const baseLocation = {
-      latitude: 47.7313982,
-      longitude: -122.3283326,
-    };
-
-    const handle = window.setInterval(() => {
-      try {
-        gameRoom.send('location', {
-          coords: {
-            latitude:
-              baseLocation.latitude + Math.cos(Date.now() * 1e-4) * 1e-4,
-            longitude:
-              baseLocation.longitude + Math.sin(Date.now() * 1e-4) * 1e-4,
-          },
-        });
-      } catch {
-        window.clearInterval(handle);
-      }
-    }, 200);
+    console.log('Game started');
   });
 });
 
@@ -70,3 +52,19 @@ const connectToGameRoom = (code) => {
 const startGame = () => {
   getGameRoom().send('startGame');
 };
+
+// Listen for input changes
+const sendCoords = () => {
+  getGameRoom().send('location', {
+    coords: {
+      latitude: parseFloat($('#latitude').value),
+      longitude: parseFloat($('#longitude').value),
+    },
+  });
+};
+
+$('#latitude').addEventListener('input', sendCoords);
+$('#longitude').addEventListener('input', sendCoords);
+
+$('#latitude').value = 47.731417;
+$('#longitude').value = -122.328147;
