@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -18,12 +18,19 @@ function CaptchaTask(props) {
     }
 
     const onVerify = token => {
+        props.complete('reCaptcha');
         console.log('success!', token);
     }
 
     const onExpire = () => {
         console.warn('expired');
     }
+
+    useEffect(() => {
+      if(props.active == true){
+        send();
+      }
+    }, [props.active]);
 
   return (
     <View>
@@ -35,7 +42,6 @@ function CaptchaTask(props) {
             onExpire={onExpire}
             size="normal"
         />
-        <Button title="Send" onPress={send} />
     </View>
   );
 }
