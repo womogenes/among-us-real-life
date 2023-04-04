@@ -19,7 +19,7 @@ import Minimap from '../components/minimap.js';
 
 import ControlPanel from '../components/controlpanel.js';
 
-import { findDistance, distAll, findClosest } from '../utils.js';
+import { findDistance, distAll, findClosestTask } from '../utils.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 
@@ -30,16 +30,10 @@ export default function GameScreen({ navigation }) {
     coords: { latitude: 0, longitude: 0 },
   });
 
-  const [playerState, setPlayerState] = useState('crewmate'); // Change this to change the player type (e.g. crewmate, imposter, disguised)
+  const [playerState, setPlayerState] = useState('impostor'); // Change this to change the player type (e.g. crewmate, impostor, disguised)
   const [errorMsg, setErrorMsg] = useState(null);
-  const [players, setPlayers] = useState(new Map()); // At some point, we'll want to use a state management lib for this
-  const [tasks, setTasks] = useState([
-    {
-      name: 'reCaptcha',
-      location: { latitude: 47.731475, longitude: -122.328036 }, // Felix's house test coords: 47.73730501931134, -122.33942051124151
-      complete: true,
-    }, // Test instance
-  ]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+  const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
+  const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
   const [sabotageList, setSabotageList] = useState([
     { name: 'Reactor', key: 1, availability: true },
@@ -53,9 +47,15 @@ export default function GameScreen({ navigation }) {
     disguise: false,
     sabotage: false,
   });
+
   const [taskCompletion, setTaskCompletion] = useState(10);
 
-  const [distArr, setDistArr] = useState([]);
+  const [activeTask, setActiveTask] = useState({
+    reCaptcha: false,
+  });
+
+  const [distTask, setDistTask] = useState([]);
+  const [distPlayer, setDistPlayer] = useState([]);
 
   const animate = (loc) => {
     let r = {
@@ -96,24 +96,46 @@ export default function GameScreen({ navigation }) {
     });
   }
 
-  function changeButtonState(button) {
+  function completeTask(task) {
+    if(task == 'reCaptcha') {
+      console.log('reCaptcha deactivate');
+      setActiveTask((prevArrState) => ({
+        ...prevArrState,
+        reCaptcha: false,
+      }));
+    }
+  }
+
+  function changeButtonState(button, state) {
     if (button == 'use') {
       setButtonState((prevButtonState) => ({
         ...prevButtonState,
-        use: !buttonState.use,
+        use: state,
       }));
     }
     if (button == 'report') {
       setButtonState((prevButtonState) => ({
         ...prevButtonState,
-        report: !buttonState.report,
+        report: state,
+      }));
+    }
+    if (button == 'kill') {
+      setButtonState((prevButtonState) => ({
+        ...prevButtonState,
+        kill: state,
       }));
     }
   }
 
   function useButton() {
     console.log('USE');
-    let closestTask = findClosest(distArr);
+    let closestTask = findClosestTask(distTask);
+    if (closestTask.name == 'reCaptcha') {
+      setActiveTask((prevArrState) => ({
+        ...prevArrState,
+        reCaptcha: true,
+      }));
+    }
   }
 
   function reportButton() {
@@ -130,41 +152,55 @@ export default function GameScreen({ navigation }) {
   }
 
   function revealButton() {
-    setPlayerState('imposter');
+    setPlayerState('impostor');
     console.log('REVEAL');
   }
 
   function findAllDist(loc) {
-    let newArr = distAll(loc.coords, tasks);
-    setDistArr(newArr);
-
+    let taskArr = distAll(loc.coords, tasks, 10);
+    let playerArr = distAll(loc.coords, players, 0.1);
+    setDistTask(taskArr);
+    setDistPlayer(playerArr);
   }
 
-  function activateButton() {
-    if (distArr.length > 0) {
-      setButtonState({
-        use: false,
-        report: buttonState.report,
-        kill: buttonState.kill,
-        disguise: buttonState.disguise,
-        sabotage: buttonState.sabotage,
-      });
-      console.log('close');
+  function activateUseButton() {
+    if (distTask.length > 0) {
+      changeButtonState('use', false);
     } else {
-      setButtonState({
-        use: true,
-        report: buttonState.report,
-        kill: buttonState.kill,
-        disguise: buttonState.disguise,
-        sabotage: buttonState.sabotage,
-      });
-      console.log('far');
+      changeButtonState('use', true);
     }
   }
 
-  useEffect(() => { // Detects when distArr is updated and reevaluates button activation
-    activateButton();
-  }, [distArr]);
+  function activateKillButton() {
+    if (playerState == 'impostor') {
+      console.log(distPlayer);
+      if (distPlayer.length > 0) {
+        console.log('<<<close>>>');
+        changeButtonState('kill', false);
+      } else {
+        console.log('<<<far>>>');
+        changeButtonState('kill', true);
+      }
+    }
+  }
+
+  useEffect(() => {
+    // Detects when distTask is updated and reevaluates USE button activation
+    activateUseButton();
+  }, [distTask]);
+
+  useEffect(() => {
+    // Detects when distPlayer is updated and reevaluates KILL button activation
+    activateKillButton();
+  }, [distPlayer]);
+
+  useEffect(() => {
+    findAllDist(location);
+  }, [location]);
+
+  useEffect(() => {
+    findAllDist(location);
+  }, [players]);
 
   useEffect(() => {
     // Status update loop
@@ -173,17 +209,14 @@ export default function GameScreen({ navigation }) {
     setPlayers(room?.state?.players);
 
     room.onStateChange((state) => {
-      setPlayers(state.players.$items);
+      setPlayers(state.players);
 
-      // // Get player tasks from room state
-      // const tasks = state.players.find(
-      //   (p) => p.sessionId === room.sessionId
-      // ).tasks;
-      // // setTasks(tasks);
-      // console.log(`my tasks: ${tasks}`);
+      // Get player tasks from room state
+      const tasks = state.players.find(
+        (p) => p.sessionId === room.sessionId
+      ).tasks;
+      setTasks(tasks);
     });
-
-    findAllDist(location);
 
     return () => {
       room.removeAllListeners();
@@ -209,15 +242,13 @@ export default function GameScreen({ navigation }) {
         {
           accuracy: Location.Accuracy.High,
           distanceInterval: 0.1,
-          timeInterval: 100,
+          timeInterval: 10,
         },
         (loc) => {
           setLocation(loc), animate(loc);
 
           // Send location to server
           getGameRoom()?.send('location', loc);
-
-          findAllDist(loc);
         }
       );
     })();
@@ -245,7 +276,7 @@ export default function GameScreen({ navigation }) {
         }}
         mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
       >
-        {players.forEach((player) => {
+        {players.map((player) => {
           return (
             <Marker
               key={player.sessionId}
@@ -272,9 +303,9 @@ export default function GameScreen({ navigation }) {
           reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
         />
-      ) : playerState == 'imposter' ? (
+      ) : playerState == 'impostor' ? (
         <ControlPanel
-          userType={'imposter'}
+          userType={'impostor'}
           killButtonState={buttonState.kill}
           killButtonPress={killButton}
           cooldown={10}
@@ -288,7 +319,7 @@ export default function GameScreen({ navigation }) {
         />
       ) : playerState == 'disguised' ? (
         <ControlPanel
-          userType={'disguisedImposter'}
+          userType={'disguisedimpostor'}
           revealButtonPress={revealButton}
           reportButtonState={buttonState.report}
           reportButtonPress={reportButton}
@@ -302,7 +333,10 @@ export default function GameScreen({ navigation }) {
         title={'increase tasks'}
         onPress={() => setTaskCompletion(taskCompletion + 10)}
       />
-      <CaptchaTask />
+      <CaptchaTask
+        active={activeTask.reCaptcha}
+        complete={completeTask}
+      />
     </View>
   );
 }

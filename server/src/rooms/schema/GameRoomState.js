@@ -29,7 +29,7 @@ class Task extends Schema {
 
     this.name = name;
     this.location = location;
-    this.complete = true;
+    this.complete = false;
   }
 }
 schema.defineTypes(Task, {
@@ -47,11 +47,16 @@ export class Player extends Schema {
     this.username = 'Anonymous';
     this.location = new Location();
     this.isHost = isHost;
+    this.isImpostor = false;
 
     // Make a default test task
     this.tasks = new ArraySchema();
     this.tasks.push(
-      new Task('reCaptcha', new Location(47.731475, -122.328036, 0))
+      new Task('reCaptcha', new Location(47.731475, -122.328036, 0)), // AG
+      new Task('reCaptcha', new Location(47.731265, -122.327709, 0)), // Lower-right of AG
+      new Task('reCaptcha', new Location(47.731838, -122.327802, 0)), // Fix
+      new Task('reCaptcha', new Location(47.731639, -122.327612, 0)), // Red square
+      new Task('reCaptcha', new Location(47.731779, -122.32705, 0)) // Bliss
     );
   }
 }
@@ -60,14 +65,24 @@ schema.defineTypes(Player, {
   username: 'string',
   location: Location,
   isHost: 'boolean',
+  isImpostor: 'boolean',
 
   tasks: [Task],
 });
 
 // Settings schema
 class Settings extends Schema {
-  constructor(settings) {
-    Object.assign(settings, this);
+  constructor() {
+    super();
+
+    this.killRadius = 5;
+    this.killCooldown = 10;
+  }
+
+  update(newSettings) {
+    for (let key in newSettings) {
+      if (newSettings[key]) this[key] = newSettings[key];
+    }
   }
 }
 schema.defineTypes(Settings, {
@@ -81,16 +96,18 @@ export class GameRoomState extends Schema {
     super();
 
     this.refresh = 0;
-
-    this.players = new ArraySchema();
     this.code = code;
     this.gameStarted = false;
+    this.settings = new Settings();
+
+    this.players = new ArraySchema();
   }
 }
 schema.defineTypes(GameRoomState, {
   refresh: 'number',
-
-  players: [Player],
   code: 'string',
   gameStarted: 'boolean',
+  settings: Settings,
+
+  players: [Player],
 });

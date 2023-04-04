@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@pgrabovets/json-view": "^2.7.1",
+    "json-formatter-js": "^2.3.4"
+  }
+}

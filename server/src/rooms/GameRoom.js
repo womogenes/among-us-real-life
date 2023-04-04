@@ -20,7 +20,7 @@ export class GameRoom extends Room {
       this.state.players[idx].username = username;
     });
 
-    this.onMessage('startGame', (client, { settings }) => {
+    this.onMessage('startGame', (client) => {
       console.log(`client ${client.sessionId} started`);
 
       // Verify that only host can start the game
@@ -33,10 +33,16 @@ export class GameRoom extends Room {
       this.broadcast('gameStarted');
       this.state.gameStarted = true;
 
-      // Save the settings given by client
-      this.state.settings = settings;
+      // Assign an impostor (for now, make it the host)
+      this.state.players.find((p) => p.isHost).isImpostor = true;
     });
 
+    this.onMessage('settingsUpdated', (client, settings) => {
+      this.state.settings.update(settings);
+      this.state.refresh++;
+    });
+
+    // Currently not used
     this.onMessage('endGame', (client) => {
       const isHost =
         client.sessionId === this.state.players.find((p) => p.isHost).sessionId;
@@ -52,11 +58,14 @@ export class GameRoom extends Room {
   }
 
   onAuth(client, options, request) {
+    return true;
+
+    // Temporarily allow joining an in-progress game for the sake of testing
     return !this.state.gameStarted;
   }
 
   onJoin(client, options) {
-    console.log(client.sessionId, 'joined!');
+    console.log(`${client.sessionId} joined room ${this.state.code}!`);
     const isHost = this.state.players.length === 0;
     this.state.players.push(new Player(client.sessionId, isHost));
 
@@ -70,7 +79,7 @@ export class GameRoom extends Room {
     );
     this.state.players.splice(removeIdx, 1);
 
-    if (this.state.players.size > 0) {
+    if (this.state.players.length > 0) {
       this.state.players[0].isHost = true;
     }
   }
