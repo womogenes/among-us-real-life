@@ -328,12 +328,9 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     fontFamily: 'Impostograph-Regular',
   },
-<<<<<<< HEAD
   disabled: {
     display: 'none',
   },
-=======
->>>>>>> ecb38314192a9fa3b1b38e4c5afd5f70c888aaf3
 });
 
 export { LobbyScreen };
