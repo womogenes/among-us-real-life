@@ -158,7 +158,11 @@ function LobbyScreen({ navigation }) {
             disabled={!isHost}
           >
             <Text style={styles.buttonText}>
-              {isHost ? 'Start Game' : 'Waiting on host...'}
+              {isHost
+                ? getGameRoom().state.players.length > 1
+                  ? 'Start Game'
+                  : 'Not enough players...'
+                : 'Waiting on host...'}
             </Text>
           </TouchableOpacity>
         </View>
