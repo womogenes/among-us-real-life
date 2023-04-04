@@ -207,6 +207,11 @@ export default function GameScreen({ navigation }) {
     const room = getGameRoom();
 
     setPlayers(room?.state?.players);
+    setPlayerState(
+      room.state.players.find((p) => p.sessionId === room.sessionId).isImpostor
+        ? 'impostor'
+        : 'crewmate'
+    );
 
     room.onStateChange((state) => {
       setPlayers(state.players);
