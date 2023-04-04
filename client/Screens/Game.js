@@ -19,7 +19,7 @@ import Minimap from '../components/minimap.js';
 
 import ControlPanel from '../components/controlpanel.js';
 
-import { findDistance, distAll, findClosestTask } from '../utils.js';
+import { findDistance, distAll, findClosest } from '../utils.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 
@@ -157,8 +157,8 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist(loc) {
-    let taskArr = distAll(loc.coords, tasks, 10);
-    let playerArr = distAll(loc.coords, players, 0.1);
+    let taskArr = distAll('task', loc.coords, tasks, 10);
+    let playerArr = distAll('player', loc.coords, players, 5);
     setDistTask(taskArr);
     setDistPlayer(playerArr);
   }
@@ -173,8 +173,9 @@ export default function GameScreen({ navigation }) {
 
   function activateKillButton() {
     if (playerState == 'impostor') {
-      console.log(distPlayer);
+      console.log(distPlayer);     
       if (distPlayer.length > 0) {
+
         console.log('<<<close>>>');
         changeButtonState('kill', false);
       } else {
@@ -190,15 +191,18 @@ export default function GameScreen({ navigation }) {
   }, [distTask]);
 
   useEffect(() => {
+    changeButtonState('kill', true);
     // Detects when distPlayer is updated and reevaluates KILL button activation
     activateKillButton();
   }, [distPlayer]);
 
   useEffect(() => {
+    console.log('my change');
     findAllDist(location);
   }, [location]);
 
   useEffect(() => {
+    console.log('player change');
     findAllDist(location);
   }, [players]);
 
