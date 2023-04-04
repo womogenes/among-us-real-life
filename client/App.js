@@ -38,7 +38,7 @@ export default function App() {
             <Stack.Screen
               name="Game"
               component={GameScreen}
-              options={{ gestureEnabled: false }}
+              // options={{ gestureEnabled: false }}
             />
             <Stack.Screen name="Join" component={JoinScreen} />
             <Stack.Screen
