@@ -3,7 +3,6 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  Text,
   View,
   TextInput,
   KeyboardAvoidingView,
@@ -13,11 +12,10 @@ import {
 } from 'react-native';
 import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
-import { StatusBar } from 'expo-status-bar';
 import { Slider } from '@miblanchard/react-native-slider';
+import CustomText from '../components/text.js';
 
 import { getGameRoom, leaveGameRoom } from '../networking.js';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 function LobbyScreen({ navigation }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -134,7 +132,7 @@ function LobbyScreen({ navigation }) {
             autoComplete="off"
             autoCorrect={false}
           />
-          <Text style={styles.codeText}>Code: {roomCode}</Text>
+          <CustomText textSize={50}>Code: {roomCode}</CustomText>
         </View>
 
         <View style={styles.playerContainer}>
@@ -142,10 +140,19 @@ function LobbyScreen({ navigation }) {
             data={memberList}
             renderItem={({ item }) => (
               <TouchableWithoutFeedback>
-                <Text style={styles.item}>
-                  <Text>{item.username || 'Anonymous'}</Text>
-                  <Text>{item.isHost && ' (Host)'}</Text>
-                </Text>
+                <CustomText
+                  textColor={'black'}
+                  centerText={true}
+                  textSize={50}
+                  marginHorizontal={20}
+                  marginVertical={10}
+                  padding={10}
+                  borderWidth={2}
+                  borderRadius={15}
+                >
+                  {item.username || 'Anonymous'}
+                  {item.isHost && ' (Host)'}
+                </CustomText>
               </TouchableWithoutFeedback>
             )}
           />
@@ -155,15 +162,15 @@ function LobbyScreen({ navigation }) {
           <TouchableOpacity
             style={styles.button}
             onPress={startGame}
-            disabled={!isHost}
+            disabled={!isHost || getGameRoom().state.players.length < 2}
           >
-            <Text style={styles.buttonText}>
+            <CustomText textSize={45}>
               {isHost
                 ? getGameRoom().state.players.length > 1
                   ? 'Start Game'
                   : 'Not enough players...'
                 : 'Waiting on host...'}
-            </Text>
+            </CustomText>
           </TouchableOpacity>
         </View>
 
@@ -174,11 +181,13 @@ function LobbyScreen({ navigation }) {
         >
           <View style={styles.settingsModal}>
             <View style={styles.settingsModalSettings}>
-              <Text style={styles.titleSettings}>Settings</Text>
+              <CustomText textSize={60} centerText={true} marginVertical={40}>
+                Settings
+              </CustomText>
               <View>
-                <Text style={styles.settingsModalText}>
+                <CustomText centerText={true} textSize={40}>
                   Kill Radius: {killRadius}m
-                </Text>
+                </CustomText>
                 <Slider
                   value={killRadius}
                   minimumValue={2}
@@ -193,9 +202,9 @@ function LobbyScreen({ navigation }) {
                 />
               </View>
               <View>
-                <Text style={styles.settingsModalText}>
+                <CustomText centerText={true} textSize={40}>
                   Kill Cooldown: {killCooldown}s
-                </Text>
+                </CustomText>
                 <Slider
                   value={killCooldown}
                   minimumValue={10}
@@ -214,7 +223,7 @@ function LobbyScreen({ navigation }) {
             {isHost ? (
               <View style={styles.settingsModalExit}>
                 <TouchableOpacity onPress={handleModal} style={styles.button}>
-                  <Text style={styles.buttonText}>Close and Save</Text>
+                  <CustomText textSize={45}>Close and Save</CustomText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
@@ -223,7 +232,9 @@ function LobbyScreen({ navigation }) {
                   }}
                   style={styles.button}
                 >
-                  <Text style={styles.redText}>Close and Don't Save</Text>
+                  <CustomText color={'red'} textSize={45}>
+                    Close and Don't Save
+                  </CustomText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
@@ -232,13 +243,15 @@ function LobbyScreen({ navigation }) {
                   }}
                   style={[styles.button]}
                 >
-                  <Text style={styles.redText}>Leave Room</Text>
+                  <CustomText color={'red'} textSize={45}>
+                    Leave Room
+                  </CustomText>
                 </TouchableOpacity>
               </View>
             ) : (
               <View style={styles.settingsModalExit}>
                 <TouchableOpacity onPress={handleModal} style={styles.button}>
-                  <Text style={styles.buttonText}>Close</Text>
+                  <CustomText textSize={45}>Close</CustomText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
@@ -247,7 +260,9 @@ function LobbyScreen({ navigation }) {
                   }}
                   style={[styles.button]}
                 >
-                  <Text style={styles.redText}>Leave Room</Text>
+                  <CustomText color={'red'} textSize={45}>
+                    Leave Room
+                  </CustomText>
                 </TouchableOpacity>
               </View>
             )}
@@ -288,10 +303,7 @@ const styles = StyleSheet.create({
     fontSize: 45,
     fontFamily: 'Impostograph-Regular',
   },
-  codeText: {
-    fontSize: 50,
-    fontFamily: 'Impostograph-Regular',
-  },
+
   settingsModal: {
     backgroundColor: 'white',
     borderRadius: 20,
@@ -335,10 +347,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 40,
   },
-  buttonText: {
-    fontSize: 45,
-    fontFamily: 'Impostograph-Regular',
-  },
   redText: {
     color: 'red',
     fontSize: 45,
@@ -353,17 +361,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 30,
     marginBottom: 40,
-    fontFamily: 'Impostograph-Regular',
-  },
-  item: {
-    color: '#000000',
-    textAlign: 'center',
-    marginHorizontal: 20,
-    marginVertical: 10,
-    padding: 10,
-    fontSize: 50,
-    borderWidth: 2,
-    borderRadius: 15,
     fontFamily: 'Impostograph-Regular',
   },
   disabled: {

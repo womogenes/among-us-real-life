@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  Text,
   View,
   ImageBackground,
   TouchableOpacity,
@@ -9,6 +8,8 @@ import {
 import { React, useEffect, useState } from 'react';
 
 import { connectToGameRoom, getLobbyRoom } from '../networking.js';
+
+import CustomText from '../components/text.js';
 
 function MenuScreen({ navigation }) {
   const joinGame = () => {
@@ -36,20 +37,20 @@ function MenuScreen({ navigation }) {
         style={styles.backgroundImage}
       >
         <View style={styles.titleContainer}>
-          <Text numberOfLines={1} style={styles.titleText}>
+          <CustomText numberOfLines={1} textSize={100} letterSpacing={3}>
             AMONG US
-          </Text>
-          <Text numberOfLines={1} style={styles.lakesideText}>
+          </CustomText>
+          <CustomText numberOfLines={1} textSize={40}>
             (Lakeside Edition)
-          </Text>
+          </CustomText>
         </View>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity style={styles.button} onPress={joinGame}>
-            <Text style={styles.buttonText}>Join</Text>
+            <CustomText textSize={40}>Join</CustomText>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.button} onPress={toLobby}>
-            <Text style={styles.buttonText}>Create</Text>
+            <CustomText textSize={40}>Create</CustomText>
           </TouchableOpacity>
         </View>
       </ImageBackground>
@@ -68,15 +69,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  titleText: {
-    fontSize: 100,
-    letterSpacing: 3,
-    fontFamily: 'Impostograph-Regular',
-  },
-  lakesideText: {
-    fontSize: 40,
-    fontFamily: 'Impostograph-Regular',
-  },
   buttonsContainer: {
     color: '#505050',
     flex: 0.5,
@@ -91,11 +83,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  buttonText: {
-    color: 'black',
-    fontSize: 40,
-    fontFamily: 'Impostograph-Regular',
   },
 });
 
