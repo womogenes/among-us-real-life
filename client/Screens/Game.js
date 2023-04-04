@@ -61,8 +61,9 @@ export default function GameScreen({ navigation }) {
     let r = {
       latitude: loc.coords.latitude,
       longitude: loc.coords.longitude,
+      latitudeDelta: 0.001,
+      longitudeDelta: 0.001,
     };
-
     mapView?.animateToRegion(r, 500);
   };
 
@@ -236,8 +237,7 @@ export default function GameScreen({ navigation }) {
       }
 
       let newLocation = await Location.getCurrentPositionAsync({});
-      setLocation(newLocation);
-
+      setLocation(newLocation), animate(newLocation);
       locationWatcher = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
@@ -275,18 +275,17 @@ export default function GameScreen({ navigation }) {
           longitudeDelta: 0.001,
         }}
         mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
+        showsUserLocation={true}
       >
         {players.map((player) => {
-          return (
-            <Marker
-              key={player.sessionId}
-              coordinate={{
-                latitude: player?.location?.latitude,
-                longitude: player?.location?.longitude,
-              }}
-              title={`Player ${player.sessionId}`}
-            />
-          );
+          <Marker
+            key={player.sessionId}
+            coordinate={{
+              latitude: player?.location?.latitude,
+              longitude: player?.location?.longitude,
+            }}
+            title={`Player ${player.sessionId}`}
+          />;
         })}
         {taskMarkers()}
       </MapView>
