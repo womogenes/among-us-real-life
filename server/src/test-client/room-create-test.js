@@ -45,6 +45,7 @@ const connectToGameRoom = (code) => {
 
       resolve(gameRoom);
       getGameRoom = () => gameRoom;
+      sendCoords;
     });
   });
 };

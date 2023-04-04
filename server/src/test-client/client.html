@@ -17,41 +17,43 @@
   </head>
 
   <body>
-    <h1>Client</h1>
+    <div id="main-container">
+      <div id="left-container">
+        <h1>Client</h1>
 
-    <span id="status-message">Connecting to server...<code></code></span>
-    <span id="status-message-2">[status message]</span>
+        <span id="status-message">Connecting to server...<code></code></span>
 
-    <br /><br />
+        <br /><br />
 
-    <form id="join-game-form">
-      <span>Join a game room:</span><br />
-      <small>(Must be 4 digits)</small><br />
-      <input id="new-room-code" pattern="[0-9]{4}" />
-      <input id="new-room-btn" type="submit" />
-    </form>
+        <form id="join-game-form">
+          <span>Join a game room:</span><br />
+          <small>(Must be 4 digits)</small><br />
+          <input id="new-room-code" pattern="[0-9]{4}" />
+          <input id="new-room-btn" type="submit" />
+        </form>
 
-    <div>
-      <button id="start-game-btn" onclick="startGame()" disabled>
-        Start game
-      </button>
-    </div>
+        <div>
+          <button id="start-game-btn" onclick="startGame()" disabled>
+            Start game
+          </button>
+        </div>
 
-    <div>
-      <h3>Set coordinates</h3>
-        <label for="#latitude">Latitude</label>
-        <input id="latitude" type="number" /></span>
-        <label for="#longitude">Longitude</label>
-        <input id="longitude" type="number" /></span>
+        <div>
+          <h3>Set coordinates</h3>
+          <label for="#latitude">Latitude</label>
+          <input id="latitude" type="number" step="any" />
+          <label for="#longitude">Longitude</label>
+          <input id="longitude" type="number" step="any" />
+        </div>
       </div>
-    </div>
 
-    <div>
-      <h3>Room state</h3>
-      <span>
-        Room sessionId: <code id="room-session-id">[not connected]</code>
-      </span>
-      <pre id="room-state-output" style="font-size: 11pt"></pre>
+      <div id="right-container">
+        <h3>Room state</h3>
+        <span>
+          Room sessionId: <code id="room-session-id">[not connected]</code>
+        </span>
+        <pre id="room-state-output" style="font-size: 11pt"></pre>
+      </div>
     </div>
   </body>
 </html>
