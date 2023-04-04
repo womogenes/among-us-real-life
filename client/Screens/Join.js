@@ -30,13 +30,13 @@ function JoinScreen({ navigation }) {
     // Constantly updates roomList
     setRoomList(openRooms);
     lobby.onStateChange((state) => {
-      console.log(state.rooms.$items);
-      console.log(`all rooms: ${[...state.rooms.$items.values()]}`);
-      console.log(`in progress: ${[...state.inProgressRooms.$items.values()]}`);
+      // console.log(state.rooms.$items);
+      // console.log(`all rooms: ${[...state.rooms.$items.values()]}`);
+      // console.log(`in progress: ${[...state.inProgressRooms.$items.values()]}`);
       let rooms = [...state.rooms.$items.values()];
       let inprogressrooms = [...state.inProgressRooms.$items.values()];
       setOpenRooms(rooms.filter((room) => !inprogressrooms.includes(room)));
-      console.log(`roomList: ${[...roomList]}`);
+      // console.log(`roomList: ${[...roomList]}`);
     });
     return () => {
       lobby?.removeAllListeners();
