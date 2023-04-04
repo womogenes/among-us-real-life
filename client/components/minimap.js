@@ -27,7 +27,8 @@ function Minimap(props) {
           latitudeDelta: 0.0025,
           longitudeDelta: 0.0001,
         }}
-        mapType="standard"
+        mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
+        // showsUserLocation={true}
       >
         <Marker
           key={'You'}
