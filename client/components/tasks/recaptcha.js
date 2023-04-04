@@ -8,7 +8,6 @@ function CaptchaTask({ active, complete }) {
   const recaptcha = useRef();
 
   const send = () => {
-    console.log('send!');
     recaptcha.current.open();
   };
 

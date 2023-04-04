@@ -17,30 +17,41 @@ export class GameRoom extends Room {
         .location.update(loc.coords);
     });
 
-    this.onMessage('setUsername', (client, username) => {
-      const idx = this.state.players.findIndex(
-        (p) => p.sessionId === client.sessionId
+    this.onMessage('completeTask', (client, taskID) => {
+      const player = this.state.players.find(
+        (p) => p.sessionID === client.sessionID
       );
-      this.state.players[idx].username = username;
+      const tasks = player.tasks;
+
+      tasks.find((task) => task.taskID === taskID).completed = true;
+    });
+
+    this.onMessage('setUsername', (client, username) => {
+      this.state.players.find(
+        (p) => p.sessionId === client.sessionId
+      ).username = username;
     });
 
     this.onMessage('startGame', (client) => {
       console.log(`client ${client.sessionId} started`);
 
       // Verify that only host can start the game
-      const isHost =
-        client.sessionId === this.state.players.find((p) => p.isHost).sessionId;
+      const hostSessionId = this.state.players.find((p) => p.isHost).sessionId;
+      const isHost = client.sessionId === hostSessionId;
       if (!isHost) {
         return;
       }
 
-      this.broadcast('gameStarted');
-      this.state.gameStarted = true;
-      console.log('here');
-      onGameStart(this);
-
       // Assign an impostor (for now, make it the host)
       this.state.players.find((p) => p.isHost).isImpostor = true;
+
+      // Extremely hacky and bad
+      setTimeout(() => {
+        this.broadcast('gameStarted');
+      }, 100);
+
+      this.state.gameStarted = true;
+      onGameStart(this);
     });
 
     this.onMessage('settingsUpdated', (client, settings) => {

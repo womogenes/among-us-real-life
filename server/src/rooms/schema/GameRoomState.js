@@ -1,6 +1,8 @@
 import * as schema from '@colyseus/schema';
 const { Schema, ArraySchema } = schema;
 
+import { nanoid } from 'nanoid';
+
 // Location schema
 class Location extends Schema {
   constructor(latitude = 0, longitude = 0, altitude = 0) {
@@ -28,12 +30,14 @@ class Task extends Schema {
     super();
 
     this.name = name;
+    this.taskID = nanoid();
     this.location = location;
     this.complete = false;
   }
 }
 schema.defineTypes(Task, {
   name: 'string',
+  taskID: 'string',
   location: Location,
   complete: 'boolean',
 });
@@ -53,8 +57,8 @@ export class Player extends Schema {
     this.tasks = new ArraySchema();
     this.tasks.push(
       new Task('reCaptcha', new Location(47.731475, -122.328036, 0)), // AG
-      new Task('reCaptcha', new Location(47.731265, -122.327709, 0)), // Lower-right of AG
-      new Task('reCaptcha', new Location(47.731838, -122.327802, 0)), // Fix
+      new Task('reCaptcha', new Location(47.731392, -122.327791, 0)), // East end of AG
+      new Task('reCaptcha', new Location(47.732346, -122.326806, 0)), // Moore
       new Task('reCaptcha', new Location(47.731639, -122.327612, 0)), // Red square
       new Task('reCaptcha', new Location(47.731779, -122.32705, 0)) // Bliss
     );

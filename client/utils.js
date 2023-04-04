@@ -15,6 +15,7 @@ export function distAll(myCoords, allCoords, distance) {
   let myDist = 0;
   let myObject = {};
   /* allCoords is a Array of all entities on the map not including yourself */
+
   allCoords.forEach((item) => {
     myDist = findDistance(myCoords, item.location);
     if (myDist <= distance) {
@@ -29,7 +30,7 @@ export function distAll(myCoords, allCoords, distance) {
       console.log(
         '_______________________________________________________________'
       );
-      myObject = { name: item.name, distance: myDist };
+      myObject = { ...item, distance: myDist };
       myArr.push(myObject);
     } else {
       console.log(

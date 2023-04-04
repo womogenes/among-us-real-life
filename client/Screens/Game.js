@@ -30,7 +30,8 @@ export default function GameScreen({ navigation }) {
     coords: { latitude: 0, longitude: 0 },
   });
 
-  const [playerState, setPlayerState] = useState('impostor'); // Change this to change the player type (e.g. crewmate, impostor, disguised)
+  const [playerState, setPlayerState] = useState('impostor');
+
   const [errorMsg, setErrorMsg] = useState(null);
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
@@ -52,6 +53,7 @@ export default function GameScreen({ navigation }) {
 
   const [activeTask, setActiveTask] = useState({
     reCaptcha: false,
+    taskID: undefined,
   });
 
   const [distTask, setDistTask] = useState([]);
@@ -71,12 +73,12 @@ export default function GameScreen({ navigation }) {
       return (
         <Marker
           pinColor={item.complete ? 'turquoise' : 'gold'}
-          key={Math.random()}
+          key={item.taskID}
           coordinate={{
             latitude: item.location.latitude,
             longitude: item.location.longitude,
           }}
-          title={item.name}
+          title={`${item.name} (${item.taskID.substring(0, 4)})`}
         />
       );
     });
@@ -84,11 +86,16 @@ export default function GameScreen({ navigation }) {
 
   function completeTask(task) {
     if (task == 'reCaptcha') {
-      console.log('reCaptcha deactivate');
+      const { taskID } = activeTask;
       setActiveTask((prevArrState) => ({
         ...prevArrState,
         reCaptcha: false,
+        taskID: undefined,
       }));
+
+      // Mark task as complete
+      console.log(`reCaptcha task ${taskID} completed`);
+      getGameRoom().send('completeTask', taskID);
     }
   }
 
@@ -116,10 +123,12 @@ export default function GameScreen({ navigation }) {
   function useButton() {
     console.log('USE');
     let closestTask = findClosestTask(distTask);
+
     if (closestTask.name == 'reCaptcha') {
       setActiveTask((prevArrState) => ({
         ...prevArrState,
         reCaptcha: true,
+        taskID: closestTask.taskID,
       }));
     }
   }
@@ -193,11 +202,11 @@ export default function GameScreen({ navigation }) {
     const room = getGameRoom();
 
     setPlayers(room?.state?.players);
-    setPlayerState(
-      room.state.players.find((p) => p.sessionId === room.sessionId).isImpostor
-        ? 'impostor'
-        : 'crewmate'
+
+    const thisPlayer = room.state.players.find(
+      (p) => p.sessionId === room.sessionId
     );
+    setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
 
     room.onStateChange((state) => {
       setPlayers(state.players);
