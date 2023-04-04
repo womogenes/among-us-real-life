@@ -202,6 +202,8 @@ export default function GameScreen({ navigation }) {
 
     room.onStateChange((state) => {
       setPlayers(state.players);
+      //brandon is testing things here
+      console.log(`players: ${players}`);
 
       // Get player tasks from room state
       const tasks = state.players.find(
