@@ -270,6 +270,7 @@ export default function GameScreen({ navigation }) {
       >
         {players.map((player) => {
           <Marker
+            pinColor="gold"
             key={player.sessionId}
             coordinate={{
               latitude: player?.location?.latitude,
