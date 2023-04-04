@@ -68,31 +68,17 @@ export default function GameScreen({ navigation }) {
 
   function taskMarkers() {
     return tasks.map((item) => {
-      if (item.complete == false) {
-        return (
-          <Marker
-            pinColor={'gold'}
-            key={Math.random()}
-            coordinate={{
-              latitude: item.location.latitude,
-              longitude: item.location.longitude,
-            }}
-            title={item.name}
-          />
-        );
-      } else {
-        return (
-          <Marker
-            pinColor={'turquoise'}
-            key={Math.random()}
-            coordinate={{
-              latitude: item.location.latitude,
-              longitude: item.location.longitude,
-            }}
-            title={item.name}
-          />
-        );
-      }
+      return (
+        <Marker
+          pinColor={item.complete ? 'turquoise' : 'gold'}
+          key={Math.random()}
+          coordinate={{
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+          }}
+          title={item.name}
+        />
+      );
     });
   }
 

@@ -15,39 +15,50 @@ export function distAll(myCoords, allCoords, distance) {
   let myDist = 0;
   let myObject = {};
   /* allCoords is a Array of all entities on the map not including yourself */
-  allCoords.forEach((item) =>  {
+  allCoords.forEach((item) => {
     myDist = findDistance(myCoords, item.location);
     if (myDist <= distance) {
-        console.log('_______________________________________________________________');
-        console.log('Distance: ' + myDist);
-        console.log('My loc: ' + myCoords.latitude + ", " + myCoords.longitude);
-        console.log('Other loc: ' + item.location.latitude + ", " + item.location.longitude);
-        console.log('_______________________________________________________________');
-        myObject = {name: item.name, distance: myDist}
-        myArr.push(myObject);
+      console.log(
+        '_______________________________________________________________'
+      );
+      console.log('Distance: ' + myDist);
+      console.log('My loc: ' + myCoords.latitude + ', ' + myCoords.longitude);
+      console.log(
+        'Other loc: ' + item.location.latitude + ', ' + item.location.longitude
+      );
+      console.log(
+        '_______________________________________________________________'
+      );
+      myObject = { name: item.name, distance: myDist };
+      myArr.push(myObject);
+    } else {
+      console.log(
+        '_______________________________________________________________'
+      );
+      console.log('Distance: ' + myDist);
+      console.log('My loc: ' + myCoords.latitude + ', ' + myCoords.longitude);
+      console.log(
+        'Other loc: ' + item.location.latitude + ', ' + item.location.longitude
+      );
+      console.log(
+        '_______________________________________________________________'
+      );
     }
-    else {
-        console.log('_______________________________________________________________');
-        console.log('Distance: ' + myDist);
-        console.log('My loc: ' + myCoords.latitude + ", " + myCoords.longitude);
-        console.log('Other loc: ' + item.location.latitude + ", " + item.location.longitude);
-        console.log('_______________________________________________________________');
-    }
-  })
+  });
   return myArr;
 }
 
 export function findClosestTask(distArr) {
-  if(distArr.length == 0){
-    return []
+  if (distArr.length == 0) {
+    return [];
   }
   let min = distArr[0].distance;
   let minTask = distArr[0];
   distArr.forEach((item) => {
-    if(item.distance < min){
+    if (item.distance < min) {
       min = item.distance;
       minTask = item;
     }
-  })
+  });
   return minTask;
 }

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 
 import Recaptcha from 'react-native-recaptcha-that-works';
 
-function CaptchaTask(props) {
+function CaptchaTask({ active, complete }) {
   const recaptcha = useRef();
 
   const send = () => {
@@ -13,7 +13,7 @@ function CaptchaTask(props) {
   };
 
   const onVerify = (token) => {
-    props.complete('reCaptcha');
+    complete('reCaptcha');
     console.log('success!', token);
   };
 
@@ -22,10 +22,10 @@ function CaptchaTask(props) {
   };
 
   useEffect(() => {
-    if (props.active == true) {
+    if (active == true) {
       send();
     }
-  }, [props.active]);
+  }, [active]);
 
   return (
     <View>
