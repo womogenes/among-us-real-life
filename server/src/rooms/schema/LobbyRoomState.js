@@ -6,9 +6,11 @@ export class LobbyRoomState extends Schema {
     super();
 
     this.rooms = new ArraySchema();
+    this.inProgressRooms = new ArraySchema();
   }
 }
 
 schema.defineTypes(LobbyRoomState, {
   rooms: ['string'],
+  inProgressRooms: ['string'],
 });

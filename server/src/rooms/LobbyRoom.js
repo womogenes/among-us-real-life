@@ -1,12 +1,13 @@
 import { Room } from '@colyseus/core';
 import { LobbyRoomState } from './schema/LobbyRoomState.js';
 
-export let onCreateGameRoom, onDisposeGameRoom;
+export let onCreateGameRoom, onDisposeGameRoom, onGameStart;
 
 export class LobbyRoom extends Room {
   onCreate(options) {
     this.setState(new LobbyRoomState());
     this.rooms = new Map();
+    this.inProgressRooms = new Map();
 
     this.onMessage('createNewGame', (client, message) => {
       // Generate new room
@@ -22,9 +23,20 @@ export class LobbyRoom extends Room {
       this.state.rooms.push(room.state.code);
     };
 
+    //function to mark a game as in progress
+    onGameStart = (room) => {
+      console.log(`Room ${room.state.code} started game, marked in progress`);
+      this.state.inProgressRooms.push(room.state.code);
+    };
+
     onDisposeGameRoom = (code) => {
       this.rooms.delete(code);
+      this.inProgressRooms.delete(code);
       this.state.rooms.splice(this.state.rooms.indexOf(code), 1);
+      this.state.inProgressRooms.splice(
+        this.state.inProgressRooms.indexOf(code),
+        1
+      );
 
       console.log(`Game room ${code} disposed.`);
     };

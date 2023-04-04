@@ -1,7 +1,11 @@
 import { Room } from '@colyseus/core';
 
 import { GameRoomState, Player } from './schema/GameRoomState.js';
-import { onCreateGameRoom, onDisposeGameRoom } from './LobbyRoom.js';
+import {
+  onCreateGameRoom,
+  onDisposeGameRoom,
+  onGameStart,
+} from './LobbyRoom.js';
 
 export class GameRoom extends Room {
   onCreate(options) {
@@ -32,6 +36,8 @@ export class GameRoom extends Room {
 
       this.broadcast('gameStarted');
       this.state.gameStarted = true;
+      console.log('here');
+      onGameStart(this);
 
       // Assign an impostor (for now, make it the host)
       this.state.players.find((p) => p.isHost).isImpostor = true;

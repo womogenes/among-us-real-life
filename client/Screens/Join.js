@@ -18,6 +18,7 @@ import { connectToGameRoom, getLobbyRoom } from '../networking.js';
 function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
   const [roomList, setRoomList] = useState([]);
+  const [openRooms, setOpenRooms] = useState([]);
 
   const joinPressed = async (code) => {
     await connectToGameRoom(code);
@@ -25,23 +26,22 @@ function JoinScreen({ navigation }) {
   };
 
   useEffect(() => {
-    // This gets run only once
     const lobby = getLobbyRoom();
-
-    // Keep roomList in sync with the server
-    setRoomList(lobby.state.rooms);
-
-    console.log(lobby.state.rooms);
-
+    // Constantly updates roomList
+    setRoomList(openRooms);
     lobby.onStateChange((state) => {
       console.log(state.rooms.$items);
-      setRoomList(state.rooms.$items);
+      console.log(`all rooms: ${[...state.rooms.$items.values()]}`);
+      console.log(`in progress: ${[...state.inProgressRooms.$items.values()]}`);
+      let rooms = [...state.rooms.$items.values()];
+      let inprogressrooms = [...state.inProgressRooms.$items.values()];
+      setOpenRooms(rooms.filter((room) => !inprogressrooms.includes(room)));
+      console.log(`roomList: ${[...roomList]}`);
     });
-
     return () => {
       lobby?.removeAllListeners();
     };
-  }, [roomList]);
+  }, [openRooms]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
