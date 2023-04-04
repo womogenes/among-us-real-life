@@ -10,7 +10,7 @@ export function findDistance(myCoords, yourCoords) {
   return dist;
 }
 
-export function distAll(myCoords, allCoords, distance) {
+export function distAll(type, myCoords, allCoords, distance) {
   let myArr = [];
   let myDist = 0;
   let myObject = {};
@@ -30,36 +30,29 @@ export function distAll(myCoords, allCoords, distance) {
       console.log(
         '_______________________________________________________________'
       );
-      myObject = { ...item, distance: myDist };
+      if (type == 'task') {
+        myObject = { ...item, distance: myDist };
+      }
+      if (type == 'player') {
+        myObject = { ...item, distance: myDist };
+      }
       myArr.push(myObject);
-    } else {
-      console.log(
-        '_______________________________________________________________'
-      );
-      console.log('Distance: ' + myDist);
-      console.log('My loc: ' + myCoords.latitude + ', ' + myCoords.longitude);
-      console.log(
-        'Other loc: ' + item.location.latitude + ', ' + item.location.longitude
-      );
-      console.log(
-        '_______________________________________________________________'
-      );
     }
   });
   return myArr;
 }
 
-export function findClosestTask(distArr) {
+export function findClosest(distArr) {
   if (distArr.length == 0) {
     return [];
   }
   let min = distArr[0].distance;
-  let minTask = distArr[0];
+  let minItem = distArr[0];
   distArr.forEach((item) => {
     if (item.distance < min) {
       min = item.distance;
-      minTask = item;
+      minItem = item;
     }
   });
-  return minTask;
+  return minItem;
 }

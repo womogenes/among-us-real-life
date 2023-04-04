@@ -19,7 +19,7 @@ import Minimap from '../components/minimap.js';
 
 import ControlPanel from '../components/controlpanel.js';
 
-import { findDistance, distAll, findClosestTask } from '../utils.js';
+import { findDistance, distAll, findClosest } from '../utils.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 
@@ -63,8 +63,9 @@ export default function GameScreen({ navigation }) {
     let r = {
       latitude: loc.coords.latitude,
       longitude: loc.coords.longitude,
+      latitudeDelta: 0.001,
+      longitudeDelta: 0.001,
     };
-
     mapView?.animateToRegion(r, 500);
   };
 
@@ -152,8 +153,8 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist(loc) {
-    let taskArr = distAll(loc.coords, tasks, 10);
-    let playerArr = distAll(loc.coords, players, 0.1);
+    let taskArr = distAll('task', loc.coords, tasks, 10);
+    let playerArr = distAll('player', loc.coords, players, 5);
     setDistTask(taskArr);
     setDistPlayer(playerArr);
   }
@@ -168,8 +169,9 @@ export default function GameScreen({ navigation }) {
 
   function activateKillButton() {
     if (playerState == 'impostor') {
-      console.log(distPlayer);
+      console.log(distPlayer);     
       if (distPlayer.length > 0) {
+
         console.log('<<<close>>>');
         changeButtonState('kill', false);
       } else {
@@ -185,15 +187,18 @@ export default function GameScreen({ navigation }) {
   }, [distTask]);
 
   useEffect(() => {
+    changeButtonState('kill', true);
     // Detects when distPlayer is updated and reevaluates KILL button activation
     activateKillButton();
   }, [distPlayer]);
 
   useEffect(() => {
+    console.log('my change');
     findAllDist(location);
   }, [location]);
 
   useEffect(() => {
+    console.log('player change');
     findAllDist(location);
   }, [players]);
 
@@ -210,6 +215,8 @@ export default function GameScreen({ navigation }) {
 
     room.onStateChange((state) => {
       setPlayers(state.players);
+      //brandon is testing things here
+      console.log(`players: ${players}`);
 
       // Get player tasks from room state
       const tasks = state.players.find(
@@ -236,8 +243,7 @@ export default function GameScreen({ navigation }) {
       }
 
       let newLocation = await Location.getCurrentPositionAsync({});
-      setLocation(newLocation);
-
+      setLocation(newLocation), animate(newLocation);
       locationWatcher = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
@@ -275,18 +281,18 @@ export default function GameScreen({ navigation }) {
           longitudeDelta: 0.001,
         }}
         mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
+        showsUserLocation={true}
       >
         {players.map((player) => {
-          return (
-            <Marker
-              key={player.sessionId}
-              coordinate={{
-                latitude: player?.location?.latitude,
-                longitude: player?.location?.longitude,
-              }}
-              title={`Player ${player.sessionId}`}
-            />
-          );
+          <Marker
+            pinColor="gold"
+            key={player.sessionId}
+            coordinate={{
+              latitude: player?.location?.latitude,
+              longitude: player?.location?.longitude,
+            }}
+            title={`Player ${player.sessionId}`}
+          />;
         })}
         {taskMarkers()}
       </MapView>
