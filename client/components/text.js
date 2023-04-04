@@ -1,0 +1,51 @@
+import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+
+function CustomText(props) {
+  return (
+    <View
+      style={[
+        styles.button,
+        props.top && { top: props.top },
+        props.bottom && { bottom: props.bottom },
+        props.right && { right: props.right },
+        props.left && { left: props.left },
+      ]}
+    >
+      <Text
+        style={[
+          styles.textDefault,
+          props.textSize ? { fontSize: props.textSize } : { fontSize: 12 },
+          props.centerText ? { textAlign: 'center' } : {},
+          props.textColor ? { color: props.textColor } : { color: 'black' },
+          props.letterSpacing
+            ? { letterSpacing: props.letterSpacing }
+            : { letterSpacing: 0 },
+          props.marginHorizontal
+            ? { marginHorizontal: props.marginHorizontal }
+            : { marginHorizontal: 0 },
+          props.marginVertical
+            ? { marginVertical: props.marginVertical }
+            : { marginVertical: 0 },
+          props.padding ? { padding: props.padding } : { padding: 0 },
+          props.borderWidth
+            ? { borderWidth: props.borderWidth }
+            : { borderWidth: 0 },
+          props.borderRadius
+            ? { borderRadius: props.borderRadius }
+            : { borderRadius: 0 },
+        ]}
+      >
+        {props.children}
+      </Text>
+    </View>
+  );
+}
+export default CustomText;
+
+const styles = StyleSheet.create({
+  textDefault: {
+    fontFamily: 'Impostograph-Regular',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
