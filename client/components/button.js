@@ -105,6 +105,6 @@ const styles = StyleSheet.create({
     color: 'black',
     position: 'absolute',
     fontSize: 40,
-    fontWeight: '900',
+    fontFamily: 'Impostograph-Regular',
   },
 });

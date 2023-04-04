@@ -41,7 +41,7 @@ function JoinScreen({ navigation }) {
     return () => {
       lobby?.removeAllListeners();
     };
-  }, []);
+  }, [roomList]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

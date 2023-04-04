@@ -97,7 +97,7 @@ export default function GameScreen({ navigation }) {
   }
 
   function completeTask(task) {
-    if(task == 'reCaptcha') {
+    if (task == 'reCaptcha') {
       console.log('reCaptcha deactivate');
       setActiveTask((prevArrState) => ({
         ...prevArrState,
@@ -329,14 +329,13 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      <Button
-        title={'increase tasks'}
-        onPress={() => setTaskCompletion(taskCompletion + 10)}
-      />
-      <CaptchaTask
-        active={activeTask.reCaptcha}
-        complete={completeTask}
-      />
+      <CaptchaTask active={activeTask.reCaptcha} complete={completeTask} />
+      <View style={styles.increaseTaskContainer}>
+        <Button
+          title={'increase tasks'}
+          onPress={() => setTaskCompletion(taskCompletion + 10)}
+        />
+      </View>
     </View>
   );
 }
@@ -366,14 +365,8 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
 
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#888',
-    padding: 10,
-    marginTop: 10,
-    marginBottom: 10,
-    borderRadius: 5,
+  increaseTaskContainer: {
+    marginTop: Constants.statusBarHeight,
   },
 });
 

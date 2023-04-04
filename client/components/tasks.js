@@ -92,8 +92,11 @@ const myStyles = (fontScale) =>
     },
     taskButtonText: {
       flex: 1,
-      fontWeight: '700',
-      fontSize: 15 / fontScale,
+      color: 'black',
+      fontSize: 20 / fontScale,
       textAlign: 'center',
+      fontFamily: 'Impostograph-Regular',
+      textShadowColor: '#000000',
+      textShadowRadius: 3,
     },
   });

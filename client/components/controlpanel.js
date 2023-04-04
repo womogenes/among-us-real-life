@@ -129,13 +129,13 @@ function ControlPanel(props) {
           <CustomButton
             type={'text'}
             text={'DISGUISE'}
-            textsize={20}
+            textsize={30}
             disabled={props.disguiseButtonState}
             onPress={props.disguiseButtonPress}
             roundness={50}
             backgroundcolor={'#00000000'}
             width={150}
-            height={150}
+            height={100}
             right={-10}
             bottom={420}
           />
@@ -222,15 +222,18 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   modalTitle: {
-    fontSize: 47,
-    marginBottom: 30,
+    fontSize: 70,
+    marginBottom: 10,
+    marginTop: -10,
+    fontFamily: 'Impostograph-Regular',
   },
   closeButtonContainer: {
     width: '100%',
     alignItems: 'flex-end',
   },
   closeButtonText: {
-    fontSize: 20,
+    marginHorizontal: 10,
+    fontSize: 30,
   },
   sabotageListButton: {
     width: '80%',
@@ -242,6 +245,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   sabotageListButtonText: {
-    fontSize: 23,
+    fontSize: 40,
+    fontFamily: 'Impostograph-Regular',
   },
 });

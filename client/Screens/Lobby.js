@@ -67,7 +67,7 @@ function LobbyScreen({ navigation }) {
     return () => {
       // Disconnect from the room
       console.log(`Left game room ${room.sessionId}, code: ${room.state.code}`);
-      // leaveGameRoom();
+      leaveGameRoom();
     };
   }, []);
 
