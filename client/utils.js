@@ -19,23 +19,18 @@ export function distAll(type, myCoords, allCoords, distance) {
   allCoords.forEach((item) => {
     myDist = findDistance(myCoords, item.location);
     if (myDist <= distance) {
-      console.log(
-        '_______________________________________________________________'
-      );
-      console.log('Distance: ' + myDist);
-      console.log('My loc: ' + myCoords.latitude + ', ' + myCoords.longitude);
-      console.log(
-        'Other loc: ' + item.location.latitude + ', ' + item.location.longitude
-      );
-      console.log(
-        '_______________________________________________________________'
-      );
-      if (type == 'task') {
-        myObject = { ...item, distance: myDist };
-      }
-      if (type == 'player') {
-        myObject = { ...item, distance: myDist };
-      }
+      // console.log(
+      //   '_______________________________________________________________'
+      // );
+      // console.log('Distance: ' + myDist);
+      // console.log('My loc: ' + myCoords.latitude + ', ' + myCoords.longitude);
+      // console.log(
+      //   'Other loc: ' + item.location.latitude + ', ' + item.location.longitude
+      // );
+      // console.log(
+      //   '_______________________________________________________________'
+      // );
+      myObject = { ...item, distance: myDist };
       myArr.push(myObject);
     }
   });

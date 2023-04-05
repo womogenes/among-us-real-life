@@ -118,6 +118,8 @@ export default function GameScreen({ navigation }) {
         ...prevButtonState,
         kill: state,
       }));
+      let closestPlayer = findClosest(distPlayer);
+      getGameRoom().send('death', closestPlayer.sessionId);
     }
   }
 
@@ -153,10 +155,11 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist(loc) {
-    let taskArr = distAll('task', loc.coords, tasks, 10);
-    let playerArr = distAll('player', loc.coords, players, 5);
-    setDistTask(taskArr);
-    setDistPlayer(playerArr);
+    let taskDist = distAll('task', loc.coords, tasks, 10);
+    let playerArr = getGameRoom().state.players.filter((p) => p.sessionId !== getGameRoom().sessionId);
+    let playerDist = distAll('player', loc.coords, playerArr, 5);
+    setDistTask(taskDist);
+    setDistPlayer(playerDist);
   }
 
   function activateUseButton() {
@@ -187,7 +190,6 @@ export default function GameScreen({ navigation }) {
   }, [distTask]);
 
   useEffect(() => {
-    changeButtonState('kill', true);
     // Detects when distPlayer is updated and reevaluates KILL button activation
     activateKillButton();
   }, [distPlayer]);
@@ -200,7 +202,7 @@ export default function GameScreen({ navigation }) {
   useEffect(() => {
     console.log('player change');
     findAllDist(location);
-  }, [players]);
+  }, [JSON.stringify(getGameRoom().state.players.filter((p) => p.sessionId !== getGameRoom().sessionId))]);
 
   useEffect(() => {
     // Status update loop
@@ -216,7 +218,7 @@ export default function GameScreen({ navigation }) {
     room.onStateChange((state) => {
       setPlayers(state.players);
       //brandon is testing things here
-      console.log(`players: ${players}`);
+      //console.log(`players: ${players}`);
 
       // Get player tasks from room state
       const tasks = state.players.find(
