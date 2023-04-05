@@ -31,6 +31,7 @@ export default function GameScreen({ navigation }) {
   });
 
   const [playerState, setPlayerState] = useState('impostor');
+  const [playerAlive, setPlayerAlive] = useState(true); 
 
   const [errorMsg, setErrorMsg] = useState(null);
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
@@ -118,8 +119,6 @@ export default function GameScreen({ navigation }) {
         ...prevButtonState,
         kill: state,
       }));
-      let closestPlayer = findClosest(distPlayer);
-      getGameRoom().send('death', closestPlayer.sessionId);
     }
   }
 
@@ -142,6 +141,11 @@ export default function GameScreen({ navigation }) {
 
   function killButton() {
     console.log('KILL');
+    let closestPlayer = findClosest(distPlayer);
+    console.log(closestPlayer);
+    getGameRoom().send('playerDeath', closestPlayer.sessionId);
+    console.log("_____________________________")
+    console.log(closestPlayer);
   }
 
   function disguiseButton() {
@@ -214,6 +218,7 @@ export default function GameScreen({ navigation }) {
       (p) => p.sessionId === room.sessionId
     );
     setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
+    setPlayerAlive(thisPlayer.isAlive);
 
     room.onStateChange((state) => {
       setPlayers(state.players);
@@ -269,6 +274,7 @@ export default function GameScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      {playerAlive == false && <View style={styles.deathScreen}></View>}
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
@@ -361,6 +367,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+  },
+
+  deathScreen: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    backgroundColor: 'red',
   },
 
   debugContainer: {
