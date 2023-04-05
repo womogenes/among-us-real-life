@@ -17,13 +17,18 @@ export class GameRoom extends Room {
         .location.update(loc.coords);
     });
 
-    this.onMessage('completeTask', (client, taskID) => {
-      const player = this.state.players.find(
-        (p) => p.sessionID === client.sessionID
+    this.onMessage('completeTask', (client, taskId) => {
+      const playerIdx = this.state.players.findIndex(
+        (p) => p.sessionId === client.sessionId
       );
-      const tasks = player.tasks;
+      const taskIdx = this.state.players[playerIdx].tasks.findIndex(
+        (task) => task.taskId === taskId
+      );
+      console.log(`playerIdx=${playerIdx}, taskIdx=${taskIdx}`);
 
-      tasks.find((task) => task.taskID === taskID).completed = true;
+      this.state.players[playerIdx].tasks[taskIdx].complete = true;
+
+      console.log(`new state: ${JSON.stringify(this.state, null, 1)}`);
     });
 
     this.onMessage('setUsername', (client, username) => {
@@ -34,9 +39,7 @@ export class GameRoom extends Room {
 
     this.onMessage('playerDeath', (client, sessionId) => {
       console.log('<<<<<death>>>>>');
-      this.state.players.find(
-        (p) => p.sessionId === sessionId
-      ).isAlive = false;
+      this.state.players.find((p) => p.sessionId === sessionId).isAlive = false;
     });
 
     this.onMessage('startGame', (client) => {

@@ -31,7 +31,7 @@ export default function GameScreen({ navigation }) {
   });
 
   const [playerState, setPlayerState] = useState('impostor');
-  const [playerAlive, setPlayerAlive] = useState(true); 
+  const [playerAlive, setPlayerAlive] = useState(true);
 
   const [errorMsg, setErrorMsg] = useState(null);
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
@@ -54,7 +54,7 @@ export default function GameScreen({ navigation }) {
 
   const [activeTask, setActiveTask] = useState({
     reCaptcha: false,
-    taskID: undefined,
+    taskId: undefined,
   });
 
   const [distTask, setDistTask] = useState([]);
@@ -75,12 +75,12 @@ export default function GameScreen({ navigation }) {
       return (
         <Marker
           pinColor={item.complete ? 'turquoise' : 'gold'}
-          key={item.taskID}
+          key={item.taskId}
           coordinate={{
             latitude: item.location.latitude,
             longitude: item.location.longitude,
           }}
-          title={`${item.name} (${item.taskID.substring(0, 4)})`}
+          title={`${item.name} (${item.taskId.substring(0, 4)})`}
         />
       );
     });
@@ -88,16 +88,16 @@ export default function GameScreen({ navigation }) {
 
   function completeTask(task) {
     if (task == 'reCaptcha') {
-      const { taskID } = activeTask;
+      const { taskId } = activeTask;
       setActiveTask((prevArrState) => ({
         ...prevArrState,
         reCaptcha: false,
-        taskID: undefined,
+        taskId: undefined,
       }));
 
       // Mark task as complete
-      console.log(`reCaptcha task ${taskID} completed`);
-      getGameRoom().send('completeTask', taskID);
+      console.log(`reCaptcha task ${taskId} completed`);
+      getGameRoom().send('completeTask', taskId);
     }
   }
 
@@ -124,13 +124,13 @@ export default function GameScreen({ navigation }) {
 
   function useButton() {
     console.log('USE');
-    let closestTask = findClosestTask(distTask);
+    let closestTask = findClosest(distTask);
 
     if (closestTask.name == 'reCaptcha') {
       setActiveTask((prevArrState) => ({
         ...prevArrState,
         reCaptcha: true,
-        taskID: closestTask.taskID,
+        taskId: closestTask.taskId,
       }));
     }
   }
@@ -144,7 +144,7 @@ export default function GameScreen({ navigation }) {
     let closestPlayer = findClosest(distPlayer);
     console.log(closestPlayer);
     getGameRoom().send('playerDeath', closestPlayer.sessionId);
-    console.log("_____________________________")
+    console.log('_____________________________');
     console.log(closestPlayer);
   }
 
@@ -160,7 +160,9 @@ export default function GameScreen({ navigation }) {
 
   function findAllDist(loc) {
     let taskDist = distAll('task', loc.coords, tasks, 10);
-    let playerArr = getGameRoom().state.players.filter((p) => p.sessionId !== getGameRoom().sessionId);
+    let playerArr = getGameRoom().state.players.filter(
+      (p) => p.sessionId !== getGameRoom().sessionId
+    );
     let playerDist = distAll('player', loc.coords, playerArr, 5);
     setDistTask(taskDist);
     setDistPlayer(playerDist);
@@ -176,9 +178,8 @@ export default function GameScreen({ navigation }) {
 
   function activateKillButton() {
     if (playerState == 'impostor') {
-      console.log(distPlayer);     
+      console.log(distPlayer);
       if (distPlayer.length > 0) {
-
         console.log('<<<close>>>');
         changeButtonState('kill', false);
       } else {
@@ -206,7 +207,13 @@ export default function GameScreen({ navigation }) {
   useEffect(() => {
     console.log('player change');
     findAllDist(location);
-  }, [JSON.stringify(getGameRoom().state.players.filter((p) => p.sessionId !== getGameRoom().sessionId))]);
+  }, [
+    JSON.stringify(
+      getGameRoom().state.players.filter(
+        (p) => p.sessionId !== getGameRoom().sessionId
+      )
+    ),
+  ]);
 
   useEffect(() => {
     // Status update loop
@@ -217,7 +224,7 @@ export default function GameScreen({ navigation }) {
     const thisPlayer = room.state.players.find(
       (p) => p.sessionId === room.sessionId
     );
-    setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
+    setPlayerState(!thisPlayer.isImpostor ? 'impostor' : 'crewmate');
     setPlayerAlive(thisPlayer.isAlive);
 
     room.onStateChange((state) => {

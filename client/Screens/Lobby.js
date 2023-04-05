@@ -162,7 +162,7 @@ function LobbyScreen({ navigation }) {
           <TouchableOpacity
             style={styles.button}
             onPress={startGame}
-            disabled={!isHost || getGameRoom().state.players.length < 2}
+            disabled={!isHost || getGameRoom().state.players.length < 1}
           >
             <CustomText textSize={45}>
               {isHost
