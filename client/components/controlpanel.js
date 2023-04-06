@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Button } from 'react-native';
 
 import { useRef, useEffect, useState } from 'react';
 
@@ -6,7 +6,7 @@ import Modal from 'react-native-modal';
 
 import CustomButton from '../components/button.js';
 import TaskBar from '../components/taskbar.js';
-import Tasks from '../components/tasks.js';
+import TaskMenu from '../components/taskmenu.js';
 
 function ControlPanel(props) {
   const [timer, setTimer] = useState(null);
@@ -185,8 +185,8 @@ function ControlPanel(props) {
           />
         </View>
       )}
-      <Tasks />
-      <TaskBar taskCompletion={props.taskCompletion} />
+      <TaskMenu tasks={props.tasks}/>
+      <TaskBar taskCompletion={props.taskCompletion}/>
     </View>
   );
 }

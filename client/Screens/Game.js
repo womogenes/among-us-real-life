@@ -290,10 +290,10 @@ export default function GameScreen({ navigation }) {
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
-        pitchEnabled={false}
-        rotateEnabled={false}
-        scrollEnabled={false}
-        zoomEnabled={false}
+        // pitchEnabled={false}
+        // rotateEnabled={false}
+        // scrollEnabled={false}
+        // zoomEnabled={false}
         initialRegion={{
           latitude: 47.7326514,
           longitude: -122.3278194,
@@ -318,7 +318,7 @@ export default function GameScreen({ navigation }) {
       </MapView>
       <Minimap
         userCoords={[location.coords.latitude, location.coords.longitude]}
-        taskCoords={tasks.location}
+        tasks={tasks}
       />
       {deathScreen()}
       {playerState == 'crewmate' ? (
@@ -329,6 +329,7 @@ export default function GameScreen({ navigation }) {
           reportButtonState={buttonState.report}
           reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
+          tasks={tasks}
         />
       ) : playerState == 'impostor' ? (
         <ControlPanel
@@ -343,6 +344,7 @@ export default function GameScreen({ navigation }) {
           reportButtonPress={reportButton}
           disguiseButtonPress={disguiseButton}
           taskCompletion={taskCompletion}
+          tasks={tasks}
         />
       ) : playerState == 'disguised' ? (
         <ControlPanel
@@ -351,6 +353,7 @@ export default function GameScreen({ navigation }) {
           reportButtonState={buttonState.report}
           reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
+          tasks={tasks}
         />
       ) : (
         <ControlPanel />

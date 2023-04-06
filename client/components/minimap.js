@@ -1,18 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
-  Text,
   View,
-  Pressable,
-  Touchable,
-  TouchableOpacity,
   Button,
-  Image,
-  ScrollView,
 } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 function Minimap(props) {
+
+  function taskMarkers() {
+    return props.tasks.map((item) => {
+      return (
+        <Marker
+          pinColor={item.complete ? 'turquoise' : 'gold'}
+          key={item.taskId}
+          coordinate={{
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+          }}
+          title={`${item.name} (${item.taskId.substring(0, 4)})`}
+        />
+      );
+    });
+  }
+  
   return (
     <View style={styles.container}>
       <MapView
@@ -37,6 +48,7 @@ function Minimap(props) {
             longitude: props.userCoords[1],
           }}
         />
+        {taskMarkers()}
       </MapView>
     </View>
   );

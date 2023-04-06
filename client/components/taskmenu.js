@@ -5,18 +5,29 @@ import {
   TouchableOpacity,
   Text,
   useWindowDimensions,
+  Button,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import { useEffect, useState } from 'react';
 import Easing from 'react-native/Libraries/Animated/Easing';
 
-function Tasks(props) {
+function TaskMenu(props) {
   const { fontScale } = useWindowDimensions(); //
   const styles = myStyles(fontScale); // pass in fontScale to the StyleSheet
   const [position, setPosition] = useState(new Animated.Value(-175));
   const [backgroundColor, setBackgroundColor] = useState(
     'rgba(100, 100, 100, 0)'
   );
+
+  function tasks() {
+    let counter = 0;
+    return props.tasks.map((task) => {
+      counter++;
+      return (
+        <Text style={[styles.listText, task.complete ? {color: 'turquoise'} : {color: 'gold'}]}>{counter}. {task.name}</Text>
+      );
+    });
+  }
 
   function toggleX() {
     if (position.__getValue() == -175) {
@@ -51,7 +62,9 @@ function Tasks(props) {
         { backgroundColor: backgroundColor },
       ]}
     >
-      <View style={styles.taskList}></View>
+      <View style={styles.taskList}>
+        {tasks()}
+      </View>
       <View style={styles.taskButtonContainer}>
         <TouchableOpacity style={styles.taskButton} onPress={() => toggleX()}>
           <Text style={styles.taskButtonText}>Tasks</Text>
@@ -61,7 +74,7 @@ function Tasks(props) {
   );
 }
 
-export default Tasks;
+export default TaskMenu;
 
 const myStyles = (fontScale) =>
   StyleSheet.create({
@@ -76,12 +89,14 @@ const myStyles = (fontScale) =>
     },
     taskList: {
       flex: 1,
+      padding: 5,
+      backgroundColor: 'rgba(194, 194, 194, 0.6)',
     },
     taskButtonContainer: {
       width: 25,
       height: 120,
       justifyContent: 'center',
-      backgroundColor: 'rgba(rgba(215, 215, 215, 0.41))',
+      backgroundColor: 'rgba(215, 215, 215, 0.8)',
       padding: 5,
     },
     taskButton: {
@@ -96,6 +111,12 @@ const myStyles = (fontScale) =>
       fontSize: 20 / fontScale,
       textAlign: 'center',
       fontFamily: 'Impostograph-Regular',
+      textShadowColor: '#000000',
+      textShadowRadius: 3,
+    },
+    listText: {
+      flex: 1,
+      fontWeight: 'bold',
       textShadowColor: '#000000',
       textShadowRadius: 3,
     },
