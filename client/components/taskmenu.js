@@ -24,7 +24,7 @@ function TaskMenu(props) {
     return props.tasks.map((task) => {
       counter++;
       return (
-        <Text style={[styles.listText, task.complete ? {color: 'turquoise'} : {color: 'gold'}]}>{counter}. {task.name}</Text>
+        <Text style={[styles.listText, task.complete ? {color: 'turquoise'} : {color: 'gold'}]} key={task.taskId}>{counter}. {task.name}</Text>
       );
     });
   }
