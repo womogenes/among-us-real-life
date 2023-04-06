@@ -30,8 +30,16 @@ export function distAll(type, myCoords, allCoords, distance) {
       // console.log(
       //   '_______________________________________________________________'
       // );
-      myObject = { ...item, distance: myDist };
-      myArr.push(myObject);
+      if (type == 'player') {
+        if (item.isAlive) {
+          myObject = { ...item, distance: myDist };
+          myArr.push(myObject);
+        }
+      }
+      else {
+        myObject = { ...item, distance: myDist };
+        myArr.push(myObject);
+      }
     }
   });
   return myArr;

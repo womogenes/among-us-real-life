@@ -23,6 +23,8 @@ import { findDistance, distAll, findClosest } from '../utils.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 
+import CustomText from '../components/text.js';
+
 var mapView;
 
 export default function GameScreen({ navigation }) {
@@ -86,6 +88,18 @@ export default function GameScreen({ navigation }) {
     });
   }
 
+  function deathScreen() {
+    if(!playerAlive){
+      return(
+        <View style={styles.deathScreen}>
+          <CustomText numberOfLines={1} textSize={100} letterSpacing={3} textColor={'white'}>
+            You Are Dead
+          </CustomText>
+        </View>
+      )
+    }
+  }
+
   function completeTask(task) {
     if (task == 'reCaptcha') {
       const { taskId } = activeTask;
@@ -142,10 +156,7 @@ export default function GameScreen({ navigation }) {
   function killButton() {
     console.log('KILL');
     let closestPlayer = findClosest(distPlayer);
-    console.log(closestPlayer);
     getGameRoom().send('playerDeath', closestPlayer.sessionId);
-    console.log('_____________________________');
-    console.log(closestPlayer);
   }
 
   function disguiseButton() {
@@ -178,12 +189,9 @@ export default function GameScreen({ navigation }) {
 
   function activateKillButton() {
     if (playerState == 'impostor') {
-      console.log(distPlayer);
       if (distPlayer.length > 0) {
-        console.log('<<<close>>>');
         changeButtonState('kill', false);
       } else {
-        console.log('<<<far>>>');
         changeButtonState('kill', true);
       }
     }
@@ -200,12 +208,10 @@ export default function GameScreen({ navigation }) {
   }, [distPlayer]);
 
   useEffect(() => {
-    console.log('my change');
     findAllDist(location);
   }, [location]);
 
   useEffect(() => {
-    console.log('player change');
     findAllDist(location);
   }, [
     JSON.stringify(
@@ -225,10 +231,10 @@ export default function GameScreen({ navigation }) {
       (p) => p.sessionId === room.sessionId
     );
     setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
-    setPlayerAlive(thisPlayer.isAlive);
 
     room.onStateChange((state) => {
       setPlayers(state.players);
+      setPlayerAlive(thisPlayer.isAlive);
       //brandon is testing things here
       //console.log(`players: ${players}`);
 
@@ -281,7 +287,6 @@ export default function GameScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {playerAlive == false && <View style={styles.deathScreen}></View>}
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
@@ -315,6 +320,7 @@ export default function GameScreen({ navigation }) {
         userCoords={[location.coords.latitude, location.coords.longitude]}
         taskCoords={tasks.location}
       />
+      {deathScreen()}
       {playerState == 'crewmate' ? (
         <ControlPanel
           userType={'crewmate'}
@@ -381,6 +387,13 @@ const styles = StyleSheet.create({
     height: '100%',
     position: 'absolute',
     backgroundColor: 'red',
+    opacity: 0.2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  deathText: {
+
   },
 
   debugContainer: {
