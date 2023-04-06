@@ -89,14 +89,19 @@ export default function GameScreen({ navigation }) {
   }
 
   function deathScreen() {
-    if(!playerAlive){
-      return(
+    if (!playerAlive) {
+      return (
         <View style={styles.deathScreen}>
-          <CustomText numberOfLines={1} textSize={100} letterSpacing={3} textColor={'white'}>
+          <CustomText
+            numberOfLines={1}
+            textSize={100}
+            letterSpacing={3}
+            textColor={'white'}
+          >
             You Are Dead
           </CustomText>
         </View>
-      )
+      );
     }
   }
 
@@ -281,7 +286,8 @@ export default function GameScreen({ navigation }) {
 
     return async () => {
       // Unmount listener when component unmounts
-      await locationWatcher?.remove();
+      // TODO: dev setting, uncomment when done
+      // await locationWatcher?.remove();
     };
   }, []);
 
@@ -301,18 +307,18 @@ export default function GameScreen({ navigation }) {
           longitudeDelta: 0.001,
         }}
         mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
-        showsUserLocation={true}
       >
         {players.map((player) => {
-          <Marker
-            pinColor="gold"
-            key={player.sessionId}
-            coordinate={{
-              latitude: player?.location?.latitude,
-              longitude: player?.location?.longitude,
-            }}
-            title={`Player ${player.sessionId}`}
-          />;
+          return (
+            <Marker
+              key={player.sessionId}
+              coordinate={{
+                latitude: player.location.latitude,
+                longitude: player.location.longitude,
+              }}
+              title={`Player ${player.sessionId}`}
+            />
+          );
         })}
         {taskMarkers()}
       </MapView>
@@ -395,9 +401,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  deathText: {
-
-  },
+  deathText: {},
 
   debugContainer: {
     // alignItems: 'flex-start',
