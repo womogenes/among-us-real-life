@@ -10,6 +10,7 @@ import {
 import Modal from 'react-native-modal';
 import { useEffect, useState } from 'react';
 import Easing from 'react-native/Libraries/Animated/Easing';
+import CustomText from './text.js';
 
 function TaskMenu(props) {
   const { fontScale } = useWindowDimensions(); //
@@ -24,7 +25,17 @@ function TaskMenu(props) {
     return props.tasks.map((task) => {
       counter++;
       return (
-        <Text style={[styles.listText, task.complete ? {color: 'turquoise'} : {color: 'gold'}]} key={task.taskId}>{counter}. {task.name}</Text>
+        <CustomText
+          style={[styles.listText]}
+          textSize={14}
+          key={task.taskId}
+          textColor={task.complete ? 'turquoise' : 'gold'}
+        >
+          {counter}.{' '}
+          {`${task.name} (${task.taskId.substring(0, 4).replace('_', '-')})${
+            task.complete ? ' (Complete)' : ''
+          }`}
+        </CustomText>
       );
     });
   }
@@ -62,9 +73,7 @@ function TaskMenu(props) {
         { backgroundColor: backgroundColor },
       ]}
     >
-      <View style={styles.taskList}>
-        {tasks()}
-      </View>
+      <View style={styles.taskList}>{tasks()}</View>
       <View style={styles.taskButtonContainer}>
         <TouchableOpacity style={styles.taskButton} onPress={() => toggleX()}>
           <Text style={styles.taskButtonText}>Tasks</Text>
@@ -115,7 +124,6 @@ const myStyles = (fontScale) =>
       textShadowRadius: 3,
     },
     listText: {
-      flex: 1,
       fontWeight: 'bold',
       textShadowColor: '#000000',
       textShadowRadius: 3,

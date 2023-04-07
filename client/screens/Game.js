@@ -35,7 +35,7 @@ export default function GameScreen({ navigation }) {
   const [playerState, setPlayerState] = useState('impostor');
   const [playerAlive, setPlayerAlive] = useState(true);
 
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
@@ -52,7 +52,7 @@ export default function GameScreen({ navigation }) {
     sabotage: false,
   });
 
-  const [taskCompletion, setTaskCompletion] = useState(10);
+  const [taskCompletion, setTaskCompletion] = useState(0);
 
   const [activeTask, setActiveTask] = useState({
     reCaptcha: false,
@@ -74,6 +74,9 @@ export default function GameScreen({ navigation }) {
 
   function taskMarkers() {
     return tasks.map((item) => {
+      let markerLabel = `${item.name} ${item.taskId.substring(0, 4)}`;
+      if (item.complete) markerLabel += ' (Complete)';
+
       return (
         <Marker
           pinColor={item.complete ? 'turquoise' : 'gold'}
@@ -82,7 +85,7 @@ export default function GameScreen({ navigation }) {
             latitude: item.location.latitude,
             longitude: item.location.longitude,
           }}
-          title={`${item.name} (${item.taskId.substring(0, 4)})`}
+          title={markerLabel}
         />
       );
     });
@@ -227,7 +230,7 @@ export default function GameScreen({ navigation }) {
   ]);
 
   useEffect(() => {
-    // Status update loop
+    // Networking update loop
     const room = getGameRoom();
 
     setPlayers(room?.state?.players);
@@ -235,7 +238,7 @@ export default function GameScreen({ navigation }) {
     const thisPlayer = room.state.players.find(
       (p) => p.sessionId === room.sessionId
     );
-    setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
+    setPlayerState(!thisPlayer.isImpostor ? 'impostor' : 'crewmate');
 
     room.onStateChange((state) => {
       setPlayers(state.players);
@@ -248,6 +251,23 @@ export default function GameScreen({ navigation }) {
         (p) => p.sessionId === room.sessionId
       ).tasks;
       setTasks(tasks);
+
+      // Set progress bar based on task completion percentage
+      // Array.reduce documentation: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
+      const totalTaskCount = state.players.reduce(
+        (count, player) => count + player.tasks.length,
+        0
+      );
+      const completedTaskCount = state.players.reduce(
+        (count, player) =>
+          count +
+          player.tasks.reduce((count, task) => count + task.complete, 0),
+        0
+      );
+      setTaskCompletion(completedTaskCount / totalTaskCount);
+
+      // Force rerender
+      setRefresh((value) => value + 1);
     });
 
     return () => {
@@ -293,6 +313,11 @@ export default function GameScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      {/* !! HACKY STUFF!! Force rerenders with this state */}
+      <View style={{ display: 'none' }}>
+        <Text>{refresh}</Text>
+      </View>
+
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
@@ -303,8 +328,8 @@ export default function GameScreen({ navigation }) {
         initialRegion={{
           latitude: 47.7326514,
           longitude: -122.3278194,
-          latitudeDelta: 0.001,
-          longitudeDelta: 0.001,
+          latitudeDelta: 0.002,
+          longitudeDelta: 0.002,
         }}
         mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
       >
@@ -369,7 +394,7 @@ export default function GameScreen({ navigation }) {
       <View style={styles.increaseTaskContainer}>
         <Button
           title={'increase tasks'}
-          onPress={() => setTaskCompletion(taskCompletion + 10)}
+          onPress={() => setTaskCompletion(taskCompletion + 0.1)}
         />
       </View>
     </View>

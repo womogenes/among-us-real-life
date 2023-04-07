@@ -11,7 +11,7 @@ function TaskBar(props) {
       toValue: props.taskCompletion,
       duration: 1000,
       useNativeDriver: false,
-      easing: Easing.linear,
+      easing: Easing.inOut(Easing.sin),
     }).start();
   }
 
@@ -27,7 +27,7 @@ function TaskBar(props) {
             styles.taskbarGreen,
             {
               width: completion.width.interpolate({
-                inputRange: [0, 100],
+                inputRange: [0, 1],
                 outputRange: ['0%', '100%'],
               }),
             },
