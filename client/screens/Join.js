@@ -28,14 +28,15 @@ function JoinScreen({ navigation }) {
   useEffect(() => {
     const lobby = getLobbyRoom();
     // Constantly updates roomList
-    setRoomList(openRooms);
+    setRoomList([...lobby.state.rooms.$items.values()]);
+
     lobby.onStateChange((state) => {
       // console.log(state.rooms.$items);
       // console.log(`all rooms: ${[...state.rooms.$items.values()]}`);
       // console.log(`in progress: ${[...state.inProgressRooms.$items.values()]}`);
       let rooms = [...state.rooms.$items.values()];
-      let inprogressrooms = [...state.inProgressRooms.$items.values()];
-      setOpenRooms(rooms.filter((room) => !inprogressrooms.includes(room)));
+      let inProgressRooms = [...state.inProgressRooms.$items.values()];
+      setOpenRooms(rooms.filter((room) => !inProgressRooms.includes(room)));
       // console.log(`roomList: ${[...roomList]}`);
     });
     return () => {
