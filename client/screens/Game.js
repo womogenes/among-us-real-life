@@ -123,6 +123,16 @@ export default function GameScreen({ navigation }) {
     }
   }
 
+  function closeTask(task) {
+    if (task == 'reCaptcha') {
+      setActiveTask((prevArrState) => ({
+        ...prevArrState,
+        reCaptcha: false,
+        taskId: undefined,
+      }));
+    }
+  }
+
   function changeButtonState(button, state) {
     if (button == 'use') {
       setButtonState((prevButtonState) => ({
@@ -148,12 +158,14 @@ export default function GameScreen({ navigation }) {
     console.log('USE');
     let closestTask = findClosest(distTask);
 
-    if (closestTask.name == 'reCaptcha') {
-      setActiveTask((prevArrState) => ({
-        ...prevArrState,
-        reCaptcha: true,
-        taskId: closestTask.taskId,
-      }));
+    if(!closestTask.complete){
+      if (closestTask.name == 'reCaptcha') {
+        setActiveTask((prevArrState) => ({
+          ...prevArrState,
+          reCaptcha: true,
+          taskId: closestTask.taskId,
+        }));
+      }
     }
   }
 
@@ -178,7 +190,7 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist(loc) {
-    let taskDist = distAll('task', loc.coords, tasks, 10);
+    let taskDist = distAll('task', loc.coords, tasks, 20);
     let playerArr = getGameRoom().state.players.filter(
       (p) => p.sessionId !== getGameRoom().sessionId
     );
@@ -321,10 +333,10 @@ export default function GameScreen({ navigation }) {
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
-        // pitchEnabled={false}
-        // rotateEnabled={false}
-        // scrollEnabled={false}
-        // zoomEnabled={false}
+        pitchEnabled={false}
+        rotateEnabled={false}
+        scrollEnabled={false}
+        zoomEnabled={false}
         initialRegion={{
           latitude: 47.7326514,
           longitude: -122.3278194,
@@ -389,14 +401,7 @@ export default function GameScreen({ navigation }) {
       ) : (
         <ControlPanel />
       )}
-
-      <CaptchaTask active={activeTask.reCaptcha} complete={completeTask} />
-      <View style={styles.increaseTaskContainer}>
-        <Button
-          title={'increase tasks'}
-          onPress={() => setTaskCompletion(taskCompletion + 0.1)}
-        />
-      </View>
+      <CaptchaTask active={activeTask.reCaptcha} complete={completeTask} closeTask={closeTask}/>
     </View>
   );
 }
@@ -436,10 +441,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#ffffffdd',
     zIndex: 2,
-  },
-
-  increaseTaskContainer: {
-    marginTop: Constants.statusBarHeight,
   },
 });
 

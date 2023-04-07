@@ -36,6 +36,12 @@ export function distAll(type, myCoords, allCoords, distance) {
           myArr.push(myObject);
         }
       }
+      if (type == 'task') {
+        if (!item.complete) {
+          myObject = { ...item, distance: myDist };
+          myArr.push(myObject);
+        }
+      }
       else {
         myObject = { ...item, distance: myDist };
         myArr.push(myObject);
