@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
   Button,
@@ -327,7 +326,7 @@ export default function GameScreen({ navigation }) {
     <View style={styles.container}>
       {/* !! HACKY STUFF!! Force rerenders with this state */}
       <View style={{ display: 'none' }}>
-        <Text>{refresh}</Text>
+        <CustomText>{refresh}</CustomText>
       </View>
 
       <MapView

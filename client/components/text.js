@@ -36,6 +36,10 @@ function CustomText(props) {
           props.borderRadius
             ? { borderRadius: props.borderRadius }
             : { borderRadius: 0 },
+          props.backgroundColor
+            ? { backgroundColor: props.backgroundColor }
+            : {},
+          props.overflow ? { overflow: props.overflow } : {},
         ]}
       >
         {props.children}
