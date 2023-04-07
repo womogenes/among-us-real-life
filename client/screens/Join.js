@@ -14,6 +14,7 @@ import {
 import React, { useState, useEffect } from 'react';
 
 import { connectToGameRoom, getLobbyRoom } from '../networking.js';
+import CustomText from '../components/text.js';
 
 function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
@@ -56,7 +57,9 @@ function JoinScreen({ navigation }) {
           style={styles.backgroundImage}
         >
           <View style={styles.titleContainer}>
-            <Text style={styles.titleText}>Join Server</Text>
+            <CustomText textColor={'white'} textSize={100} letterSpacing={1}>
+              Join Server
+            </CustomText>
           </View>
           <View style={styles.bodyContainer}>
             <TextInput
@@ -78,7 +81,9 @@ function JoinScreen({ navigation }) {
                 joinPressed(code);
               }}
             >
-              <Text style={styles.touchableButton}>Join</Text>
+              <CustomText color={'black'} textSize={40}>
+                Join
+              </CustomText>
             </TouchableOpacity>
           </View>
 
@@ -94,7 +99,16 @@ function JoinScreen({ navigation }) {
                     joinPressed(item);
                   }}
                 >
-                  <Text style={styles.room}>{item}</Text>
+                  <CustomText
+                    overflow={'hidden'}
+                    backgroundColor={'#BDC9C9'}
+                    borderRadius={5}
+                    padding={10}
+                    marginVertical={2}
+                    textSize={30}
+                  >
+                    {item}
+                  </CustomText>
                 </TouchableOpacity>
               )}
               keyExtractor={(item) => item}
