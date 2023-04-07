@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
   Button,
@@ -158,7 +157,7 @@ export default function GameScreen({ navigation }) {
     console.log('USE');
     let closestTask = findClosest(distTask);
 
-    if(!closestTask.complete){
+    if (!closestTask.complete) {
       if (closestTask.name == 'reCaptcha') {
         setActiveTask((prevArrState) => ({
           ...prevArrState,
@@ -327,7 +326,7 @@ export default function GameScreen({ navigation }) {
     <View style={styles.container}>
       {/* !! HACKY STUFF!! Force rerenders with this state */}
       <View style={{ display: 'none' }}>
-        <Text>{refresh}</Text>
+        <CustomText>{refresh}</CustomText>
       </View>
 
       <MapView
@@ -401,7 +400,11 @@ export default function GameScreen({ navigation }) {
       ) : (
         <ControlPanel />
       )}
-      <CaptchaTask active={activeTask.reCaptcha} complete={completeTask} closeTask={closeTask}/>
+      <CaptchaTask
+        active={activeTask.reCaptcha}
+        complete={completeTask}
+        closeTask={closeTask}
+      />
     </View>
   );
 }
