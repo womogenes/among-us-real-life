@@ -32,7 +32,7 @@ export default function GameScreen({ navigation }) {
     coords: { latitude: 0, longitude: 0 },
   });
 
-  const [playerState, setPlayerState] = useState('impostor');
+  const [playerState, setPlayerState] = useState('crewmate');
   const [playerAlive, setPlayerAlive] = useState(true);
 
   const [errorMsg, setErrorMsg] = useState(null);

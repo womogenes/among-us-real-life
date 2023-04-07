@@ -11,6 +11,10 @@ function CaptchaTask({ active, complete }) {
     recaptcha.current.open();
   };
 
+  const close = () => {
+    recaptcha.current.close();
+  };
+
   const onVerify = (token) => {
     complete('reCaptcha');
     console.log('success!', token);
