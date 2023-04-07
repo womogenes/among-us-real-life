@@ -63,7 +63,9 @@ export class Player extends Schema {
       new Task('reCaptcha', new Location(47.731639, -122.327612, 0)), // Red square
       new Task('reCaptcha', new Location(47.731779, -122.32705, 0)), // Bliss
 
-      new Task('reCaptcha', new Location(47.73206, -122.326362, 0)) // St. Nicks
+      new Task('reCaptcha', new Location(47.73206, -122.326362, 0)), // St. Nicks
+
+      new Task('reCaptcha', new Location(47.63754, -122.169789, 0)) // William's house
     );
   }
 }

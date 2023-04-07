@@ -24,11 +24,8 @@ export class GameRoom extends Room {
       const taskIdx = this.state.players[playerIdx].tasks.findIndex(
         (task) => task.taskId === taskId
       );
-      console.log(`playerIdx=${playerIdx}, taskIdx=${taskIdx}`);
 
       this.state.players[playerIdx].tasks[taskIdx].complete = true;
-
-      console.log(`new state: ${JSON.stringify(this.state, null, 1)}`);
     });
 
     this.onMessage('setUsername', (client, username) => {

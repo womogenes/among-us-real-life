@@ -17,7 +17,7 @@ function CaptchaTask({ active, complete }) {
 
   const onVerify = (token) => {
     complete('reCaptcha');
-    console.log('success!', token);
+    console.log(`reCaptcha success! token: ${token.substring(0, 8)}`);
   };
 
   const onExpire = () => {

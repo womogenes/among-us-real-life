@@ -1,6 +1,9 @@
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 
 function CustomText(props) {
+  const inheritedStyles = props.style || [];
+  console.log(inheritedStyles);
+
   return (
     <View
       style={[
@@ -13,6 +16,7 @@ function CustomText(props) {
     >
       <Text
         style={[
+          ...inheritedStyles,
           styles.textDefault,
           props.textSize ? { fontSize: props.textSize } : { fontSize: 12 },
           props.centerText ? { textAlign: 'center' } : {},
