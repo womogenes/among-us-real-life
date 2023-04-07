@@ -158,7 +158,7 @@ export default function GameScreen({ navigation }) {
     console.log('USE');
     let closestTask = findClosest(distTask);
 
-    if(!closestTask.complete){
+    if (!closestTask.complete) {
       if (closestTask.name == 'reCaptcha') {
         setActiveTask((prevArrState) => ({
           ...prevArrState,
@@ -250,7 +250,7 @@ export default function GameScreen({ navigation }) {
     const thisPlayer = room.state.players.find(
       (p) => p.sessionId === room.sessionId
     );
-    setPlayerState(!thisPlayer.isImpostor ? 'impostor' : 'crewmate');
+    setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
 
     room.onStateChange((state) => {
       setPlayers(state.players);
@@ -401,7 +401,11 @@ export default function GameScreen({ navigation }) {
       ) : (
         <ControlPanel />
       )}
-      <CaptchaTask active={activeTask.reCaptcha} complete={completeTask} closeTask={closeTask}/>
+      <CaptchaTask
+        active={activeTask.reCaptcha}
+        complete={completeTask}
+        closeTask={closeTask}
+      />
     </View>
   );
 }

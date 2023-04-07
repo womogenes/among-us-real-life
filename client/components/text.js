@@ -2,7 +2,6 @@ import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 
 function CustomText(props) {
   const inheritedStyles = props.style || [];
-  console.log(inheritedStyles);
 
   return (
     <View
