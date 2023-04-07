@@ -32,7 +32,7 @@ export default function GameScreen({ navigation }) {
     coords: { latitude: 0, longitude: 0 },
   });
 
-  const [playerState, setPlayerState] = useState('crewmate');
+  const [playerState, setPlayerState] = useState('impostor');
   const [playerAlive, setPlayerAlive] = useState(true);
 
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
