@@ -73,7 +73,9 @@ function TaskMenu(props) {
         { backgroundColor: backgroundColor },
       ]}
     >
-      <View style={styles.taskList}>{tasks()}</View>
+      <View style={styles.taskList}>
+        {tasks()}
+      </View>
       <View style={styles.taskButtonContainer}>
         <TouchableOpacity style={styles.taskButton} onPress={() => toggleX()}>
           <Text style={styles.taskButtonText}>Tasks</Text>
