@@ -52,12 +52,14 @@ export class GameRoom extends Room {
       this.state.players.find((p) => p.isHost).isImpostor = true;
 
       // Extremely hacky and bad
+      // Necessary to make impostor assignment work
       setTimeout(() => {
         this.broadcast('gameStarted');
       }, 100);
 
       this.state.gameStarted = true;
-      onGameStart(this);
+      this.state.gameState = 'normal';
+      this.state.onGameStart(this);
     });
 
     this.onMessage('settingsUpdated', (client, settings) => {
