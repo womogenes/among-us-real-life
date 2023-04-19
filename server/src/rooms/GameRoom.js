@@ -59,7 +59,7 @@ export class GameRoom extends Room {
 
       this.state.gameStarted = true;
       this.state.gameState = 'normal';
-      this.state.onGameStart(this);
+      onGameStart(this);
     });
 
     this.onMessage('settingsUpdated', (client, settings) => {

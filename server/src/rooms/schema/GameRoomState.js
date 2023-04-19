@@ -110,10 +110,6 @@ export class GameRoomState extends Schema {
     this.refresh = 0;
     this.code = code;
     this.gameStarted = false;
-    this.settings = new Settings();
-
-    this.players = new ArraySchema();
-
     /*
       Necessary states:
         lobby (Join.js)
@@ -122,12 +118,17 @@ export class GameRoomState extends Schema {
         voting
     */
     this.gameState = 'lobby';
+
+    this.settings = new Settings();
+
+    this.players = new ArraySchema();
   }
 }
 schema.defineTypes(GameRoomState, {
   refresh: 'number',
   code: 'string',
   gameStarted: 'boolean',
+  gameState: 'string',
   settings: Settings,
 
   players: [Player],
