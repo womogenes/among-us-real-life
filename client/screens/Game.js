@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   Button,
+  Text,
   Platform,
 } from 'react-native';
 import Constants from 'expo-constants';
@@ -23,6 +24,8 @@ import { findDistance, distAll, findClosest } from '../utils.js';
 import CaptchaTask from '../components/tasks/recaptcha.js';
 
 import CustomText from '../components/text.js';
+
+import VotingModal from '../components/voting.js';
 
 var mapView;
 
@@ -60,6 +63,18 @@ export default function GameScreen({ navigation }) {
 
   const [distTask, setDistTask] = useState([]);
   const [distPlayer, setDistPlayer] = useState([]);
+
+  const [votingModalVisible, setVotingModalVisible] = useState(false);
+  const [votingTimer, setVotingTimer] = useState(30);
+
+  const openModal = () => {
+    setVotingModalVisible(true);
+    const timeout = setTimeout(() => {
+      setVotingModalVisible(false);
+    }, votingTimer * 1000 + 2000); //buffer the timer a bit for transition smoothness
+
+    return () => clearTimeout(timeout);
+  };
 
   const animate = (loc) => {
     let r = {
@@ -400,6 +415,11 @@ export default function GameScreen({ navigation }) {
       ) : (
         <ControlPanel />
       )}
+      {/* testing button below */}
+      <TouchableOpacity onPress={openModal} style={styles.testButton}>
+        <Text>toggle voting modal</Text>
+      </TouchableOpacity>
+      <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
       <CaptchaTask
         active={activeTask.reCaptcha}
         complete={completeTask}
@@ -416,6 +436,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'flex-start',
   },
+
   map: {
     position: 'absolute',
     top: 0,
@@ -444,6 +465,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#ffffffdd',
     zIndex: 2,
+  },
+
+  testButton: {
+    marginTop: Constants.statusBarHeight,
+    padding: 5,
+    backgroundColor: 'powderblue',
   },
 });
 
