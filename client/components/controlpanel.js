@@ -55,9 +55,9 @@ function ControlPanel(props) {
             disabled={props.useButtonState}
             onPress={props.useButtonPress}
             image={require('client/assets/usebutton.png')}
-            imagesize={'75%'}
+            imageSize={'75%'}
             roundness={50}
-            backgroundcolor={'#00000000'}
+            backgroundColor={'#00000000'}
             width={150}
             height={150}
             right={-10}
@@ -68,9 +68,9 @@ function ControlPanel(props) {
             disabled={props.reportButtonState}
             onPress={props.reportButtonPress}
             image={require('client/assets/reportbutton.png')}
-            imagesize={'75%'}
+            imageSize={'75%'}
             roundness={50}
-            backgroundcolor={'#00000000'}
+            backgroundColor={'#00000000'}
             width={150}
             height={150}
             right={-10}
@@ -90,9 +90,9 @@ function ControlPanel(props) {
             cooldownTimer={timer}
             text={timer}
             image={require('client/assets/killbutton.png')}
-            imagesize={'65%'}
+            imageSize={'65%'}
             roundness={50}
-            backgroundcolor={'#00000000'}
+            backgroundColor={'#00000000'}
             width={150}
             height={150}
             right={-10}
@@ -105,9 +105,9 @@ function ControlPanel(props) {
               sabotageTasks();
             }}
             image={require('client/assets/sabotagebutton.png')}
-            imagesize={'65%'}
+            imageSize={'65%'}
             roundness={50}
-            backgroundcolor={'#00000000'}
+            backgroundColor={'#00000000'}
             width={150}
             height={150}
             right={-10}
@@ -118,9 +118,9 @@ function ControlPanel(props) {
             disabled={props.reportButtonState}
             onPress={props.reportButtonPress}
             image={require('client/assets/reportbutton.png')}
-            imagesize={'75%'}
+            imageSize={'75%'}
             roundness={50}
-            backgroundcolor={'#00000000'}
+            backgroundColor={'#00000000'}
             width={150}
             height={150}
             right={-10}
@@ -129,15 +129,16 @@ function ControlPanel(props) {
           <CustomButton
             type={'text'}
             text={'DISGUISE'}
-            textsize={30}
+            textSize={30}
             disabled={props.disguiseButtonState}
             onPress={props.disguiseButtonPress}
             roundness={50}
-            backgroundcolor={'#00000000'}
+            textColor={'#000'}
+            backgroundColor={'#00000000'}
             width={150}
             height={100}
             right={-10}
-            bottom={420}
+            bottom={450}
           />
           <Modal isVisible={isModalVisible} style={styles.modal}>
             <View style={styles.modalBackground}>
@@ -162,9 +163,9 @@ function ControlPanel(props) {
             disabled={null}
             onPress={props.revealButtonPress}
             image={require('client/assets/usebutton.png')}
-            imagesize={'75%'}
+            imageSize={'75%'}
             roundness={50}
-            backgroundcolor={'#00000000'}
+            backgroundColor={'#00000000'}
             width={150}
             height={150}
             right={-10}
@@ -175,9 +176,9 @@ function ControlPanel(props) {
             disabled={props.reportButtonState}
             onPress={props.reportButtonPress}
             image={require('client/assets/reportbutton.png')}
-            imagesize={'75%'}
+            imageSize={'75%'}
             roundness={50}
-            backgroundcolor={'#00000000'}
+            backgroundColor={'#00000000'}
             width={150}
             height={150}
             right={-10}
@@ -185,8 +186,8 @@ function ControlPanel(props) {
           />
         </View>
       )}
-      <TaskMenu tasks={props.tasks}/>
-      <TaskBar taskCompletion={props.taskCompletion}/>
+      <TaskMenu tasks={props.tasks} />
+      <TaskBar taskCompletion={props.taskCompletion} />
     </View>
   );
 }
