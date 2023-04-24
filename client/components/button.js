@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     flex: 1,
     display: 'flex',
     alignItems: 'center',
-    position: 'absolute',
   },
   shape: {
     padding: 10,
@@ -97,12 +96,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonImage: {
-    margin: 10,
     resizeMode: 'contain',
     flex: 1,
   },
   buttonText: {
-    margin: 10,
     color: 'black',
     position: 'absolute',
     fontSize: 40,

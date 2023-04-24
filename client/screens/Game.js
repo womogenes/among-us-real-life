@@ -67,11 +67,11 @@ export default function GameScreen({ navigation }) {
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(30);
 
-  const openModal = () => {
+  const openVotingModal = () => {
     setVotingModalVisible(true);
     const timeout = setTimeout(() => {
       setVotingModalVisible(false);
-    }, votingTimer * 1000 + 2000); //buffer the timer a bit for transition smoothness
+    }, votingTimer * 1000 + 2000); // buffer the timer a bit for transition smoothness
 
     return () => clearTimeout(timeout);
   };
@@ -416,7 +416,7 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
       {/* testing button below */}
-      <TouchableOpacity onPress={openModal} style={styles.testButton}>
+      <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
         <Text>toggle voting modal</Text>
       </TouchableOpacity>
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />

@@ -5,6 +5,7 @@ import { useRef, useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 
 import CustomButton from '../components/button.js';
+import CustomText from '../components/text.js';
 import TaskBar from '../components/taskbar.js';
 import TaskMenu from '../components/taskmenu.js';
 
@@ -48,6 +49,21 @@ function ControlPanel(props) {
 
   return (
     <View style={styles.bottom}>
+      {/* Universal views */}
+      <View
+        style={{
+          right: -10,
+          bottom: 400,
+          width: 20,
+          height: 20,
+          backgroundColor: '#000',
+          position: 'absolute',
+        }}
+      >
+        <CustomText>Hello</CustomText>
+      </View>
+
+      {/* Role-specific buttons */}
       {props.userType == 'crewmate' && (
         <View style={styles.buttonContainer}>
           <CustomButton
@@ -60,8 +76,6 @@ function ControlPanel(props) {
             backgroundColor={'#00000000'}
             width={150}
             height={150}
-            right={-10}
-            bottom={200}
           />
           <CustomButton
             type={'image'}
@@ -73,13 +87,19 @@ function ControlPanel(props) {
             backgroundColor={'#00000000'}
             width={150}
             height={150}
-            right={-10}
-            bottom={320}
           />
         </View>
       )}
       {props.userType == 'impostor' && (
         <View style={styles.buttonContainer}>
+          <CustomButton
+            type={'text'}
+            text={'DISGUISE'}
+            textSize={30}
+            disabled={props.disguiseButtonState}
+            onPress={props.disguiseButtonPress}
+            backgroundColor={'#00000000'}
+          />
           <CustomButton
             type={'cooldown'}
             disabled={props.killButtonState}
@@ -90,13 +110,7 @@ function ControlPanel(props) {
             cooldownTimer={timer}
             text={timer}
             image={require('client/assets/killbutton.png')}
-            imageSize={'65%'}
-            roundness={50}
             backgroundColor={'#00000000'}
-            width={150}
-            height={150}
-            right={-10}
-            bottom={200}
           />
           <CustomButton
             type={'cooldown'}
@@ -105,40 +119,14 @@ function ControlPanel(props) {
               sabotageTasks();
             }}
             image={require('client/assets/sabotagebutton.png')}
-            imageSize={'65%'}
-            roundness={50}
             backgroundColor={'#00000000'}
-            width={150}
-            height={150}
-            right={-10}
-            bottom={80}
           />
           <CustomButton
             type={'image'}
             disabled={props.reportButtonState}
             onPress={props.reportButtonPress}
             image={require('client/assets/reportbutton.png')}
-            imageSize={'75%'}
-            roundness={50}
             backgroundColor={'#00000000'}
-            width={150}
-            height={150}
-            right={-10}
-            bottom={320}
-          />
-          <CustomButton
-            type={'text'}
-            text={'DISGUISE'}
-            textSize={30}
-            disabled={props.disguiseButtonState}
-            onPress={props.disguiseButtonPress}
-            roundness={50}
-            textColor={'#000'}
-            backgroundColor={'#00000000'}
-            width={150}
-            height={100}
-            right={-10}
-            bottom={450}
           />
           <Modal isVisible={isModalVisible} style={styles.modal}>
             <View style={styles.modalBackground}>
@@ -163,29 +151,18 @@ function ControlPanel(props) {
             disabled={null}
             onPress={props.revealButtonPress}
             image={require('client/assets/usebutton.png')}
-            imageSize={'75%'}
-            roundness={50}
             backgroundColor={'#00000000'}
-            width={150}
-            height={150}
-            right={-10}
-            bottom={200}
           />
           <CustomButton
             type={'image'}
             disabled={props.reportButtonState}
             onPress={props.reportButtonPress}
             image={require('client/assets/reportbutton.png')}
-            imageSize={'75%'}
-            roundness={50}
             backgroundColor={'#00000000'}
-            width={150}
-            height={150}
-            right={-10}
-            bottom={320}
           />
         </View>
       )}
+
       <TaskMenu tasks={props.tasks} />
       <TaskBar taskCompletion={props.taskCompletion} />
     </View>
@@ -197,7 +174,6 @@ export default ControlPanel;
 const styles = StyleSheet.create({
   bottom: {
     width: '100%',
-    height: '40%',
     backgroundColor: '#00000000',
     justifyContent: 'center',
     alignItems: 'center',
@@ -206,9 +182,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
+    alignSelf: 'flex-end',
+    bottom: 120,
   },
   modal: {
     alignItems: 'center',
