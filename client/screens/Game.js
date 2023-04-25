@@ -10,6 +10,7 @@ import {
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
+import * as Haptics from 'expo-haptics';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
@@ -191,6 +192,7 @@ export default function GameScreen({ navigation }) {
 
   function useButton() {
     console.log('USE');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     let closestTask = findClosest(distTask);
 
     if (!closestTask.complete) {
@@ -206,6 +208,7 @@ export default function GameScreen({ navigation }) {
 
   function reportButton() {
     console.log('REPORT');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   }
 
   function killButton() {
