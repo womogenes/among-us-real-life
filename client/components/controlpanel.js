@@ -56,7 +56,7 @@ function ControlPanel(props) {
       <View style={styles.buttonContainer}>
         {/* Universal views */}
         <View style={{ flex: 1, alignItems: 'center' }}>
-          {manualMovement && (
+          {(Platform.OS == 'android' || manualMovement) && (
             <AxisPad
               size={100}
               handlerSize={50}

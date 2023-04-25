@@ -10,6 +10,7 @@ import {
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
+import * as Haptics from 'expo-haptics';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
@@ -80,7 +81,8 @@ export default function GameScreen({ navigation }) {
   const [distPlayer, setDistPlayer] = useState([]);
 
   const [votingModalVisible, setVotingModalVisible] = useState(false);
-  const [votingTimer, setVotingTimer] = useState(30);
+  //set timer in settings later, 10 is for faster testing
+  const [votingTimer, setVotingTimer] = useState(10);
 
   const [passcode, setPasscode] = useState(false);
 
@@ -190,6 +192,7 @@ export default function GameScreen({ navigation }) {
 
   function useButton() {
     console.log('USE');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     let closestTask = findClosest(distTask);
 
     if (!closestTask.complete) {
@@ -205,6 +208,7 @@ export default function GameScreen({ navigation }) {
 
   function reportButton() {
     console.log('REPORT');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   }
 
   function killButton() {
@@ -282,10 +286,14 @@ export default function GameScreen({ navigation }) {
   ]);
 
   useEffect(() => {
-    getGameRoom().onMessage('emergencyMeeting', () => {
+    const room = getGameRoom();
+    room.onMessage('emergencyMeeting', () => {
       setEmergencyMeetingLocation({
         latitude: 47.731317,
         longitude: -122.327169,
+      });
+      room.send('emergencyMeetingLoc', () => {
+        emergencyMeetingLocation;
       });
     });
   });
@@ -518,6 +526,9 @@ export default function GameScreen({ navigation }) {
           </CustomText>
           <CustomText textSize={30} centerText={true} textColor={'black'}>
             Actions are now disabled
+          </CustomText>
+          <CustomText textSize={30} centerText={true} textColor={'black'}>
+            Proceed to the Purple Pin
           </CustomText>
         </View>
       )}

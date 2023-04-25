@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { React, useEffect, useState } from 'react';
+import * as Haptics from 'expo-haptics';
 
 import { connectToGameRoom, getLobbyRoom } from '../networking.js';
 
@@ -13,6 +14,7 @@ import CustomText from '../components/text.js';
 
 function MenuScreen({ navigation }) {
   const joinGame = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     navigation.navigate('Join');
   };
 
@@ -23,6 +25,7 @@ function MenuScreen({ navigation }) {
 
     lobby?.onMessage('gameCreated', async (code) => {
       await connectToGameRoom(code);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       navigation.navigate('Lobby');
 
       lobby.removeAllListeners();
