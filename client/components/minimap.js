@@ -5,17 +5,32 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 function Minimap(props) {
   function taskMarkers() {
     return props.tasks.map((item) => {
-      return (
-        <Marker
-          pinColor={item.complete ? 'turquoise' : 'gold'}
-          key={item.taskId}
-          coordinate={{
-            latitude: item.location.latitude,
-            longitude: item.location.longitude,
-          }}
-          title={`${item.name} (${item.taskId.substring(0, 4)})`}
-        />
-      );
+      if(item.name != 'o2'){
+        return (
+          <Marker
+            pinColor={item.complete ? 'turquoise' : 'gold'}
+            key={item.taskId}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={`${item.name} (${item.taskId.substring(0, 4)})`}
+          />
+        );
+      }
+      else {
+        return (
+          <Marker
+            pinColor={item.complete ? 'wheat' : 'violet'}
+            key={item.taskId}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={`${item.name} (${item.taskId.substring(0, 4)})`}
+          />
+        );
+      }
     });
   }
 

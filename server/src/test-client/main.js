@@ -1,10 +1,14 @@
 const client = new Colyseus.Client(`ws://${window.location.host}`);
 const $ = document.querySelector.bind(document);
 
+const round = (x, n) => Math.round(x * Math.pow(10, n)) / Math.pow(10, n);
+
 let getGameRoom = () => {};
 
 // Set some default room code
 $('#new-room-code').value = '1234';
+$('#latitude').value = 47.731417;
+$('#longitude').value = -122.328147;
 
 // Join the lobby
 const lobbyRoom = client.joinOrCreate('lobby');
@@ -25,11 +29,13 @@ $('#join-game-form').addEventListener('submit', async (e) => {
   gameRoom.send('setUsername', 'web test client');
 
   gameRoom.onStateChange((state) => {
-    $('#room-state-output').innerText = JSON.stringify(state, null, 2);
+    const me = state.players.find((p) => p.sessionId === gameRoom.sessionId);
 
-    $('#start-game-btn').disabled =
-      state.gameStarted ||
-      !state.players.find((p) => p.sessionId === gameRoom.sessionId).isHost;
+    $('#room-state-output').innerText = JSON.stringify(state, null, 2);
+    $('#start-game-btn').disabled = state.gameStarted || !me.isHost;
+
+    $('#latitude').value = me.location.latitude;
+    $('#longitude').value = me.location.longitude;
   }, 100);
 
   gameRoom.onMessage('gameStarted', () => {
@@ -45,7 +51,7 @@ const connectToGameRoom = (code) => {
 
       resolve(gameRoom);
       getGameRoom = () => gameRoom;
-      sendCoords;
+      sendCoords();
     });
   });
 };
@@ -59,11 +65,51 @@ const sendCoords = () => {
   getGameRoom().send('location', {
     latitude: parseFloat($('#latitude').value),
     longitude: parseFloat($('#longitude').value),
+    altitude: 0,
   });
 };
 
 $('#latitude').addEventListener('input', sendCoords);
 $('#longitude').addEventListener('input', sendCoords);
 
-$('#latitude').value = 47.731417;
-$('#longitude').value = -122.328147;
+// Handlers for moving
+const keyMap = {}; // You could also use an array
+onkeydown =
+  onpress =
+  onkeyup =
+    function (e) {
+      keyMap[e.key] = e.type == 'keydown';
+      checkKeys();
+    };
+
+let [dLatCache, dLongCache] = [0, 0];
+const deltaUpdate = (dLat, dLong) => {
+  dLatCache += dLat;
+  dLongCache += dLong;
+};
+
+window.setInterval(() => {
+  getGameRoom()?.send('deltaLocation', {
+    latitude: dLatCache,
+    longitude: dLongCache,
+  });
+
+  dLatCache = 0;
+  dLongCache = 0;
+}, 100);
+
+const checkKeys = () => {
+  const delta = 1e-4;
+  if (keyMap['ArrowDown']) {
+    deltaUpdate(-delta, 0);
+  }
+  if (keyMap['ArrowUp']) {
+    deltaUpdate(delta, 0);
+  }
+  if (keyMap['ArrowLeft']) {
+    deltaUpdate(0, -delta);
+  }
+  if (keyMap['ArrowRight']) {
+    deltaUpdate(0, delta);
+  }
+};
