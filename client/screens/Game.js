@@ -10,6 +10,7 @@ import {
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
+import * as Haptics from 'expo-haptics';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
@@ -77,17 +78,21 @@ export default function GameScreen({ navigation }) {
   const [distPlayer, setDistPlayer] = useState([]);
 
   const [votingModalVisible, setVotingModalVisible] = useState(false);
-  const [votingTimer, setVotingTimer] = useState(30);
+  //set timer in settings later, 10 is for faster testing
+  const [votingTimer, setVotingTimer] = useState(10);
 
   const [passcode, setPasscode] = useState(false);
 
   const openVotingModal = () => {
+    getGameRoom()?.send('startVoting');
     setVotingModalVisible(true);
     const timeout = setTimeout(() => {
       setVotingModalVisible(false);
-    }, votingTimer * 1000 + 2000); // buffer the timer a bit for transition smoothness
+    }, votingTimer * 1000 + 1500); //buffer the timer a bit for transition smoothness
 
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+    };
   };
 
   const animate = (loc) => {
@@ -203,6 +208,7 @@ export default function GameScreen({ navigation }) {
 
   function useButton() {
     console.log('USE');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     let closestTask = findClosest(distTask);
 
     if (!closestTask.complete) {
@@ -218,6 +224,7 @@ export default function GameScreen({ navigation }) {
 
   function reportButton() {
     console.log('REPORT');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   }
 
   function killButton() {
@@ -238,8 +245,6 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist(loc) {
-    // console.log(`location: ${loc.latitude}`);
-
     let taskDist = distAll('task', loc, tasks, 20);
     let playerArr = getGameRoom().state.players.filter(
       (p) => p.sessionId !== getGameRoom().sessionId
@@ -297,10 +302,14 @@ export default function GameScreen({ navigation }) {
   ]);
 
   useEffect(() => {
-    getGameRoom().onMessage('emergencyMeeting', () => {
+    const room = getGameRoom();
+    room.onMessage('emergencyMeeting', () => {
       setEmergencyMeetingLocation({
         latitude: 47.731317,
         longitude: -122.327169,
+      });
+      room.send('emergencyMeetingLoc', () => {
+        emergencyMeetingLocation;
       });
     });
   });
@@ -534,6 +543,9 @@ export default function GameScreen({ navigation }) {
           </CustomText>
           <CustomText textSize={30} centerText={true} textColor={'black'}>
             Actions are now disabled
+          </CustomText>
+          <CustomText textSize={30} centerText={true} textColor={'black'}>
+            Proceed to the Purple Pin
           </CustomText>
         </View>
       )}
