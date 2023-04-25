@@ -4,7 +4,7 @@ const { Schema, ArraySchema } = schema;
 import { nanoid } from 'nanoid';
 
 // Location schema
-class Location extends Schema {
+export class Location extends Schema {
   constructor(latitude = 0, longitude = 0, altitude = 0) {
     super();
 
@@ -30,7 +30,7 @@ schema.defineTypes(Location, {
   altitude: 'number', // altitude
 });
 
-class Task extends Schema {
+export class Task extends Schema {
   constructor(name, location) {
     super();
 

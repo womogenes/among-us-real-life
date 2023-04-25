@@ -26,16 +26,6 @@ function ControlPanel(props) {
     setIntervalID(interval);
   }
 
-  function renderSabotageTasks() {
-    return props.sabotageList.map((item) => {
-      return (
-        <TouchableOpacity style={styles.sabotageListButton} key={item.key}>
-          <Text style={styles.sabotageListButtonText}>{item.name}</Text>
-        </TouchableOpacity>
-      );
-    });
-  }
-
   function sabotageTasks() {
     setModalVisibility(true);
   }
@@ -129,15 +119,26 @@ function ControlPanel(props) {
               image={require('client/assets/killbutton.png')}
               backgroundColor={'#00000000'}
             />
-            <CustomButton
-              type={'cooldown'}
-              disabled={props.sabotageButtonState}
-              onPress={() => {
-                sabotageTasks();
-              }}
-              image={require('client/assets/sabotagebutton.png')}
-              backgroundColor={'#00000000'}
-            />
+            {props.sabotageActive?  
+              <CustomButton
+                type={'image'}
+                disabled={props.useButtonState}
+                onPress={props.useButtonPress}
+                image={require('client/assets/usebutton.png')}
+                roundness={50}
+                backgroundColor={'#00000000'}
+              />
+            :
+              <CustomButton
+                type={'cooldown'}
+                disabled={props.sabotageButtonState}
+                onPress={() => {
+                  sabotageTasks();
+                }}
+                image={require('client/assets/sabotagebutton.png')}
+                backgroundColor={'#00000000'}
+              />
+            }
             <CustomButton
               type={'image'}
               disabled={props.reportButtonState}
@@ -156,7 +157,12 @@ function ControlPanel(props) {
                   </TouchableOpacity>
                 </View>
                 <Text style={styles.modalTitle}>Sabotage</Text>
-                {renderSabotageTasks()}
+                  <TouchableOpacity
+                    style={styles.sabotageListButton}
+                    onPress={props.o2}
+                  >
+                    <Text style={styles.sabotageListButtonText}>O2</Text>
+                  </TouchableOpacity>
               </View>
             </Modal>
           </>

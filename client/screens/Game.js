@@ -29,6 +29,8 @@ var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
 
 export default function GameScreen({ navigation }) {
+
+  const [sabotageActive, setSabotageActive] = useState(false);
   const [manualMovement, setManualMovement] = useState(false);
   const setManualMovementHook = (value) => {
     setManualMovement(value); // This is terrible :( why must React be like this
@@ -56,11 +58,6 @@ export default function GameScreen({ navigation }) {
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
-  const [sabotageList, setSabotageList] = useState([
-    { name: 'Reactor', key: 1, availability: true },
-    { name: 'O2', key: 2, availability: true },
-    { name: 'Door', key: 3, availability: true },
-  ]);
   const [buttonState, setButtonState] = useState({
     use: true, // These should all be true at the beginning of the game
     report: true,
@@ -103,22 +100,41 @@ export default function GameScreen({ navigation }) {
     mapView?.animateToRegion(r, 500);
   };
 
+  function sabotage(type) {
+    getGameRoom().send(type);
+    setSabotageActive(true);
+  }
+
   function taskMarkers() {
     return tasks.map((item) => {
       let markerLabel = `${item.name} ${item.taskId.substring(0, 4)}`;
       if (item.complete) markerLabel += ' (Complete)';
-
-      return (
-        <Marker
-          pinColor={item.complete ? 'turquoise' : 'gold'}
-          key={item.taskId}
-          coordinate={{
-            latitude: item.location.latitude,
-            longitude: item.location.longitude,
-          }}
-          title={markerLabel}
-        />
-      );
+      if(item.name != 'o2'){
+        return (
+          <Marker
+            pinColor={item.complete ? 'turquoise' : 'gold'}
+            key={item.taskId}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={markerLabel}
+          />
+        );
+      }
+      else {
+        return (
+          <Marker
+            pinColor={item.complete ? 'wheat' : 'violet'}
+            key={item.taskId}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={markerLabel}
+          />
+        );
+      }
     });
   }
 
@@ -298,7 +314,7 @@ export default function GameScreen({ navigation }) {
     const thisPlayer = room.state.players.find(
       (p) => p.sessionId === room.sessionId
     );
-    setPlayerState(!thisPlayer.isImpostor ? 'impostor' : 'crewmate');
+    setPlayerState(!thisPlayer.isImpostor ? 'crewmate' : 'impostor');
 
     room.onStateChange((state) => {
       setPlayers(state.players);
@@ -458,7 +474,6 @@ export default function GameScreen({ navigation }) {
           sabotageButtonState={
             emergencyMeetingLocation ? true : buttonState.sabotage
           }
-          sabotageList={sabotageList}
           reportButtonState={
             emergencyMeetingLocation ? true : buttonState.report
           }
@@ -468,6 +483,8 @@ export default function GameScreen({ navigation }) {
           tasks={tasks}
           manualMovement={manualMovement}
           setManualMovement={setManualMovementHook}
+          sabotageActive={sabotageActive}
+          o2 = {() => sabotage('o2')}
         />
       ) : playerState == 'disguised' ? (
         <ControlPanel
