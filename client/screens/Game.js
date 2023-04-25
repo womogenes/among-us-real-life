@@ -436,7 +436,7 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
-      <CodeTask 
+      <CodeTask
         active={passcode}
         complete={completeTask}
         closeTask={closeTask}
