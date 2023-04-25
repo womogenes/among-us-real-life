@@ -73,7 +73,9 @@ export class Player extends Schema {
 
       new Task('reCaptcha', new Location(47.63754, -122.169789, 0)), // William's house
 
-      new Task('reCaptcha', new Location(47.737305, -122.33942, 0)) // Felix's house
+      new Task('reCaptcha', new Location(47.737305, -122.33942, 0)), // Felix's house
+
+      new Task('reCaptcha', new Location(47.731317, -122.327169, 0)) // LS Library
     );
   }
 }
@@ -81,6 +83,7 @@ schema.defineTypes(Player, {
   sessionId: 'string',
   username: 'string',
   location: Location,
+  lastAliveLocation: Location,
   isHost: 'boolean',
   isImpostor: 'boolean',
   isAlive: 'boolean',

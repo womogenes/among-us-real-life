@@ -191,7 +191,7 @@ function LobbyScreen({ navigation }) {
                 <Slider
                   value={killRadius}
                   minimumValue={2}
-                  maximumValue={10}
+                  maximumValue={100}
                   step={1}
                   onValueChange={(killRadius) => {
                     setKillRadius(killRadius);

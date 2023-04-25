@@ -20,6 +20,8 @@ import Minimap from '../components/minimap.js';
 import ControlPanel from '../components/controlpanel.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
+import CodeTask from '../components/sabotage/passcode.js';
+
 import CustomText from '../components/text.js';
 import VotingModal from '../components/voting.js';
 
@@ -46,6 +48,9 @@ export default function GameScreen({ navigation }) {
 
   const [playerState, setPlayerState] = useState('impostor');
   const [playerAlive, setPlayerAlive] = useState(true);
+
+  const [emergencyMeetingLocation, setEmergencyMeetingLocation] =
+    useState(null);
 
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
@@ -76,6 +81,8 @@ export default function GameScreen({ navigation }) {
 
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(30);
+
+  const [passcode, setPasscode] = useState(false);
 
   const openVotingModal = () => {
     setVotingModalVisible(true);
@@ -200,6 +207,7 @@ export default function GameScreen({ navigation }) {
   function killButton() {
     console.log('KILL');
     let closestPlayer = findClosest(distPlayer);
+    console.log(closestPlayer.sessionId);
     getGameRoom().send('playerDeath', closestPlayer.sessionId);
   }
 
@@ -220,7 +228,12 @@ export default function GameScreen({ navigation }) {
     let playerArr = getGameRoom().state.players.filter(
       (p) => p.sessionId !== getGameRoom().sessionId
     );
-    let playerDist = distAll('player', loc, playerArr, 5);
+    let playerDist = distAll(
+      'player',
+      loc.coords,
+      playerArr,
+      getGameRoom().state.settings.killRadius
+    );
     setDistTask(taskDist);
     setDistPlayer(playerDist);
   }
@@ -268,9 +281,17 @@ export default function GameScreen({ navigation }) {
   ]);
 
   useEffect(() => {
-    // Manual movement variable initialization
-    manualMovementVar = manualMovement;
+    getGameRoom().onMessage('emergencyMeeting', () => {
+      console.log('USE EFFECT WORKED');
+      setEmergencyMeetingLocation({
+        latitude: 47.731317,
+        longitude: -122.327169,
+      });
+      console.log(emergencyMeetingLocation);
+    });
+  });
 
+  useEffect(() => {
     // Networking update loop
     const room = getGameRoom();
 
@@ -398,12 +419,22 @@ export default function GameScreen({ navigation }) {
             />
           );
         })}
+        {emergencyMeetingLocation && (
+          <Marker
+            key="Emergency Meeting"
+            pinColor="purple"
+            coordinate={emergencyMeetingLocation}
+            title="EmergencyMeeting"
+          />
+        )}
+
         {taskMarkers()}
       </MapView>
       <Minimap
         userCoords={[location.latitude, location.longitude]}
         tasks={tasks}
       />
+
       {deathScreen()}
       {playerState == 'crewmate' ? (
         <ControlPanel
@@ -452,9 +483,20 @@ export default function GameScreen({ navigation }) {
       <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
         <Text>toggle voting modal</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => setPasscode(true)}
+        style={styles.testButton}
+      >
+        <Text>open passcode task</Text>
+      </TouchableOpacity>
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
       <CaptchaTask
         active={activeTask.reCaptcha}
+        complete={completeTask}
+        closeTask={closeTask}
+      />
+      <CodeTask
+        active={passcode}
         complete={completeTask}
         closeTask={closeTask}
       />

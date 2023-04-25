@@ -45,7 +45,10 @@ export class GameRoom extends Room {
     });
 
     this.onMessage('playerDeath', (client, sessionId) => {
-      this.state.players.find((p) => p.sessionId === sessionId).isAlive = false;
+      let player = this.state.players.find((p) => p.sessionId === sessionId);
+      player.isAlive = false;
+      player.lastAliveLocation = player.location;
+      this.broadcast('emergencyMeeting');
     });
 
     this.onMessage('startGame', (client) => {
