@@ -36,6 +36,9 @@ export class GameRoom extends Room {
 
     this.onMessage('playerDeath', (client, sessionId) => {
       this.state.players.find((p) => p.sessionId === sessionId).isAlive = false;
+      console.log(
+        type(this.state.players.find((p) => p.sessionId === sessionId).location)
+      );
     });
 
     this.onMessage('startGame', (client) => {
