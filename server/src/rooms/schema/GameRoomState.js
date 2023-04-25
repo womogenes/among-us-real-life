@@ -18,6 +18,11 @@ class Location extends Schema {
     this.longitude = coords.longitude;
     this.altitude = coords.altitude;
   }
+
+  deltaUpdate(coords) {
+    this.latitude += coords.latitude;
+    this.longitude += coords.longitude;
+  }
 }
 schema.defineTypes(Location, {
   latitude: 'number', // Latitude
