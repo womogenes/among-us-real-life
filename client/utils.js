@@ -41,8 +41,7 @@ export function distAll(type, myCoords, allCoords, distance) {
           myObject = { ...item, distance: myDist };
           myArr.push(myObject);
         }
-      }
-      else {
+      } else {
         myObject = { ...item, distance: myDist };
         myArr.push(myObject);
       }

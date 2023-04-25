@@ -14,26 +14,36 @@ import * as Location from 'expo-location';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { getGameRoom, lobbyRoom } from '../networking.js';
-
-import Minimap from '../components/minimap.js';
-
-import ControlPanel from '../components/controlpanel.js';
-
 import { findDistance, distAll, findClosest } from '../utils.js';
 
-import CaptchaTask from '../components/tasks/recaptcha.js';
+import Minimap from '../components/minimap.js';
+import ControlPanel from '../components/controlpanel.js';
 
+import CaptchaTask from '../components/tasks/recaptcha.js';
 import CodeTask from '../components/sabotage/passcode.js';
 
 import CustomText from '../components/text.js';
-
 import VotingModal from '../components/voting.js';
 
 var mapView;
+let manualMovementVar; // !! HACK !! React state sucks
 
 export default function GameScreen({ navigation }) {
+  const [manualMovement, setManualMovement] = useState(false);
+  const setManualMovementHook = (value) => {
+    setManualMovement(value); // This is terrible :( why must React be like this
+    manualMovementVar = value;
+  };
+  const setLocationHook = (loc) => {
+    if (manualMovementVar) return; // Dev override
+
+    getGameRoom()?.send('location', loc);
+    setLocation(loc);
+  };
+
   const [location, setLocation] = useState({
-    coords: { latitude: 0, longitude: 0 },
+    latitude: 0,
+    longitude: 0,
   });
 
   const [playerState, setPlayerState] = useState('impostor');
@@ -85,8 +95,8 @@ export default function GameScreen({ navigation }) {
 
   const animate = (loc) => {
     let r = {
-      latitude: loc.coords.latitude,
-      longitude: loc.coords.longitude,
+      latitude: loc.latitude,
+      longitude: loc.longitude,
       latitudeDelta: 0.001,
       longitudeDelta: 0.001,
     };
@@ -212,7 +222,9 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist(loc) {
-    let taskDist = distAll('task', loc.coords, tasks, 20);
+    // console.log(`location: ${loc.latitude}`);
+
+    let taskDist = distAll('task', loc, tasks, 20);
     let playerArr = getGameRoom().state.players.filter(
       (p) => p.sessionId !== getGameRoom().sessionId
     );
@@ -270,12 +282,10 @@ export default function GameScreen({ navigation }) {
 
   useEffect(() => {
     getGameRoom().onMessage('emergencyMeeting', () => {
-      console.log('USE EFFECT WORKED');
       setEmergencyMeetingLocation({
         latitude: 47.731317,
         longitude: -122.327169,
       });
-      console.log(emergencyMeetingLocation);
     });
   });
 
@@ -288,13 +298,18 @@ export default function GameScreen({ navigation }) {
     const thisPlayer = room.state.players.find(
       (p) => p.sessionId === room.sessionId
     );
-    setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
+    setPlayerState(!thisPlayer.isImpostor ? 'impostor' : 'crewmate');
 
     room.onStateChange((state) => {
       setPlayers(state.players);
       setPlayerAlive(thisPlayer.isAlive);
-      //brandon is testing things here
-      //console.log(`players: ${players}`);
+
+      // Animate to new given location and update local state
+      const player = state.players.find(
+        (player) => player.sessionId === getGameRoom().sessionId
+      );
+      setLocation({ ...player.location }); // VERY IMPORTANT to make new object here, or useEffect will not fire
+      animate(player.location);
 
       // Get player tasks from room state
       const tasks = state.players.find(
@@ -337,8 +352,14 @@ export default function GameScreen({ navigation }) {
         return;
       }
 
+      // Initial location update
       let newLocation = await Location.getCurrentPositionAsync({});
-      setLocation(newLocation), animate(newLocation);
+      // Necessary hook to send update to server
+      // ("Hook" might be an inaccurate term)
+      // See definition at top of this file
+      setLocationHook(newLocation.coords);
+
+      // Continued location update
       locationWatcher = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
@@ -346,10 +367,7 @@ export default function GameScreen({ navigation }) {
           timeInterval: 10,
         },
         (loc) => {
-          setLocation(loc), animate(loc);
-
-          // Send location to server
-          getGameRoom()?.send('location', loc);
+          setLocationHook(loc.coords);
         }
       );
     })();
@@ -365,7 +383,11 @@ export default function GameScreen({ navigation }) {
     <View style={styles.container}>
       {/* !! HACKY STUFF!! Force rerenders with this state */}
       <View style={{ display: 'none' }}>
-        <CustomText>{refresh}</CustomText>
+        <CustomText>
+          {refresh}
+          {manualMovement}
+          {location.longitude}
+        </CustomText>
       </View>
 
       <MapView
@@ -407,34 +429,45 @@ export default function GameScreen({ navigation }) {
         {taskMarkers()}
       </MapView>
       <Minimap
-        userCoords={[location.coords.latitude, location.coords.longitude]}
+        userCoords={[location.latitude, location.longitude]}
         tasks={tasks}
       />
+
       {deathScreen()}
       {playerState == 'crewmate' ? (
         <ControlPanel
           userType={'crewmate'}
-          useButtonState={buttonState.use}
+          useButtonState={emergencyMeetingLocation ? true : buttonState.use}
           useButtonPress={useButton}
-          reportButtonState={buttonState.report}
+          reportButtonState={
+            emergencyMeetingLocation ? true : buttonState.report
+          }
           reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
           tasks={tasks}
+          manualMovement={manualMovement}
+          setManualMovement={setManualMovementHook}
         />
       ) : playerState == 'impostor' ? (
         <ControlPanel
           userType={'impostor'}
-          killButtonState={buttonState.kill}
+          killButtonState={emergencyMeetingLocation ? true : buttonState.kill}
           killButtonPress={killButton}
           cooldown={10}
           disguiseButtonState={buttonState.disguise}
-          sabotageButtonState={buttonState.sabotage}
+          sabotageButtonState={
+            emergencyMeetingLocation ? true : buttonState.sabotage
+          }
           sabotageList={sabotageList}
-          reportButtonState={buttonState.report}
+          reportButtonState={
+            emergencyMeetingLocation ? true : buttonState.report
+          }
           reportButtonPress={reportButton}
           disguiseButtonPress={disguiseButton}
           taskCompletion={taskCompletion}
           tasks={tasks}
+          manualMovement={manualMovement}
+          setManualMovement={setManualMovementHook}
         />
       ) : playerState == 'disguised' ? (
         <ControlPanel
@@ -444,6 +477,8 @@ export default function GameScreen({ navigation }) {
           reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
           tasks={tasks}
+          manualMovement={manualMovement}
+          setManualMovement={setManualMovementHook}
         />
       ) : (
         <ControlPanel />
@@ -452,7 +487,10 @@ export default function GameScreen({ navigation }) {
       <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
         <Text>toggle voting modal</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => setPasscode(true)} style={styles.testButton}>
+      <TouchableOpacity
+        onPress={() => setPasscode(true)}
+        style={styles.testButton}
+      >
         <Text>open passcode task</Text>
       </TouchableOpacity>
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
@@ -467,6 +505,21 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
+      {emergencyMeetingLocation && (
+        <View style={styles.emergencyScreen}>
+          <CustomText
+            textSize={70}
+            letterSpacing={3}
+            textColor={'red'}
+            centerText={true}
+          >
+            Emergency Meeting Declared
+          </CustomText>
+          <CustomText textSize={30} centerText={true} textColor={'black'}>
+            Actions are now disabled
+          </CustomText>
+        </View>
+      )}
     </View>
   );
 }
@@ -493,6 +546,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: 'red',
     opacity: 0.2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  emergencyText: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'black',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -12,9 +12,19 @@ export class GameRoom extends Room {
     this.setState(new GameRoomState(options.code));
 
     this.onMessage('location', (client, loc) => {
+      // !! HACK !! to catch incorrectly formatted client data
+      const newCoords = loc.coords || loc;
+
       this.state.players
         .find((p) => p.sessionId === client.sessionId)
-        .location.update(loc.coords);
+        .location.update(newCoords);
+    });
+
+    this.onMessage('deltaLocation', (client, dLoc) => {
+      // dLoc is of the form {latitude: ..., longitude: ...}
+      this.state.players
+        .find((p) => p.sessionId === client.sessionId)
+        .location.deltaUpdate(dLoc);
     });
 
     this.onMessage('completeTask', (client, taskId) => {
