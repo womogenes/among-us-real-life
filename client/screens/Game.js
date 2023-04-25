@@ -85,12 +85,15 @@ export default function GameScreen({ navigation }) {
   const [passcode, setPasscode] = useState(false);
 
   const openVotingModal = () => {
+    getGameRoom()?.send('startVoting');
     setVotingModalVisible(true);
     const timeout = setTimeout(() => {
       setVotingModalVisible(false);
-    }, votingTimer * 1000 + 2000); // buffer the timer a bit for transition smoothness
+    }, votingTimer * 1000 + 1500); //buffer the timer a bit for transition smoothness
 
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+    };
   };
 
   const animate = (loc) => {
@@ -280,12 +283,10 @@ export default function GameScreen({ navigation }) {
 
   useEffect(() => {
     getGameRoom().onMessage('emergencyMeeting', () => {
-      console.log('USE EFFECT WORKED');
       setEmergencyMeetingLocation({
         latitude: 47.731317,
         longitude: -122.327169,
       });
-      console.log(emergencyMeetingLocation);
     });
   });
 
@@ -437,9 +438,11 @@ export default function GameScreen({ navigation }) {
       {playerState == 'crewmate' ? (
         <ControlPanel
           userType={'crewmate'}
-          useButtonState={buttonState.use}
+          useButtonState={emergencyMeetingLocation ? true : buttonState.use}
           useButtonPress={useButton}
-          reportButtonState={buttonState.report}
+          reportButtonState={
+            emergencyMeetingLocation ? true : buttonState.report
+          }
           reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
           tasks={tasks}
@@ -449,13 +452,17 @@ export default function GameScreen({ navigation }) {
       ) : playerState == 'impostor' ? (
         <ControlPanel
           userType={'impostor'}
-          killButtonState={buttonState.kill}
+          killButtonState={emergencyMeetingLocation ? true : buttonState.kill}
           killButtonPress={killButton}
           cooldown={10}
           disguiseButtonState={buttonState.disguise}
-          sabotageButtonState={buttonState.sabotage}
+          sabotageButtonState={
+            emergencyMeetingLocation ? true : buttonState.sabotage
+          }
           sabotageList={sabotageList}
-          reportButtonState={buttonState.report}
+          reportButtonState={
+            emergencyMeetingLocation ? true : buttonState.report
+          }
           reportButtonPress={reportButton}
           disguiseButtonPress={disguiseButton}
           taskCompletion={taskCompletion}
@@ -495,9 +502,25 @@ export default function GameScreen({ navigation }) {
       />
       <CodeTask
         active={passcode}
+        code={1234}
         complete={completeTask}
         closeTask={closeTask}
       />
+      {emergencyMeetingLocation && (
+        <View style={styles.emergencyScreen}>
+          <CustomText
+            textSize={70}
+            letterSpacing={3}
+            textColor={'red'}
+            centerText={true}
+          >
+            Emergency Meeting Declared
+          </CustomText>
+          <CustomText textSize={30} centerText={true} textColor={'black'}>
+            Actions are now disabled
+          </CustomText>
+        </View>
+      )}
     </View>
   );
 }
@@ -524,6 +547,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: 'red',
     opacity: 0.2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  emergencyText: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'black',
     justifyContent: 'center',
     alignItems: 'center',
   },

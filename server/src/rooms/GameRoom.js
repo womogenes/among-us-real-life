@@ -91,6 +91,17 @@ export class GameRoom extends Room {
       this.disconnect();
     });
 
+    this.onMessage('startVoting', () => {
+      this.state.votes = new Map();
+    });
+
+    this.onMessage('vote', (client, vote) => {
+      let voter = Object.keys(vote)[0];
+      let target = vote[voter];
+      this.state.votes.set(voter, target);
+      // console.log(this.state.votes.$items);
+    });
+
     // Notify the lobby that this room has been created
     onCreateGameRoom(this);
   }
