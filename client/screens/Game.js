@@ -67,13 +67,16 @@ export default function GameScreen({ navigation }) {
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(30);
 
-  const openModal = () => {
+  const openVotingModal = () => {
+    getGameRoom()?.send('startVoting');
     setVotingModalVisible(true);
     const timeout = setTimeout(() => {
       setVotingModalVisible(false);
-    }, votingTimer * 1000 + 2000); //buffer the timer a bit for transition smoothness
+    }, votingTimer * 1000 + 1500); //buffer the timer a bit for transition smoothness
 
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+    };
   };
 
   const animate = (loc) => {
@@ -269,8 +272,6 @@ export default function GameScreen({ navigation }) {
     room.onStateChange((state) => {
       setPlayers(state.players);
       setPlayerAlive(thisPlayer.isAlive);
-      //brandon is testing things here
-      //console.log(`players: ${players}`);
 
       // Get player tasks from room state
       const tasks = state.players.find(
@@ -416,7 +417,7 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
       {/* testing button below */}
-      <TouchableOpacity onPress={openModal} style={styles.testButton}>
+      <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
         <Text>toggle voting modal</Text>
       </TouchableOpacity>
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />

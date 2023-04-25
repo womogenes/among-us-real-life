@@ -1,5 +1,5 @@
 import * as schema from '@colyseus/schema';
-const { Schema, ArraySchema } = schema;
+const { Schema, ArraySchema, MapSchema } = schema;
 
 import { nanoid } from 'nanoid';
 
@@ -68,6 +68,7 @@ export class Player extends Schema {
 
       new Task('reCaptcha', new Location(47.63754, -122.169789, 0)), // William's house
 
+      new Task('reCaptcha', new Location(47.731317, -122.327169, 0)), // William's house
       new Task('reCaptcha', new Location(47.737305, -122.33942, 0)) // Felix's house
     );
   }
@@ -122,6 +123,7 @@ export class GameRoomState extends Schema {
     this.settings = new Settings();
 
     this.players = new ArraySchema();
+    this.votes = new MapSchema();
   }
 }
 schema.defineTypes(GameRoomState, {
@@ -132,4 +134,5 @@ schema.defineTypes(GameRoomState, {
   settings: Settings,
 
   players: [Player],
+  votes: { map: 'string' },
 });
