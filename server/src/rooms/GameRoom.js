@@ -51,6 +51,28 @@ export class GameRoom extends Room {
       this.broadcast('emergencyMeeting');
     });
 
+    function emergencyDist(playerCoords, emCoords) {
+      /* 111139 converts lat and long in degrees to meters */
+      const x =
+        111139 *
+        Math.abs(Math.abs(playerCoords.latitude) - Math.abs(emCoords.latitude));
+      const y =
+        111139 *
+        Math.abs(
+          Math.abs(playerCoords.longitude) - Math.abs(emCoords.longitude)
+        );
+      const dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+      return dist;
+    }
+
+    this.onMessage('emergencyMeetingLoc', (client, emergencyMeetingLoc) => {
+      console.log('TESTTT');
+      for (let i = 0; i < this.state.players.length; i++) {
+        if (this.state.players[i].isAlive == true) {
+        }
+      }
+    });
+
     this.onMessage('startGame', (client) => {
       console.log(`client ${client.sessionId} started`);
 
