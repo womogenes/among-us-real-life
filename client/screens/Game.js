@@ -410,6 +410,7 @@ export default function GameScreen({ navigation }) {
         userCoords={[location.coords.latitude, location.coords.longitude]}
         tasks={tasks}
       />
+
       {deathScreen()}
       {playerState == 'crewmate' ? (
         <ControlPanel
@@ -452,7 +453,10 @@ export default function GameScreen({ navigation }) {
       <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
         <Text>toggle voting modal</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => setPasscode(true)} style={styles.testButton}>
+      <TouchableOpacity
+        onPress={() => setPasscode(true)}
+        style={styles.testButton}
+      >
         <Text>open passcode task</Text>
       </TouchableOpacity>
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
