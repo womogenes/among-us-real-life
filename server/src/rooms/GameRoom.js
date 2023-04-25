@@ -58,6 +58,8 @@ export class GameRoom extends Room {
         p.tasks.push(newTask);
         console.log(p.tasks);
       });
+    });
+    
     function emergencyDist(playerCoords, emCoords) {
       /* 111139 converts lat and long in degrees to meters */
       const x =
