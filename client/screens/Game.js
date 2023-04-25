@@ -241,6 +241,10 @@ export default function GameScreen({ navigation }) {
   ]);
 
   useEffect(() => {
+    // GAME PLAYER DEATH MESSAGE USE EFFECT
+  });
+
+  useEffect(() => {
     // Networking update loop
     const room = getGameRoom();
 
