@@ -37,6 +37,9 @@ export default function GameScreen({ navigation }) {
   const [playerState, setPlayerState] = useState('impostor');
   const [playerAlive, setPlayerAlive] = useState(true);
 
+  const [emergencyMeetingLocation, setEmergencyMeetingLocation] =
+    useState(null);
+
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
@@ -190,6 +193,7 @@ export default function GameScreen({ navigation }) {
   function killButton() {
     console.log('KILL');
     let closestPlayer = findClosest(distPlayer);
+    console.log(closestPlayer.sessionId);
     getGameRoom().send('playerDeath', closestPlayer.sessionId);
   }
 
@@ -208,7 +212,12 @@ export default function GameScreen({ navigation }) {
     let playerArr = getGameRoom().state.players.filter(
       (p) => p.sessionId !== getGameRoom().sessionId
     );
-    let playerDist = distAll('player', loc.coords, playerArr, 5);
+    let playerDist = distAll(
+      'player',
+      loc.coords,
+      playerArr,
+      getGameRoom().state.settings.killRadius
+    );
     setDistTask(taskDist);
     setDistPlayer(playerDist);
   }
@@ -256,7 +265,14 @@ export default function GameScreen({ navigation }) {
   ]);
 
   useEffect(() => {
-    // GAME PLAYER DEATH MESSAGE USE EFFECT
+    getGameRoom().onMessage('emergencyMeeting', () => {
+      console.log('USE EFFECT WORKED');
+      setEmergencyMeetingLocation({
+        latitude: 47.731317,
+        longitude: -122.327169,
+      });
+      console.log(emergencyMeetingLocation);
+    });
   });
 
   useEffect(() => {
@@ -375,6 +391,15 @@ export default function GameScreen({ navigation }) {
             />
           );
         })}
+        {emergencyMeetingLocation && (
+          <Marker
+            key="Emergency Meeting"
+            pinColor="purple"
+            coordinate={emergencyMeetingLocation}
+            title="EmergencyMeeting"
+          />
+        )}
+
         {taskMarkers()}
       </MapView>
       <Minimap
