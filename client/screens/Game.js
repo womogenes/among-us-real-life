@@ -226,8 +226,6 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist(loc) {
-    // console.log(`location: ${loc.latitude}`);
-
     let taskDist = distAll('task', loc, tasks, 20);
     let playerArr = getGameRoom().state.players.filter(
       (p) => p.sessionId !== getGameRoom().sessionId
@@ -285,10 +283,14 @@ export default function GameScreen({ navigation }) {
   ]);
 
   useEffect(() => {
-    getGameRoom().onMessage('emergencyMeeting', () => {
+    const room = getGameRoom();
+    room.onMessage('emergencyMeeting', () => {
       setEmergencyMeetingLocation({
         latitude: 47.731317,
         longitude: -122.327169,
+      });
+      room.send('emergencyMeetingLoc', () => {
+        emergencyMeetingLocation;
       });
     });
   });
@@ -521,6 +523,9 @@ export default function GameScreen({ navigation }) {
           </CustomText>
           <CustomText textSize={30} centerText={true} textColor={'black'}>
             Actions are now disabled
+          </CustomText>
+          <CustomText textSize={30} centerText={true} textColor={'black'}>
+            Proceed to the Purple Pin
           </CustomText>
         </View>
       )}

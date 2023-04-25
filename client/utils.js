@@ -11,6 +11,8 @@ export function findDistance(myCoords, yourCoords) {
 }
 
 export function distAll(type, myCoords, allCoords, distance) {
+  if (!myCoords) return [];
+
   let myArr = [];
   let myDist = 0;
   let myObject = {};
@@ -47,6 +49,7 @@ export function distAll(type, myCoords, allCoords, distance) {
       }
     }
   });
+
   return myArr;
 }
 
