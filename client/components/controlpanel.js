@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Switch } from 'react-native';
 
 import { useRef, useEffect, useState } from 'react';
 
@@ -10,11 +10,13 @@ import TaskBar from '../components/taskbar.js';
 import TaskMenu from '../components/taskmenu.js';
 
 import AxisPad from '../components/axispad.js';
+import { getGameRoom } from '../networking.js';
 
 function ControlPanel(props) {
   const [timer, setTimer] = useState(null);
   const [intervalID, setIntervalID] = useState();
   const [isModalVisible, setModalVisibility] = useState(false);
+  const { manualMovement, setManualMovement } = props;
 
   function killCooldown() {
     setTimer(props.cooldown);
@@ -53,16 +55,35 @@ function ControlPanel(props) {
     <View style={styles.bottom}>
       <View style={styles.buttonContainer}>
         {/* Universal views */}
-        <View style={{}}>
-          <AxisPad
-            size={140}
-            handlerSize={70}
-            resetOnRelease={true}
-            autoCenter={true}
-            onValue={({ x, y }) => {
-              // values are between -1 and 1
-            }}
-          ></AxisPad>
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          {manualMovement && (
+            <AxisPad
+              size={100}
+              handlerSize={50}
+              resetOnRelease={true}
+              autoCenter={true}
+              onValue={({ x, y }) => {
+                const dLat = -y * 0.00002;
+                const dLong = x * 0.00002;
+                getGameRoom()?.send('deltaLocation', {
+                  latitude: dLat,
+                  longitude: dLong,
+                });
+              }}
+            ></AxisPad>
+          )}
+          <View>
+            <CustomText textSize={18}>Manual</CustomText>
+            <Switch
+              trackColor={{ false: '#888', true: '#666' }}
+              thumbColor={manualMovement ? '#fff' : '#fff'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={(value) => {
+                setManualMovement(value);
+              }}
+              value={manualMovement}
+            />
+          </View>
         </View>
 
         {/* Role-specific buttons */}
@@ -73,22 +94,16 @@ function ControlPanel(props) {
               disabled={props.useButtonState}
               onPress={props.useButtonPress}
               image={require('client/assets/usebutton.png')}
-              imageSize={'75%'}
               roundness={50}
               backgroundColor={'#00000000'}
-              width={150}
-              height={150}
             />
             <CustomButton
               type={'image'}
               disabled={props.reportButtonState}
               onPress={props.reportButtonPress}
               image={require('client/assets/reportbutton.png')}
-              imageSize={'75%'}
               roundness={50}
               backgroundColor={'#00000000'}
-              width={150}
-              height={150}
             />
           </>
         )}
