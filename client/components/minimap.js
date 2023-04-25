@@ -1,13 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import {
-  StyleSheet,
-  View,
-  Button,
-} from 'react-native';
+import { StyleSheet, View, Button } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 function Minimap(props) {
-
   function taskMarkers() {
     return props.tasks.map((item) => {
       return (
@@ -23,7 +18,7 @@ function Minimap(props) {
       );
     });
   }
-  
+
   return (
     <View style={styles.container}>
       <MapView

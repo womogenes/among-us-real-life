@@ -57,10 +57,8 @@ const startGame = () => {
 // Listen for input changes
 const sendCoords = () => {
   getGameRoom().send('location', {
-    coords: {
-      latitude: parseFloat($('#latitude').value),
-      longitude: parseFloat($('#longitude').value),
-    },
+    latitude: parseFloat($('#latitude').value),
+    longitude: parseFloat($('#longitude').value),
   });
 };
 
