@@ -23,6 +23,8 @@ import { findDistance, distAll, findClosest } from '../utils.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 
+import CodeTask from '../components/sabotage/passcode.js';
+
 import CustomText from '../components/text.js';
 
 import VotingModal from '../components/voting.js';
@@ -69,6 +71,8 @@ export default function GameScreen({ navigation }) {
 
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(30);
+
+  const [passcode, setPasscode] = useState(false);
 
   const openVotingModal = () => {
     setVotingModalVisible(true);
@@ -448,9 +452,17 @@ export default function GameScreen({ navigation }) {
       <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
         <Text>toggle voting modal</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => setPasscode(true)} style={styles.testButton}>
+        <Text>open passcode task</Text>
+      </TouchableOpacity>
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
       <CaptchaTask
         active={activeTask.reCaptcha}
+        complete={completeTask}
+        closeTask={closeTask}
+      />
+      <CodeTask 
+        active={passcode}
         complete={completeTask}
         closeTask={closeTask}
       />
