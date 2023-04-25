@@ -6,6 +6,7 @@ import {
   Button,
   Text,
   Platform,
+  Image,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -25,6 +26,7 @@ import CodeTask from '../components/sabotage/passcode.js';
 
 import CustomText from '../components/text.js';
 import VotingModal from '../components/voting.js';
+import { ProfileIcon } from '../components/profile-icon.js';
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
@@ -423,7 +425,13 @@ export default function GameScreen({ navigation }) {
                 longitude: player.location.longitude,
               }}
               title={`Player ${player.sessionId}`}
-            />
+            >
+              <ProfileIcon
+                id={getGameRoom().state.players.findIndex(
+                  (p) => p.sessionId === player.sessionId
+                )}
+              />
+            </Marker>
           );
         })}
         {emergencyMeetingLocation && (
