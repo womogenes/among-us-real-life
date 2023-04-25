@@ -75,6 +75,11 @@ export class Player extends Schema {
 
       new Task('reCaptcha', new Location(47.737305, -122.33942, 0)), // Felix's house
 
+      new Task(
+        'reCaptcha',
+        new Location(47.64096865628356, -122.24140723628969, 0)
+      ), // Brandon's house
+
       new Task('reCaptcha', new Location(47.731317, -122.327169, 0)) // LS Library
     );
   }
