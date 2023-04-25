@@ -463,6 +463,7 @@ export default function GameScreen({ navigation }) {
       />
       <CodeTask
         active={passcode}
+        code={1234}
         complete={completeTask}
         closeTask={closeTask}
       />
