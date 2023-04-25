@@ -27,8 +27,8 @@ function CustomButton(props) {
           props.roundness
             ? { borderRadius: props.roundness }
             : { borderRadius: 1 },
-          props.backgroundcolor
-            ? { backgroundColor: props.backgroundcolor }
+          props.backgroundColor
+            ? { backgroundColor: props.backgroundColor }
             : { backgroundColor: 'white' },
           props.width ? { width: props.width } : { width: 100 },
           props.height ? { height: props.height } : { height: 100 },
@@ -39,7 +39,7 @@ function CustomButton(props) {
             style={[
               styles.buttonImage,
               { opacity: myOpacity },
-              props.imagesize ? { width: props.imagesize } : { width: '100%' },
+              props.imageSize ? { width: props.imageSize } : { width: '100%' },
             ]}
             source={
               props.image
@@ -49,7 +49,8 @@ function CustomButton(props) {
           <Text
             style={[
               styles.buttonText,
-              props.textsize && { fontSize: props.textsize },
+              props.textColor && { color: props.textColor },
+              props.textSize && { fontSize: props.textSize },
               { opacity: myOpacity },
             ]}
           >
@@ -61,8 +62,8 @@ function CustomButton(props) {
               style={[
                 styles.buttonImage,
                 { opacity: myOpacity },
-                props.imagesize
-                  ? { width: props.imagesize }
+                props.imageSize
+                  ? { width: props.imageSize }
                   : { width: '100%' },
               ]}
               source={props.image}
@@ -88,7 +89,6 @@ const styles = StyleSheet.create({
     flex: 1,
     display: 'flex',
     alignItems: 'center',
-    position: 'absolute',
   },
   shape: {
     padding: 10,
@@ -96,12 +96,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonImage: {
-    margin: 10,
     resizeMode: 'contain',
     flex: 1,
   },
   buttonText: {
-    margin: 10,
     color: 'black',
     position: 'absolute',
     fontSize: 40,

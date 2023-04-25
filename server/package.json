@@ -25,6 +25,7 @@
     "@colyseus/monitor": "^0.14.0",
     "colyseus": "^0.14.9",
     "express": "^4.18.2",
-    "nanoid": "^4.0.2"
+    "nanoid": "^4.0.2",
+    "react-nipple": "^1.0.2"
   }
 }

@@ -50,6 +50,7 @@ export class Player extends Schema {
     this.sessionId = sessionId;
     this.username = 'Anonymous';
     this.location = new Location();
+    this.lastAliveLocation = new Location();
     this.isHost = isHost;
     this.isImpostor = false;
     this.isAlive = true;
@@ -67,7 +68,7 @@ export class Player extends Schema {
 
       new Task('reCaptcha', new Location(47.63754, -122.169789, 0)), // William's house
 
-      new Task('reCaptcha', new Location(47.73730521840812, -122.3394295418287, 0)), //Felix's house
+      new Task('reCaptcha', new Location(47.737305, -122.33942, 0)) // Felix's house
     );
   }
 }
@@ -101,7 +102,7 @@ schema.defineTypes(Settings, {
   killCooldown: 'number',
 });
 
-// Final schema
+// Big game room schema
 export class GameRoomState extends Schema {
   constructor(code) {
     super();
@@ -109,6 +110,15 @@ export class GameRoomState extends Schema {
     this.refresh = 0;
     this.code = code;
     this.gameStarted = false;
+    /*
+      Necessary states:
+        lobby (Join.js)
+        normal
+        emergency (everyone moving to location)
+        voting
+    */
+    this.gameState = 'lobby';
+
     this.settings = new Settings();
 
     this.players = new ArraySchema();
@@ -118,6 +128,7 @@ schema.defineTypes(GameRoomState, {
   refresh: 'number',
   code: 'string',
   gameStarted: 'boolean',
+  gameState: 'string',
   settings: Settings,
 
   players: [Player],
