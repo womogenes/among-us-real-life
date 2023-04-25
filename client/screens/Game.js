@@ -6,6 +6,7 @@ import {
   Button,
   Text,
   Platform,
+  Image,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -110,19 +111,29 @@ export default function GameScreen({ navigation }) {
 
   function taskMarkers() {
     return tasks.map((item) => {
-      let markerLabel = `${item.name} ${item.taskId.substring(0, 4)}`;
+      // let markerLabel = `${item.name} ${item.taskId.substring(0, 4)}`;
+      let markerLabel = item.name;
       if (item.complete) markerLabel += ' (Complete)';
+      const taskIcons = {
+        reCaptcha: require('../assets/task-icons/recaptcha.png'),
+        passcode: require('../assets/task-icons/passcode.png'),
+      };
 
       return (
         <Marker
-          pinColor={item.complete ? 'turquoise' : 'gold'}
+          // pinColor={item.complete ? 'turquoise' : 'gold'}
           key={item.taskId}
           coordinate={{
             latitude: item.location.latitude,
             longitude: item.location.longitude,
           }}
           title={markerLabel}
-        />
+        >
+          <Image
+            source={taskIcons[item.name]}
+            style={{ width: 40, height: 40, resizeMode: 'contain' }}
+          />
+        </Marker>
       );
     });
   }
