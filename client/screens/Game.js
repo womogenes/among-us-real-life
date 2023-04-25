@@ -80,7 +80,8 @@ export default function GameScreen({ navigation }) {
   const [distPlayer, setDistPlayer] = useState([]);
 
   const [votingModalVisible, setVotingModalVisible] = useState(false);
-  const [votingTimer, setVotingTimer] = useState(30);
+  //set timer in settings later, 10 is for faster testing
+  const [votingTimer, setVotingTimer] = useState(10);
 
   const [passcode, setPasscode] = useState(false);
 
