@@ -85,12 +85,15 @@ export default function GameScreen({ navigation }) {
   const [passcode, setPasscode] = useState(false);
 
   const openVotingModal = () => {
+    getGameRoom()?.send('startVoting');
     setVotingModalVisible(true);
     const timeout = setTimeout(() => {
       setVotingModalVisible(false);
-    }, votingTimer * 1000 + 2000); // buffer the timer a bit for transition smoothness
+    }, votingTimer * 1000 + 1500); //buffer the timer a bit for transition smoothness
 
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+    };
   };
 
   const animate = (loc) => {
@@ -222,8 +225,6 @@ export default function GameScreen({ navigation }) {
   }
 
   function findAllDist(loc) {
-    // console.log(`location: ${loc.latitude}`);
-
     let taskDist = distAll('task', loc, tasks, 20);
     let playerArr = getGameRoom().state.players.filter(
       (p) => p.sessionId !== getGameRoom().sessionId
@@ -505,6 +506,7 @@ export default function GameScreen({ navigation }) {
       />
       <CodeTask
         active={passcode}
+        code={1234}
         complete={completeTask}
         closeTask={closeTask}
       />

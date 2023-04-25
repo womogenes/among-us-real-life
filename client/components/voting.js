@@ -4,47 +4,103 @@ import {
   FlatList,
   Text,
   TouchableWithoutFeedback,
+  Button,
 } from 'react-native';
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 
-import { getGameRoom, lobbyRoom } from '../networking.js';
+import { getGameRoom } from '../networking.js';
 import CustomText from './text.js';
 
 export default function VotingModal(props) {
-  const [timer, setTimer] = useState(props.timer);
+  const gameRoom = getGameRoom();
 
-  let playerArr = getGameRoom().state.players;
+  const [timer, setTimer] = useState(props.timer);
+  const [votes, setVotes] = useState(new Map());
+  const [loading, setLoading] = useState(true);
+
+  let playerArr = gameRoom.state.players;
+
+  let user = gameRoom.state.players.filter(
+    (p) => p.sessionId == gameRoom.sessionId
+  )[0];
 
   useEffect(() => {
-    let countdown = setTimeout(() => {
-      setTimer(timer - 1);
-    }, 1000);
+    if (props.isModalVisible) {
+      //basically a reset
+      setTimer(props.timer);
+      setVotes(new Map());
+      setLoading(false);
+    }
+  }, [props.isModalVisible]);
 
-    if (!props.isModalVisible) {
-      return clearTimeout(countdown);
+  useEffect(() => {
+    if (!loading) {
+      let countdown = setTimeout(() => {
+        setTimer(timer - 1);
+      }, 1000);
+      if (!props.isModalVisible) {
+        setLoading(true);
+        return clearTimeout(countdown);
+      }
     }
   });
+
+  useEffect(() => {
+    gameRoom.state.votes.onChange = (target, player) => {
+      // console.log(player, ' has voted for ', target);
+      // console.log(getGameRoom().state.votes.$items);
+      setVotes((prev) => ({ ...prev, [player]: target }));
+    };
+    gameRoom.state.votes.onAdd = (target, player) => {
+      // console.log(player, ' has voted for ', target);
+      // console.log(getGameRoom().state.votes.$items);
+      setVotes((prev) => ({ ...prev, [player]: target }));
+    };
+  }, []);
 
   return (
     <Modal isVisible={props.isModalVisible} animationType="slide">
       <View style={styles.votingmodal}>
+        <Button
+          onPress={() =>
+            console.log(
+              new Map(getGameRoom().state.votes.$items),
+              ' , ',
+              Object.keys(votes)
+            )
+          }
+          title="test click (log)"
+        ></Button>
         <FlatList
           data={playerArr}
           renderItem={({ item }) => (
-            <TouchableWithoutFeedback>
-              <CustomText
-                textColor={'black'}
-                centerText={true}
-                textSize={50}
-                marginHorizontal={20}
-                marginVertical={10}
-                padding={10}
-                borderWidth={2}
-                borderRadius={15}
-              >
-                {item.username || 'Anonymous'}
-              </CustomText>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                //may have to change how this is done later
+                //using ids?
+                getGameRoom()?.send('vote', {
+                  [user.sessionId]: item.sessionId,
+                });
+              }}
+            >
+              <View style={styles.candidate}>
+                <CustomText
+                  textColor={'black'}
+                  centerText={false}
+                  textSize={40}
+                >
+                  {item.username}
+                </CustomText>
+
+                {/* maybe change to view later for icons? */}
+                <Text style={styles.votes}>
+                  {Object.keys(votes).filter(
+                    //change this to icons later
+                    (key) => votes[key] == item.sessionId
+                  )}
+                </Text>
+              </View>
             </TouchableWithoutFeedback>
           )}
           style={styles.player}
@@ -76,5 +132,20 @@ const styles = StyleSheet.create({
   },
   red: {
     color: 'red',
+  },
+  candidate: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+    borderWidth: 2,
+    borderRadius: 15,
+    marginHorizontal: 20,
+    marginVertical: 10,
+    padding: 10,
+  },
+  votes: {
+    backgroundColor: 'powderblue',
+    alignSelf: 'flex-end',
+    textAlign: 'right',
   },
 });

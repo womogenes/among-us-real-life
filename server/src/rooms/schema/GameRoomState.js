@@ -1,5 +1,5 @@
 import * as schema from '@colyseus/schema';
-const { Schema, ArraySchema } = schema;
+const { Schema, ArraySchema, MapSchema } = schema;
 
 import { nanoid } from 'nanoid';
 
@@ -130,6 +130,7 @@ export class GameRoomState extends Schema {
     this.settings = new Settings();
 
     this.players = new ArraySchema();
+    this.votes = new MapSchema();
   }
 }
 schema.defineTypes(GameRoomState, {
@@ -140,4 +141,5 @@ schema.defineTypes(GameRoomState, {
   settings: Settings,
 
   players: [Player],
+  votes: { map: 'string' },
 });
