@@ -69,6 +69,13 @@ export class GameRoom extends Room {
       console.log('TESTTT');
       for (let i = 0; i < this.state.players.length; i++) {
         if (this.state.players[i].isAlive == true) {
+          dist = emergencyDist(
+            this.state.players[i].location,
+            emergencyMeetingLoc
+          );
+          if (dist < 20) {
+            console.log('YEAHHHHH');
+          }
         }
       }
     });
