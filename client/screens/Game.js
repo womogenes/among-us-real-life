@@ -263,7 +263,7 @@ export default function GameScreen({ navigation }) {
     );
     let playerDist = distAll(
       'player',
-      loc.coords,
+      loc,
       playerArr,
       getGameRoom().state.settings.killRadius
     );
