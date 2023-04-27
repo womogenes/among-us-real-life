@@ -14,12 +14,16 @@ import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
 import { Slider } from '@miblanchard/react-native-slider';
 import CustomText from '../components/text.js';
+import * as Haptics from 'expo-haptics';
 
 import { getGameRoom, leaveGameRoom } from '../networking.js';
 
 function LobbyScreen({ navigation }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const handleModal = () => setIsModalVisible(() => !isModalVisible);
+  const handleModal = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setIsModalVisible(() => !isModalVisible);
+  };
 
   const [killRadius, setKillRadius] = useState([5]);
   const [killCooldown, setKillCooldown] = useState([60]);
@@ -107,6 +111,7 @@ function LobbyScreen({ navigation }) {
     console.assert(isHost);
 
     // Tell server to start game
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     getGameRoom().send('startGame');
   };
 
@@ -239,6 +244,9 @@ function LobbyScreen({ navigation }) {
                 <TouchableOpacity
                   onPress={() => {
                     leaveGameRoom();
+                    Haptics.notificationAsync(
+                      Haptics.NotificationFeedbackType.Warning
+                    );
                     navigation.navigate('Menu');
                   }}
                   style={[styles.button]}
@@ -256,6 +264,9 @@ function LobbyScreen({ navigation }) {
                 <TouchableOpacity
                   onPress={() => {
                     leaveGameRoom();
+                    Haptics.notificationAsync(
+                      Haptics.NotificationFeedbackType.Warning
+                    );
                     navigation.navigate('Menu');
                   }}
                   style={[styles.button]}

@@ -4,7 +4,7 @@ const { Schema, ArraySchema, MapSchema } = schema;
 import { nanoid } from 'nanoid';
 
 // Location schema
-class Location extends Schema {
+export class Location extends Schema {
   constructor(latitude = 0, longitude = 0, altitude = 0) {
     super();
 
@@ -30,7 +30,7 @@ schema.defineTypes(Location, {
   altitude: 'number', // altitude
 });
 
-class Task extends Schema {
+export class Task extends Schema {
   constructor(name, location) {
     super();
 
@@ -74,6 +74,11 @@ export class Player extends Schema {
       new Task('reCaptcha', new Location(47.63754, -122.169789, 0)), // William's house
 
       new Task('reCaptcha', new Location(47.737305, -122.33942, 0)), // Felix's house
+
+      new Task(
+        'reCaptcha',
+        new Location(47.64096865628356, -122.24140723628969, 0)
+      ), // Brandon's house
 
       new Task('reCaptcha', new Location(47.731317, -122.327169, 0)) // LS Library
     );

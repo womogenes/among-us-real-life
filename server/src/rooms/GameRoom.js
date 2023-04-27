@@ -1,6 +1,6 @@
 import { Room } from '@colyseus/core';
 
-import { GameRoomState, Player } from './schema/GameRoomState.js';
+import { GameRoomState, Player, Task, Location } from './schema/GameRoomState.js';
 import {
   onCreateGameRoom,
   onDisposeGameRoom,
@@ -51,6 +51,15 @@ export class GameRoom extends Room {
       this.broadcast('emergencyMeeting');
     });
 
+    this.onMessage('o2', () => {
+      console.log('sabotage!!!!')
+      const newTask = new Task('o2', new Location(47.731386, -122.327199, 0))
+      this.state.players.forEach(p => {
+        p.tasks.push(newTask);
+        console.log(p.tasks);
+      });
+    });
+    
     function emergencyDist(playerCoords, emCoords) {
       /* 111139 converts lat and long in degrees to meters */
       const x =

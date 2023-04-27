@@ -6,13 +6,16 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { React, useEffect, useState } from 'react';
+import * as Haptics from 'expo-haptics';
 
 import { connectToGameRoom, getLobbyRoom } from '../networking.js';
 
 import CustomText from '../components/text.js';
+import { ProfileIcon } from '../components/profile-icon.js';
 
 function MenuScreen({ navigation }) {
   const joinGame = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     navigation.navigate('Join');
   };
 
@@ -23,6 +26,7 @@ function MenuScreen({ navigation }) {
 
     lobby?.onMessage('gameCreated', async (code) => {
       await connectToGameRoom(code);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       navigation.navigate('Lobby');
 
       lobby.removeAllListeners();
@@ -39,6 +43,7 @@ function MenuScreen({ navigation }) {
         <View style={styles.titleContainer}>
           <CustomText numberOfLines={1} textSize={100} letterSpacing={3}>
             AMONG US
+            <ProfileIcon />
           </CustomText>
           <CustomText numberOfLines={1} textSize={40}>
             (Lakeside Edition)

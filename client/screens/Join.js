@@ -15,6 +15,7 @@ import React, { useState, useEffect } from 'react';
 
 import { connectToGameRoom, getLobbyRoom } from '../networking.js';
 import CustomText from '../components/text.js';
+import * as Haptics from 'expo-haptics';
 
 function JoinScreen({ navigation }) {
   const [code, onChangeCode] = useState('');
@@ -23,6 +24,7 @@ function JoinScreen({ navigation }) {
 
   const joinPressed = async (code) => {
     await connectToGameRoom(code);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     navigation.navigate('Lobby');
   };
 

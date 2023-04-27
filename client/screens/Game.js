@@ -6,10 +6,12 @@ import {
   Button,
   Text,
   Platform,
+  Image,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
+import * as Haptics from 'expo-haptics';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
@@ -24,11 +26,13 @@ import CodeTask from '../components/sabotage/passcode.js';
 
 import CustomText from '../components/text.js';
 import VotingModal from '../components/voting.js';
+import { ProfileIcon } from '../components/profile-icon.js';
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
 
 export default function GameScreen({ navigation }) {
+  const [sabotageActive, setSabotageActive] = useState(false);
   const [manualMovement, setManualMovement] = useState(false);
   const setManualMovementHook = (value) => {
     setManualMovement(value); // This is terrible :( why must React be like this
@@ -56,11 +60,6 @@ export default function GameScreen({ navigation }) {
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
-  const [sabotageList, setSabotageList] = useState([
-    { name: 'Reactor', key: 1, availability: true },
-    { name: 'O2', key: 2, availability: true },
-    { name: 'Door', key: 3, availability: true },
-  ]);
   const [buttonState, setButtonState] = useState({
     use: true, // These should all be true at the beginning of the game
     report: true,
@@ -80,7 +79,8 @@ export default function GameScreen({ navigation }) {
   const [distPlayer, setDistPlayer] = useState([]);
 
   const [votingModalVisible, setVotingModalVisible] = useState(false);
-  const [votingTimer, setVotingTimer] = useState(30);
+  //set timer in settings later, 10 is for faster testing
+  const [votingTimer, setVotingTimer] = useState(10);
 
   const [passcode, setPasscode] = useState(false);
 
@@ -106,22 +106,52 @@ export default function GameScreen({ navigation }) {
     mapView?.animateToRegion(r, 500);
   };
 
+  function sabotage(type) {
+    getGameRoom().send(type);
+    setSabotageActive(true);
+  }
+
   function taskMarkers() {
     return tasks.map((item) => {
-      let markerLabel = `${item.name} ${item.taskId.substring(0, 4)}`;
+      // let markerLabel = `${item.name} ${item.taskId.substring(0, 4)}`;
+      let markerLabel = item.name;
       if (item.complete) markerLabel += ' (Complete)';
 
-      return (
-        <Marker
-          pinColor={item.complete ? 'turquoise' : 'gold'}
-          key={item.taskId}
-          coordinate={{
-            latitude: item.location.latitude,
-            longitude: item.location.longitude,
-          }}
-          title={markerLabel}
-        />
-      );
+      const taskIcons = {
+        reCaptcha: require('../assets/task-icons/recaptcha.png'),
+        passcode: require('../assets/task-icons/passcode.png'),
+      };
+
+      if (item.name != 'o2') {
+        return (
+          <Marker
+            // pinColor={item.complete ? 'turquoise' : 'gold'}
+            key={item.taskId}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={markerLabel}
+          >
+            <Image
+              source={taskIcons[item.name]}
+              style={{ width: 40, height: 40, resizeMode: 'contain' }}
+            />
+          </Marker>
+        );
+      } else {
+        return (
+          <Marker
+            pinColor={item.complete ? 'wheat' : 'violet'}
+            key={item.taskId}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={markerLabel}
+          ></Marker>
+        );
+      }
     });
   }
 
@@ -190,6 +220,7 @@ export default function GameScreen({ navigation }) {
 
   function useButton() {
     console.log('USE');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     let closestTask = findClosest(distTask);
 
     if (!closestTask.complete) {
@@ -205,6 +236,7 @@ export default function GameScreen({ navigation }) {
 
   function reportButton() {
     console.log('REPORT');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   }
 
   function killButton() {
@@ -231,7 +263,7 @@ export default function GameScreen({ navigation }) {
     );
     let playerDist = distAll(
       'player',
-      loc.coords,
+      loc,
       playerArr,
       getGameRoom().state.settings.killRadius
     );
@@ -419,7 +451,13 @@ export default function GameScreen({ navigation }) {
                 longitude: player.location.longitude,
               }}
               title={`Player ${player.sessionId}`}
-            />
+            >
+              <ProfileIcon
+                id={getGameRoom().state.players.findIndex(
+                  (p) => p.sessionId === player.sessionId
+                )}
+              />
+            </Marker>
           );
         })}
         {emergencyMeetingLocation && (
@@ -463,7 +501,6 @@ export default function GameScreen({ navigation }) {
           sabotageButtonState={
             emergencyMeetingLocation ? true : buttonState.sabotage
           }
-          sabotageList={sabotageList}
           reportButtonState={
             emergencyMeetingLocation ? true : buttonState.report
           }
@@ -473,6 +510,8 @@ export default function GameScreen({ navigation }) {
           tasks={tasks}
           manualMovement={manualMovement}
           setManualMovement={setManualMovementHook}
+          sabotageActive={sabotageActive}
+          o2={() => sabotage('o2')}
         />
       ) : playerState == 'disguised' ? (
         <ControlPanel
