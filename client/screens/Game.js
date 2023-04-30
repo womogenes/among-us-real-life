@@ -274,7 +274,7 @@ export default function GameScreen({ navigation }) {
     );
     let playerDist = distAll(
       'player',
-      loc.coords,
+      loc,
       playerArr,
       getGameRoom().state.settings.killRadius
     );
@@ -349,7 +349,7 @@ export default function GameScreen({ navigation }) {
     const thisPlayer = room.state.players.find(
       (p) => p.sessionId === room.sessionId
     );
-    setPlayerState(!thisPlayer.isImpostor ? 'crewmate' : 'impostor');
+    setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
 
     room.onStateChange((state) => {
       setPlayers(state.players);
