@@ -8,15 +8,19 @@ export const ProfileIcon = (props) => {
     require('../assets/profile-icons/white.png'),
   ];
 
-  return <Image style={styles.image} source={images[props.id || 0]} />;
+  return (
+    <Image
+      style={[styles.image, { width: props.size, height: props.size }]}
+      source={images[props.id || 0]}
+    />
+  );
 };
 
 const styles = StyleSheet.create({
   image: {
-    width: 40,
-    height: 40,
     borderRadius: 9999,
     borderColor: '#000',
     borderWidth: 3,
+    zIndex: 9,
   },
 });

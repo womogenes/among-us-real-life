@@ -1,6 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, SafeAreaView } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
 
 import Recaptcha from 'react-native-recaptcha-that-works';
 
@@ -27,8 +34,7 @@ function CaptchaTask({ active, complete, closeTask }) {
   useEffect(() => {
     if (active == true) {
       send();
-    }
-    else{
+    } else {
       close();
     }
   }, [active]);
@@ -39,7 +45,17 @@ function CaptchaTask({ active, complete, closeTask }) {
         ref={recaptcha}
         siteKey="6Le7-FciAAAAACnKxo3JECtz17LYl2VjJgC17ydG"
         baseUrl="http://127.0.0.1"
-        footerComponent={<TouchableOpacity style={styles.closeButton} onPress={() => { close; closeTask('reCaptcha'); }}><Text style={styles.closeText}>Close</Text></TouchableOpacity>}
+        footerComponent={
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => {
+              close;
+              closeTask('reCaptcha');
+            }}
+          >
+            <Text style={styles.closeText}>Close</Text>
+          </TouchableOpacity>
+        }
         onVerify={onVerify}
         onExpire={onExpire}
         size="normal"
@@ -60,5 +76,5 @@ const styles = StyleSheet.create({
   closeText: {
     fontSize: 40,
     fontFamily: 'Impostograph-Regular',
-  }
+  },
 });
