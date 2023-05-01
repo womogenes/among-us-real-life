@@ -73,8 +73,8 @@ export default function GameScreen({ navigation }) {
   const [taskCompletion, setTaskCompletion] = useState(0);
 
   const [activeTask, setActiveTask] = useState({
-    reCaptcha: false,
-    taskId: undefined,
+    name: null,
+    taskId: null,
   });
 
   const [distTask, setDistTask] = useState([]);
@@ -177,35 +177,21 @@ export default function GameScreen({ navigation }) {
     }
   }
 
-  function completeTask(task) {
-    if (task == 'reCaptcha') {
-      const { taskId } = activeTask;
-      setActiveTask((prevArrState) => ({
-        ...prevArrState,
-        reCaptcha: false,
-        taskId: undefined,
-      }));
+  function completeTask() {
+    const { name, taskId } = activeTask;
+    closeTask();
 
-      // Mark task as complete
-      console.log(`reCaptcha task ${taskId} completed`);
-      getGameRoom().send('completeTask', taskId);
-    } else if (task === 'memory') {
-      console.log('memory task complete');
-      // getGameRoom().send('completeTask', 0);
-    }
+    // Mark task as complete
+    console.log(`${name} task ${taskId} completed`);
+    getGameRoom().send('completeTask', taskId);
   }
 
-  function closeTask(task) {
-    if (task === 'reCaptcha') {
-      setActiveTask((prevArrState) => ({
-        ...prevArrState,
-        reCaptcha: false,
-        taskId: undefined,
-      }));
-    } else if (task === 'memory') {
-      console.log('memory task closing');
-      setMemoryTask(false);
-    }
+  function closeTask() {
+    setActiveTask((prevArrState) => ({
+      ...prevArrState,
+      name: null,
+      taskId: null,
+    }));
   }
 
   function changeButtonState(button, state) {
@@ -235,13 +221,11 @@ export default function GameScreen({ navigation }) {
     let closestTask = findClosest(distTask);
 
     if (!closestTask.complete) {
-      if (closestTask.name == 'reCaptcha') {
-        setActiveTask((prevArrState) => ({
-          ...prevArrState,
-          reCaptcha: true,
-          taskId: closestTask.taskId,
-        }));
-      }
+      setActiveTask((prevArrState) => ({
+        ...prevArrState,
+        name: closestTask.name,
+        taskId: closestTask.taskId,
+      }));
     }
   }
 
@@ -564,7 +548,7 @@ export default function GameScreen({ navigation }) {
       </TouchableOpacity>
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
       <CaptchaTask
-        active={activeTask.reCaptcha}
+        active={activeTask.name === 'reCaptcha'}
         complete={completeTask}
         closeTask={closeTask}
       />
