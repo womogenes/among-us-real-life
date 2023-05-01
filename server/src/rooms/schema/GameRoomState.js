@@ -66,9 +66,9 @@ export class Player extends Schema {
     this.tasks.push(
       new Task('reCaptcha', new Location(47.731475, -122.328036, 0)), // AG
       new Task('reCaptcha', new Location(47.731392, -122.327791, 0)), // East end of AG
-      new Task('reCaptcha', new Location(47.732346, -122.326806, 0)), // Moore
-      new Task('reCaptcha', new Location(47.731639, -122.327612, 0)), // Red square
-      new Task('reCaptcha', new Location(47.731779, -122.32705, 0)), // Bliss
+      new Task('memory', new Location(47.732346, -122.326806, 0)), // Moore
+      new Task('memory', new Location(47.731639, -122.327612, 0)), // Red square
+      new Task('memory', new Location(47.731779, -122.32705, 0)), // Bliss
 
       new Task('reCaptcha', new Location(47.73206, -122.326362, 0)), // St. Nicks
 
