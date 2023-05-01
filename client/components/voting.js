@@ -11,8 +11,9 @@ import Modal from 'react-native-modal';
 
 import { getGameRoom } from '../networking.js';
 import CustomText from './text.js';
+import { ProfileIcon } from './profile-icon.js';
 
-export default function VotingModal(props) {
+export default function votingModal(props) {
   const gameRoom = getGameRoom();
 
   const [timer, setTimer] = useState(props.timer);
@@ -27,7 +28,7 @@ export default function VotingModal(props) {
 
   useEffect(() => {
     if (props.isModalVisible) {
-      //basically a reset
+      // basically a reset
       setTimer(props.timer);
       setVotes(new Map());
       setLoading(false);
@@ -61,7 +62,7 @@ export default function VotingModal(props) {
 
   return (
     <Modal isVisible={props.isModalVisible} animationType="slide">
-      <View style={styles.votingmodal}>
+      <View style={styles.votingModal}>
         <Button
           onPress={() =>
             console.log(
@@ -94,12 +95,25 @@ export default function VotingModal(props) {
                 </CustomText>
 
                 {/* maybe change to view later for icons? */}
-                <Text style={styles.votes}>
-                  {Object.keys(votes).filter(
-                    //change this to icons later
-                    (key) => votes[key] == item.sessionId
-                  )}
-                </Text>
+                <View style={styles.votes}>
+                  {Object.keys(votes)
+                    .filter(
+                      // change this to icons later
+                      (key) => votes[key] == item.sessionId
+                    )
+                    .map((playerId) => {
+                      const player = getGameRoom().state.players.find(
+                        (p) => p.sessionId === playerId
+                      );
+                      return (
+                        <ProfileIcon
+                          player={player}
+                          size={20}
+                          key={player.sessionId}
+                        />
+                      );
+                    })}
+                </View>
               </View>
             </TouchableWithoutFeedback>
           )}
@@ -119,7 +133,7 @@ export default function VotingModal(props) {
 }
 
 const styles = StyleSheet.create({
-  votingmodal: {
+  votingModal: {
     borderRadius: 20,
     flex: 1,
     alignItems: 'center',
@@ -144,7 +158,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   votes: {
-    backgroundColor: 'powderblue',
     alignSelf: 'flex-end',
     textAlign: 'right',
   },

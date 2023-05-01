@@ -36,7 +36,6 @@ export default function GameScreen({ navigation }) {
   const [sabotageActive, setSabotageActive] = useState(false);
   const [manualMovement, setManualMovement] = useState(false);
   const setLocationHook = (loc) => {
-    console.log(`manualMovement=${manualMovement}`);
     if (manualMovement) return;
 
     getGameRoom()?.send('location', loc);
@@ -78,7 +77,7 @@ export default function GameScreen({ navigation }) {
 
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   //set timer in settings later, 10 is for faster testing
-  const [votingTimer, setVotingTimer] = useState(10);
+  const [votingTimer, setVotingTimer] = useState(120);
 
   const [passcode, setPasscode] = useState(false);
   const [memoryTask, setMemoryTask] = useState(false);
