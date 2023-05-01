@@ -28,7 +28,7 @@ function MemoryTask(props) {
     if (props.active) {
       // could change code every time the task is opened, but then there are problems with the state not updating before the green squares are displayed
       // setCode(Array.from({ length: 4 }, () => Math.floor(Math.random() * 16)));
-      console.log(code);
+      // console.log(code);
       setInput([-1, -1, -1, -1]);
       setInd(0);
       setDisable(true);
