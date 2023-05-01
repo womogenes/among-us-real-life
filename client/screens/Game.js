@@ -85,7 +85,7 @@ export default function GameScreen({ navigation }) {
   const [votingTimer, setVotingTimer] = useState(10);
 
   const [passcode, setPasscode] = useState(false);
-  const [memoryTask, setMemoryTask] = useState(false);
+  const [electricityTask, setElectricityTask] = useState(false);
 
   const openVotingModal = () => {
     getGameRoom()?.send('startVoting');
@@ -535,10 +535,10 @@ export default function GameScreen({ navigation }) {
         <Text>toggle voting modal</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => setMemoryTask(true)}
+        onPress={() => setElectricityTask(true)}
         style={styles.testButton}
       >
-        <Text>open memory task</Text>
+        <Text>open electricity task</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => setPasscode(true)}
