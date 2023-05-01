@@ -153,7 +153,7 @@ function LobbyScreen({ navigation }) {
                     {item.username || 'Anonymous'}
                     {item.isHost && ' (Host)'}
                   </CustomText>
-                  <ProfileIcon player={item} />
+                  <ProfileIcon player={item} size={60} />
                 </View>
               </TouchableWithoutFeedback>
             )}

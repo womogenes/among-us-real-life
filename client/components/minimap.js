@@ -1,24 +1,32 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Button } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { getGameRoom } from '../networking';
+import { TaskIcon } from './task-icon';
+import { ProfileIcon } from './profile-icon';
 
 function Minimap(props) {
   function taskMarkers() {
     return props.tasks.map((item) => {
-      if(item.name != 'o2'){
+      if (item.name != 'o2') {
         return (
           <Marker
-            pinColor={item.complete ? 'turquoise' : 'gold'}
             key={item.taskId}
             coordinate={{
               latitude: item.location.latitude,
               longitude: item.location.longitude,
             }}
-            title={`${item.name} (${item.taskId.substring(0, 4)})`}
-          />
+            title={item.name}
+            zIndex={-1}
+          >
+            <TaskIcon
+              name={item.name}
+              complete={item.complete}
+              size={20}
+            ></TaskIcon>
+          </Marker>
         );
-      }
-      else {
+      } else {
         return (
           <Marker
             pinColor={item.complete ? 'wheat' : 'violet'}
@@ -48,16 +56,34 @@ function Minimap(props) {
           latitudeDelta: 0.0025,
           longitudeDelta: 0.0001,
         }}
-        mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
+        //changed from satellite for android for performance
+        mapType={Platform.OS === 'ios' ? 'standard' : 'standard'}
         // showsUserLocation={true}
+        moveOnMarkerPress={false}
       >
         <Marker
+          key={props.player.sessionId}
+          coordinate={{
+            latitude: props.player.location.latitude,
+            longitude: props.player.location.longitude,
+          }}
+          title={props.player.username}
+        >
+          <ProfileIcon
+            //should be able to change this to player icon later, without getGameRoom()
+            id={getGameRoom().state.players.findIndex(
+              (p) => p.sessionId === props.player.sessionId
+            )}
+            size={20}
+          />
+        </Marker>
+        {/* <Marker
           key={'You'}
           coordinate={{
             latitude: props.userCoords[0],
             longitude: props.userCoords[1],
           }}
-        />
+        /> */}
         {taskMarkers()}
       </MapView>
     </View>
