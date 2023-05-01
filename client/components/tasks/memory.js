@@ -26,7 +26,9 @@ function MemoryTask(props) {
 
   useEffect(() => {
     if (props.active) {
-      console.log(code);
+      // could change code every time the task is opened, but then there are problems with the state not updating before the green squares are displayed
+      // setCode(Array.from({ length: 4 }, () => Math.floor(Math.random() * 16)));
+      // console.log(code);
       setInput([-1, -1, -1, -1]);
       setInd(0);
       setDisable(true);
@@ -35,14 +37,14 @@ function MemoryTask(props) {
       code.forEach((item, i) => {
         timer[i] = setTimeout(() => {
           setGreen(item);
-        }, (i + 1) * 500);
+        }, (i + 1) * 750);
         timerReset[i] = setTimeout(() => {
           setGreen(-1);
-        }, (i + 2) * 500 - 100);
+        }, (i + 2) * 750 - 250);
       });
       const dis = setTimeout(() => {
         setDisable(false);
-      }, code.length + 2 * 500 - 100);
+      }, code.length + 2 * 750 - 250);
       return () => {
         clearTimeout(dis);
         timer.forEach((t) => clearTimeout(t));

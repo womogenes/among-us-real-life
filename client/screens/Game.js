@@ -31,17 +31,13 @@ import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
 
 var mapView;
-let manualMovementVar; // !! HACK !! React state sucks
 
 export default function GameScreen({ navigation }) {
   const [sabotageActive, setSabotageActive] = useState(false);
   const [manualMovement, setManualMovement] = useState(false);
-  const setManualMovementHook = (value) => {
-    setManualMovement(value); // This is terrible :( why must React be like this
-    manualMovementVar = value;
-  };
   const setLocationHook = (loc) => {
-    if (manualMovementVar) return; // Dev override
+    console.log(`manualMovement=${manualMovement}`);
+    if (manualMovement) return;
 
     getGameRoom()?.send('location', loc);
     setLocation(loc);
@@ -86,7 +82,7 @@ export default function GameScreen({ navigation }) {
   const [votingTimer, setVotingTimer] = useState(10);
 
   const [passcode, setPasscode] = useState(false);
-  const [memoryTask, setMemoryTask] = useState(false);
+  const [electricityTask, setElectricityTask] = useState(false);
 
   const openVotingModal = () => {
     getGameRoom()?.send('startVoting');
@@ -178,22 +174,13 @@ export default function GameScreen({ navigation }) {
     }
   }
 
-  function completeTask(task) {
-    if (task == 'reCaptcha') {
-      const { taskId } = activeTask;
-      setActiveTask((prevArrState) => ({
-        ...prevArrState,
-        reCaptcha: false,
-        taskId: undefined,
-      }));
+  function completeTask() {
+    const { name, taskId } = activeTask;
+    closeTask();
 
-      // Mark task as complete
-      console.log(`reCaptcha task ${taskId} completed`);
-      getGameRoom().send('completeTask', taskId);
-    } else if (task === 'memory') {
-      console.log('memory task complete');
-      // getGameRoom().send('completeTask', 0);
-    }
+    // Mark task as complete
+    console.log(`${name} task ${taskId} completed`);
+    getGameRoom().send('completeTask', taskId);
   }
 
   function closeTask(task) {
@@ -448,7 +435,7 @@ export default function GameScreen({ navigation }) {
     return async () => {
       // Unmount listener when component unmounts
       // TODO: dev setting, uncomment when done
-      // await locationWatcher?.remove();
+      await locationWatcher?.remove();
     };
   }, []);
 
@@ -492,9 +479,7 @@ export default function GameScreen({ navigation }) {
               title={player.username}
             >
               <ProfileIcon
-                id={getGameRoom().state.players.findIndex(
-                  (p) => p.sessionId === player.sessionId
-                )}
+                player={player} // Pass the whole player object
                 size={40}
               />
             </Marker>
@@ -532,7 +517,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovementHook}
+          setManualMovement={setManualMovement}
         />
       ) : playerState == 'impostor' ? (
         <ControlPanel
@@ -554,7 +539,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovementHook}
+          setManualMovement={setManualMovement}
           sabotageActive={sabotageActive}
           o2={() => sabotage('o2')}
         />
@@ -567,7 +552,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovementHook}
+          setManualMovement={setManualMovement}
         />
       ) : (
         <ControlPanel />
@@ -577,10 +562,10 @@ export default function GameScreen({ navigation }) {
         <Text>toggle voting modal</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => setMemoryTask(true)}
+        onPress={() => setElectricityTask(true)}
         style={styles.testButton}
       >
-        <Text>open memory task</Text>
+        <Text>open electricity task</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => setPasscode(true)}
@@ -590,7 +575,7 @@ export default function GameScreen({ navigation }) {
       </TouchableOpacity>
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
       <CaptchaTask
-        active={activeTask.reCaptcha}
+        active={activeTask.name === 'reCaptcha'}
         complete={completeTask}
         closeTask={closeTask}
       />
@@ -601,7 +586,7 @@ export default function GameScreen({ navigation }) {
         closeTask={closeTask}
       />
       <MemoryTask
-        active={memoryTask}
+        active={activeTask.name === 'memory'}
         complete={completeTask}
         closeTask={closeTask}
       ></MemoryTask>
