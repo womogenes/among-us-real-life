@@ -43,7 +43,6 @@ function MenuScreen({ navigation }) {
         <View style={styles.titleContainer}>
           <CustomText numberOfLines={1} textSize={100} letterSpacing={3}>
             AMONG US
-            <ProfileIcon />
           </CustomText>
           <CustomText numberOfLines={1} textSize={40}>
             (Lakeside Edition)

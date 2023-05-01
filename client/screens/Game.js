@@ -412,7 +412,7 @@ export default function GameScreen({ navigation }) {
     return async () => {
       // Unmount listener when component unmounts
       // TODO: dev setting, uncomment when done
-      // await locationWatcher?.remove();
+      await locationWatcher?.remove();
     };
   }, []);
 
@@ -453,9 +453,7 @@ export default function GameScreen({ navigation }) {
               title={`Player ${player.sessionId}`}
             >
               <ProfileIcon
-                id={getGameRoom().state.players.findIndex(
-                  (p) => p.sessionId === player.sessionId
-                )}
+                player={player} // Pass the whole player object
               />
             </Marker>
           );

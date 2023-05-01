@@ -1,14 +1,17 @@
 import { StyleSheet, View, Image } from 'react-native';
 
-export const ProfileIcon = (props) => {
-  const images = [
-    require('../assets/profile-icons/red.png'),
-    require('../assets/profile-icons/blue.png'),
-    require('../assets/profile-icons/green.png'),
-    require('../assets/profile-icons/white.png'),
-  ];
+export const ProfileIcon = ({ player }) => {
+  if (!player) return;
 
-  return <Image style={styles.image} source={images[props.id || 0]} />;
+  const images = {
+    red: require('../assets/profile-icons/red.png'),
+    blue: require('../assets/profile-icons/blue.png'),
+    green: require('../assets/profile-icons/green.png'),
+    white: require('../assets/profile-icons/white.png'),
+  };
+  const { icon } = player;
+
+  return <Image style={styles.image} source={images[icon]} />;
 };
 
 const styles = StyleSheet.create({
