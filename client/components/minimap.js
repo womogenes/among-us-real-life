@@ -69,13 +69,7 @@ function Minimap(props) {
           }}
           title={props.player.username}
         >
-          <ProfileIcon
-            //should be able to change this to player icon later, without getGameRoom()
-            id={getGameRoom().state.players.findIndex(
-              (p) => p.sessionId === props.player.sessionId
-            )}
-            size={20}
-          />
+          <ProfileIcon player={props.player} size={20} />
         </Marker>
         {/* <Marker
           key={'You'}

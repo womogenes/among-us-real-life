@@ -31,17 +31,13 @@ import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
 
 var mapView;
-let manualMovementVar; // !! HACK !! React state sucks
 
 export default function GameScreen({ navigation }) {
   const [sabotageActive, setSabotageActive] = useState(false);
   const [manualMovement, setManualMovement] = useState(false);
-  const setManualMovementHook = (value) => {
-    setManualMovement(value); // This is terrible :( why must React be like this
-    manualMovementVar = value;
-  };
   const setLocationHook = (loc) => {
-    if (manualMovementVar) return; // Dev override
+    console.log(`manualMovement=${manualMovement}`);
+    if (manualMovement) return;
 
     getGameRoom()?.send('location', loc);
     setLocation(loc);
@@ -492,7 +488,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovementHook}
+          setManualMovement={setManualMovement}
         />
       ) : playerState == 'impostor' ? (
         <ControlPanel
@@ -512,7 +508,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovementHook}
+          setManualMovement={setManualMovement}
           sabotageActive={sabotageActive}
           o2={() => sabotage('o2')}
         />
@@ -525,7 +521,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovementHook}
+          setManualMovement={setManualMovement}
         />
       ) : (
         <ControlPanel />
@@ -553,13 +549,13 @@ export default function GameScreen({ navigation }) {
         closeTask={closeTask}
       />
       <CodeTask
-        active={passcode}
+        active={activeTask.name === 'passcode'}
         code={1234}
         complete={completeTask}
         closeTask={closeTask}
       />
       <MemoryTask
-        active={memoryTask}
+        active={activeTask.name === 'memory'}
         complete={completeTask}
         closeTask={closeTask}
       ></MemoryTask>
