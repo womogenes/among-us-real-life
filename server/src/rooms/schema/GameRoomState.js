@@ -49,11 +49,12 @@ schema.defineTypes(Task, {
 
 // Player schema
 export class Player extends Schema {
-  constructor(sessionId, isHost) {
+  constructor(sessionId, isHost, icon) {
     super();
 
     this.sessionId = sessionId;
     this.username = 'Anonymous';
+    this.icon = icon; // Automatically assigned for now
     this.location = new Location();
     this.lastAliveLocation = new Location();
     this.isHost = isHost;
@@ -87,6 +88,7 @@ export class Player extends Schema {
 schema.defineTypes(Player, {
   sessionId: 'string',
   username: 'string',
+  icon: 'string',
   location: Location,
   lastAliveLocation: Location,
   isHost: 'boolean',
