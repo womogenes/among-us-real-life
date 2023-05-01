@@ -116,11 +116,6 @@ export default function GameScreen({ navigation }) {
       let markerLabel = item.name;
       if (item.complete) markerLabel += ' (Complete)';
 
-      const taskIcons = {
-        reCaptcha: require('../assets/task-icons/recaptcha.png'),
-        passcode: require('../assets/task-icons/passcode.png'),
-      };
-
       if (item.name != 'o2') {
         return (
           <Marker
