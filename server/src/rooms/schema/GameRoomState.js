@@ -31,11 +31,16 @@ schema.defineTypes(Location, {
 });
 
 export class Task extends Schema {
-  constructor(name, location) {
+  constructor(name, location, taskId) {
     super();
 
     this.name = name;
-    this.taskId = nanoid();
+    if (taskId) {
+      this.taskId = taskId;
+    }
+    else {
+      this.taskId = nanoid();
+    }
     this.location = location;
     this.complete = false;
   }

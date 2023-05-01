@@ -74,6 +74,7 @@ export default function GameScreen({ navigation }) {
 
   const [activeTask, setActiveTask] = useState({
     reCaptcha: false,
+    passcode: false,
     taskId: undefined,
   });
 
@@ -205,6 +206,13 @@ export default function GameScreen({ navigation }) {
     } else if (task === 'memory') {
       console.log('memory task closing');
       setMemoryTask(false);
+    } else if (task === 'passcode') {
+      console.log('passcode task closing');
+      setActiveTask((prevArrState) => ({
+        ...prevArrState,
+        passcode: false,
+        taskId: undefined,
+      }));
     }
   }
 
@@ -236,9 +244,18 @@ export default function GameScreen({ navigation }) {
 
     if (!closestTask.complete) {
       if (closestTask.name == 'reCaptcha') {
+        if (playerState == 'crewmate') {
+          setActiveTask((prevArrState) => ({
+            ...prevArrState,
+            reCaptcha: true,
+            taskId: closestTask.taskId,
+          }));
+        }
+      }
+      if (closestTask.name == 'o2') {
         setActiveTask((prevArrState) => ({
           ...prevArrState,
-          reCaptcha: true,
+          passcode: true,
           taskId: closestTask.taskId,
         }));
       }
@@ -287,7 +304,12 @@ export default function GameScreen({ navigation }) {
       if (buttonState.use === true) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       }
-      changeButtonState('use', false);
+      if (playerState == 'crewmate'){
+        changeButtonState('use', false); 
+      }
+      else if(playerState == 'impostor' && findClosest(distTask).name == 'o2'){
+        changeButtonState('use', false);
+      }
     } else {
       changeButtonState('use', true);
     }
@@ -515,6 +537,8 @@ export default function GameScreen({ navigation }) {
       ) : playerState == 'impostor' ? (
         <ControlPanel
           userType={'impostor'}
+          useButtonState={emergencyMeetingLocation ? true : buttonState.use}
+          useButtonPress={useButton}
           killButtonState={emergencyMeetingLocation ? true : buttonState.kill}
           killButtonPress={killButton}
           cooldown={10}
@@ -571,7 +595,7 @@ export default function GameScreen({ navigation }) {
         closeTask={closeTask}
       />
       <CodeTask
-        active={passcode}
+        active={activeTask.passcode}
         code={1234}
         complete={completeTask}
         closeTask={closeTask}
