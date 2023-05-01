@@ -74,6 +74,7 @@ export default function GameScreen({ navigation }) {
 
   const [activeTask, setActiveTask] = useState({
     reCaptcha: false,
+    memory: false,
     taskId: undefined,
   });
 
