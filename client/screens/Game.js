@@ -508,7 +508,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
         />
       ) : playerState == 'impostor' ? (
         <ControlPanel
@@ -530,7 +530,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
           o2={() => sabotage('o2')}
         />
@@ -543,7 +543,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
         />
       ) : (
         <ControlPanel />
