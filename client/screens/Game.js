@@ -318,7 +318,7 @@ export default function GameScreen({ navigation }) {
 
   useEffect(() => {
     if (emergencyMeetingLocation != null) {
-      console.log(emergencyMeetingLocation);
+      console.log(`emergencyMeetingLocation: ${emergencyMeetingLocation}`);
       getGameRoom().send('emergencyMeetingLoc', emergencyMeetingLocation);
       //Refreshing emergency meeting location after sent to game room
       setEmergencyMeetingLocation(null);
@@ -460,8 +460,8 @@ export default function GameScreen({ navigation }) {
         {players.map((player) => {
           let displayLoc =
             player.isAlive || player.sessionId === getGameRoom().sessionId
-              ? player.location
-              : player.lastAliveLocation;
+              ? player.trueLocation
+              : player.location;
 
           return (
             <Marker

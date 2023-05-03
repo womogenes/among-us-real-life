@@ -22,8 +22,8 @@ export class GameRoom extends Room {
       const player = this.state.players.find(
         (p) => p.sessionId === client.sessionId
       );
-      player.location.update(loc);
-      if (player.isAlive) player.lastAliveLocation.update(loc);
+      player.trueLocation.update(loc);
+      if (player.isAlive) player.location.update(loc);
     });
 
     this.onMessage('deltaLocation', (client, dLoc) => {
@@ -31,9 +31,8 @@ export class GameRoom extends Room {
       const player = this.state.players.find(
         (p) => p.sessionId === client.sessionId
       );
-      player.location.deltaUpdate(dLoc);
-      console.log(`player ${player.sessionId} is alive: ${player.isAlive}`);
-      if (player.isAlive) player.lastAliveLocation.deltaUpdate(dLoc);
+      player.trueLocation.deltaUpdate(dLoc);
+      if (player.isAlive) player.location.deltaUpdate(dLoc);
     });
 
     this.onMessage('completeTask', (client, taskId) => {
@@ -56,7 +55,7 @@ export class GameRoom extends Room {
     this.onMessage('playerDeath', (client, sessionId) => {
       let player = this.state.players.find((p) => p.sessionId === sessionId);
       player.isAlive = false;
-      player.lastAliveLocation.update(player.location);
+      player.location.update(player.location);
       this.broadcast('emergencyMeeting');
       console.log('broadcastedEmergencyMeeting');
     });
