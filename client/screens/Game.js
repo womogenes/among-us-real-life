@@ -267,11 +267,11 @@ export default function GameScreen({ navigation }) {
 
   function activateUseButton() {
     if (distTask.length > 0) {
-      if (buttonState.use === true) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-      }
       if (playerState == 'crewmate') {
         changeButtonState('use', false);
+        if (buttonState.use === true) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        }
       } else if (
         playerState == 'impostor' &&
         findClosest(distTask).name == 'o2'
@@ -508,7 +508,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
         />
       ) : playerState == 'impostor' ? (
         <ControlPanel
@@ -530,7 +530,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
           o2={() => sabotage('o2')}
         />
@@ -543,7 +543,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
         />
       ) : (
         <ControlPanel />
