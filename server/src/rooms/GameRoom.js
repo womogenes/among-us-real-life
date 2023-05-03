@@ -7,12 +7,6 @@ import {
   Location,
 } from './schema/GameRoomState.js';
 import {
-  GameRoomState,
-  Player,
-  Task,
-  Location,
-} from './schema/GameRoomState.js';
-import {
   onCreateGameRoom,
   onDisposeGameRoom,
   onGameStart,
