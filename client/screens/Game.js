@@ -126,7 +126,6 @@ export default function GameScreen({ navigation }) {
       if (item.name != 'o2') {
         return (
           <Marker
-            // pinColor={item.complete ? 'turquoise' : 'gold'}
             key={item.taskId}
             coordinate={{
               latitude: item.location.latitude,
@@ -232,6 +231,7 @@ export default function GameScreen({ navigation }) {
   function reportButton() {
     console.log('REPORT');
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    getGameRoom().send('startEmergencyMeeting');
   }
 
   function killButton() {
@@ -286,12 +286,18 @@ export default function GameScreen({ navigation }) {
 
   function activateKillButton() {
     if (playerState == 'impostor') {
-      if (distPlayer.length > 0) {
-        changeButtonState('kill', false);
-      } else {
-        changeButtonState('kill', true);
-      }
+      changeButtonState(
+        'kill',
+        !(distPlayer.filter((p) => p.isAlive).length > 0)
+      );
     }
+  }
+
+  function activateReportButton() {
+    changeButtonState(
+      'report',
+      !(distPlayer.filter((p) => !p.isAlive).length > 0)
+    );
   }
 
   useEffect(() => {
@@ -302,6 +308,7 @@ export default function GameScreen({ navigation }) {
   useEffect(() => {
     // Detects when distPlayer is updated and reevaluates KILL button activation
     activateKillButton();
+    activateReportButton();
   }, [distPlayer]);
 
   useEffect(() => {
@@ -320,9 +327,9 @@ export default function GameScreen({ navigation }) {
 
   useEffect(() => {
     if (emergencyMeetingLocation != null) {
-      console.log(emergencyMeetingLocation);
+      console.log(`emergencyMeetingLocation: ${emergencyMeetingLocation}`);
       getGameRoom().send('emergencyMeetingLoc', emergencyMeetingLocation);
-      //Refreshing emergency meeting location after sent to game room
+      // Refreshing emergency meeting location after sent to game room
       setEmergencyMeetingLocation(null);
       setInProgressEmer(true);
     }
@@ -347,7 +354,7 @@ export default function GameScreen({ navigation }) {
     });
 
     room.onMessage('beginEmerMeeting', () => {
-      // WRITE CODE TO BEGIN EMERGENCY MEETING
+      openVotingModal();
     });
 
     room.onStateChange((state) => {
@@ -455,19 +462,20 @@ export default function GameScreen({ navigation }) {
           latitudeDelta: 0.002,
           longitudeDelta: 0.002,
         }}
-        //changed from satellite for android for performance
+        // Changed from satellite for android for performance
         mapType={Platform.OS === 'ios' ? 'standard' : 'standard'}
         moveOnMarkerPress={false}
       >
         {players.map((player) => {
+          let displayLoc =
+            player.isAlive || player.sessionId === getGameRoom().sessionId
+              ? player.trueLocation
+              : player.location;
+
           return (
             <Marker
               key={player.sessionId}
-              coordinate={{
-                latitude: player.location.latitude,
-                longitude: player.location.longitude,
-              }}
-              // title={`Player ${player.sessionId}`}
+              coordinate={{ ...displayLoc }}
               title={player.username}
             >
               <ProfileIcon
@@ -509,7 +517,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
         />
       ) : playerState == 'impostor' ? (
         <ControlPanel
@@ -531,7 +539,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
           o2={() => sabotage('o2')}
         />
@@ -544,7 +552,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
         />
       ) : (
         <ControlPanel />
@@ -576,6 +584,7 @@ export default function GameScreen({ navigation }) {
         code={1234}
         complete={completeTask}
         closeTask={closeTask}
+        sabotageActive={sabotageActive}
       />
       <MemoryTask
         active={activeTask.name === 'memory'}
@@ -588,7 +597,7 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
-      {emergencyMeetingLocation && (
+      {inProgressEmer && (
         <View style={styles.emergencyScreen}>
           <CustomText
             textSize={70}

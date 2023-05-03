@@ -28,9 +28,16 @@ function LobbyScreen({ navigation }) {
   };
 
   const [killRadius, setKillRadius] = useState([5]);
-  const [killCooldown, setKillCooldown] = useState([60]);
   const [prevKillRadius, setPrevKillRadius] = useState([5]);
+
+  const [killCooldown, setKillCooldown] = useState([60]);
   const [prevKillCooldown, setPrevKillCooldown] = useState([60]);
+
+  const [imposterNum, setImposterNum] = useState([1]);
+  const [prevImposterNum, setPrevImposterNum] = useState([1]);
+
+  const [votingTimer, setVotingTimer] = useState([60]);
+  const [prevVotingTimer, setPrevVotingTimer] = useState([60]);
 
   const [roomState, setRoomState] = useState({});
   const [roomCode, setRoomCode] = useState('0000');
@@ -57,6 +64,8 @@ function LobbyScreen({ navigation }) {
       if (!isHost) {
         setKillRadius(state.settings.killRadius);
         setKillCooldown(state.settings.killCooldown);
+        setImposterNum(state.settings.imposterNum);
+        setVotingTimer(state.settings.votingTimer);
       }
     });
 
@@ -79,14 +88,20 @@ function LobbyScreen({ navigation }) {
   function storePrev() {
     setPrevKillRadius(killRadius);
     setPrevKillCooldown(killCooldown);
+    setPrevImposterNum(imposterNum);
+    setPrevVotingTimer(votingTimer);
   }
 
   function dontSave() {
     setKillRadius(prevKillRadius);
     setKillCooldown(prevKillCooldown);
+    setImposterNum(prevImposterNum);
+    setVotingTimer(prevVotingTimer);
     getGameRoom().send('settingsUpdated', {
       killRadius: prevKillRadius[0],
       killCooldown: prevKillCooldown[0],
+      imposterNum: prevImposterNum[0],
+      votingTimer: prevVotingTimer[0],
     });
   }
 
@@ -105,6 +120,8 @@ function LobbyScreen({ navigation }) {
     getGameRoom().send('settingsUpdated', {
       killRadius: killRadius[0],
       killCooldown: killCooldown[0],
+      imposterNum: imposterNum[0],
+      votingTimer: votingTimer[0],
     });
   }
 
@@ -218,6 +235,40 @@ function LobbyScreen({ navigation }) {
                   step={10}
                   onValueChange={(killCooldown) => {
                     setKillCooldown(killCooldown);
+                    settingsUpdated();
+                  }}
+                  trackClickable={true}
+                  disabled={!isHost}
+                />
+              </View>
+              <View>
+                <CustomText centerText={true} textSize={40}>
+                  Number of Imposters: {imposterNum}
+                </CustomText>
+                <Slider
+                  value={imposterNum}
+                  minimumValue={30}
+                  maximumValue={120}
+                  step={5}
+                  onValueChange={(imposterNum) => {
+                    setImposterNum(imposterNum);
+                    settingsUpdated();
+                  }}
+                  trackClickable={true}
+                  disabled={!isHost}
+                />
+              </View>
+              <View>
+                <CustomText centerText={true} textSize={40}>
+                  Voting Timer: {votingTimer}s
+                </CustomText>
+                <Slider
+                  value={votingTimer}
+                  minimumValue={10}
+                  maximumValue={240}
+                  step={10}
+                  onValueChange={(votingTimer) => {
+                    setVotingTimer(votingTimer);
                     settingsUpdated();
                   }}
                   trackClickable={true}
