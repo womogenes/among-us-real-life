@@ -24,6 +24,7 @@ import ControlPanel from '../components/controlpanel.js';
 import CaptchaTask from '../components/tasks/recaptcha.js';
 import CodeTask from '../components/sabotage/passcode.js';
 import MemoryTask from '../components/tasks/memory.js';
+import ElectricityTask from '../components/tasks/electricity.js';
 
 import CustomText from '../components/text.js';
 import VotingModal from '../components/voting.js';
@@ -41,7 +42,6 @@ export default function GameScreen({ navigation }) {
     manualMovementVar = value;
   };
   const setLocationHook = (loc) => {
-    console.log(`manualMovement=${manualMovement}`);
     if (manualMovement) return;
 
     getGameRoom()?.send('location', loc);
@@ -85,7 +85,7 @@ export default function GameScreen({ navigation }) {
 
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   //set timer in settings later, 10 is for faster testing
-  const [votingTimer, setVotingTimer] = useState(10);
+  const [votingTimer, setVotingTimer] = useState(120);
 
   const [passcode, setPasscode] = useState(false);
   const [electricityTask, setElectricityTask] = useState(false);
@@ -391,13 +391,15 @@ export default function GameScreen({ navigation }) {
       // Set progress bar based on task completion percentage
       // Array.reduce documentation: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
       const totalTaskCount = state.players.reduce(
-        (count, player) => count + player.tasks.length,
+        (count, player) =>
+          count + player.isImpostor ? 0 : player.tasks.length,
         0
       );
       const completedTaskCount = state.players.reduce(
         (count, player) =>
-          count +
-          player.tasks.reduce((count, task) => count + task.complete, 0),
+          count + player.isImpostor
+            ? 0
+            : player.tasks.reduce((count, task) => count + task.complete, 0),
         0
       );
       setTaskCompletion(completedTaskCount / totalTaskCount);
@@ -600,7 +602,8 @@ export default function GameScreen({ navigation }) {
         active={activeTask.name === 'memory'}
         complete={completeTask}
         closeTask={closeTask}
-      ></MemoryTask>
+      />
+      <ElectricityTask active={activeTask.name === 'electricity'} />
       {emergencyMeetingLocation && (
         <View style={styles.emergencyScreen}>
           <CustomText
