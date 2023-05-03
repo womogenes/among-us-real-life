@@ -603,7 +603,12 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
-      <ElectricityTask active={activeTask.name === 'electricity'} />
+      <ElectricityTask
+        // active={activeTask.name === 'electricity'}
+        active={electricityTask}
+        complete={completeTask}
+        closeTask={closeTask}
+      />
       {emergencyMeetingLocation && (
         <View style={styles.emergencyScreen}>
           <CustomText
