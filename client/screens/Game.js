@@ -24,6 +24,7 @@ import ControlPanel from '../components/controlpanel.js';
 import CaptchaTask from '../components/tasks/recaptcha.js';
 import CodeTask from '../components/sabotage/passcode.js';
 import MemoryTask from '../components/tasks/memory.js';
+import ElectricityTask from '../components/tasks/electricity.js';
 
 import CustomText from '../components/text.js';
 import VotingModal from '../components/voting.js';
@@ -286,10 +287,12 @@ export default function GameScreen({ navigation }) {
       if (buttonState.use === true) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       }
-      if (playerState == 'crewmate'){
-        changeButtonState('use', false); 
-      }
-      else if(playerState == 'impostor' && findClosest(distTask).name == 'o2'){
+      if (playerState == 'crewmate') {
+        changeButtonState('use', false);
+      } else if (
+        playerState == 'impostor' &&
+        findClosest(distTask).name == 'o2'
+      ) {
         changeButtonState('use', false);
       }
     } else {
@@ -584,7 +587,8 @@ export default function GameScreen({ navigation }) {
         active={activeTask.name === 'memory'}
         complete={completeTask}
         closeTask={closeTask}
-      ></MemoryTask>
+      />
+      <ElectricityTask active={activeTask.name === 'electricity'} />
       {emergencyMeetingLocation && (
         <View style={styles.emergencyScreen}>
           <CustomText

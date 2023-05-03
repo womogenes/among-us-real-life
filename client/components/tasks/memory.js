@@ -1,14 +1,5 @@
-import { useLinkProps } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TouchableOpacity,
-  SafeAreaView,
-} from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
 
 function MemoryTask(props) {
