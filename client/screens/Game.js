@@ -55,6 +55,7 @@ export default function GameScreen({ navigation }) {
 
   const [emergencyMeetingLocation, setEmergencyMeetingLocation] =
     useState(null);
+  const [inProgressEmer, setInProgressEmer] = useState(false);
 
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
@@ -314,16 +315,13 @@ export default function GameScreen({ navigation }) {
   ]);
 
   useEffect(() => {
-    const room = getGameRoom();
-    room.onMessage('emergencyMeeting', () => {
-      setEmergencyMeetingLocation({
-        latitude: 47.731317,
-        longitude: -122.327169,
-      });
-      room.send('emergencyMeetingLoc', () => {
-        emergencyMeetingLocation;
-      });
-    });
+    if (emergencyMeetingLocation != null) {
+      console.log(emergencyMeetingLocation);
+      getGameRoom().send('emergencyMeetingLoc', emergencyMeetingLocation);
+      //Refreshing emergency meeting location after sent to game room
+      setEmergencyMeetingLocation(null);
+      setInProgressEmer(true);
+    }
   });
 
   useEffect(() => {
@@ -336,6 +334,17 @@ export default function GameScreen({ navigation }) {
       (p) => p.sessionId === room.sessionId
     );
     setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
+
+    room.onMessage('emergencyMeeting', () => {
+      setEmergencyMeetingLocation({
+        latitude: 47.731317,
+        longitude: -122.327169,
+      });
+    });
+
+    room.onMessage('beginEmerMeeting', () => {
+      // WRITE CODE TO BEGIN EMERGENCY MEETING
+    });
 
     room.onStateChange((state) => {
       setPlayers(state.players);
@@ -549,7 +558,7 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
-      {emergencyMeetingLocation && (
+      {inProgressEmer && (
         <View style={styles.emergencyScreen}>
           <CustomText
             textSize={70}
