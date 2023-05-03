@@ -575,6 +575,7 @@ export default function GameScreen({ navigation }) {
         code={1234}
         complete={completeTask}
         closeTask={closeTask}
+        sabotageActive={sabotageActive}
       />
       <MemoryTask
         active={activeTask.name === 'memory'}
