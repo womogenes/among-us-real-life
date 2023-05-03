@@ -34,8 +34,8 @@ $('#join-game-form').addEventListener('submit', async (e) => {
     $('#room-state-output').innerText = JSON.stringify(state, null, 2);
     $('#start-game-btn').disabled = state.gameStarted || !me.isHost;
 
-    $('#latitude').value = me.location.latitude;
-    $('#longitude').value = me.location.longitude;
+    $('#latitude').value = me.trueLocation.latitude;
+    $('#longitude').value = me.trueLocation.longitude;
   }, 100);
 
   gameRoom.onMessage('gameStarted', () => {

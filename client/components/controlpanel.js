@@ -125,7 +125,7 @@ function ControlPanel(props) {
               image={require('client/assets/killbutton.png')}
               backgroundColor={'#00000000'}
             />
-            {props.sabotageActive?  
+            {props.sabotageActive ? (
               <CustomButton
                 type={'image'}
                 disabled={props.useButtonState}
@@ -134,7 +134,7 @@ function ControlPanel(props) {
                 roundness={50}
                 backgroundColor={'#00000000'}
               />
-            :
+            ) : (
               <CustomButton
                 type={'cooldown'}
                 disabled={props.sabotageButtonState}
@@ -144,7 +144,7 @@ function ControlPanel(props) {
                 image={require('client/assets/sabotagebutton.png')}
                 backgroundColor={'#00000000'}
               />
-            }
+            )}
             <CustomButton
               type={'image'}
               disabled={props.reportButtonState}
@@ -163,12 +163,12 @@ function ControlPanel(props) {
                   </TouchableOpacity>
                 </View>
                 <Text style={styles.modalTitle}>Sabotage</Text>
-                  <TouchableOpacity
-                    style={styles.sabotageListButton}
-                    onPress={props.o2}
-                  >
-                    <Text style={styles.sabotageListButtonText}>O2</Text>
-                  </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.sabotageListButton}
+                  onPress={props.o2}
+                >
+                  <Text style={styles.sabotageListButtonText}>O2</Text>
+                </TouchableOpacity>
               </View>
             </Modal>
           </>
