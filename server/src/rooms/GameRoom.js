@@ -12,6 +12,8 @@ import {
   onGameStart,
 } from './LobbyRoom.js';
 
+import { nanoid } from 'nanoid';
+
 export class GameRoom extends Room {
   onCreate(options) {
     this.setState(new GameRoomState(options.code));
@@ -57,9 +59,10 @@ export class GameRoom extends Room {
     });
 
     this.onMessage('o2', () => {
-      console.log('sabotage!!!!');
-      const newTask = new Task('o2', new Location(47.731386, -122.327199, 0));
-      this.state.players.forEach((p) => {
+      console.log('sabotage!!!!')
+      const newId = nanoid();
+      const newTask = new Task('o2', new Location(47.731386, -122.327199, 0), newId)
+      this.state.players.forEach(p => {
         p.tasks.push(newTask);
         console.log(p.tasks);
       });

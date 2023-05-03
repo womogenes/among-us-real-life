@@ -4,6 +4,7 @@ export const TaskIcon = (props) => {
   const images = {
     reCaptcha: require('../assets/task-icons/recaptcha.png'),
     passcode: require('../assets/task-icons/passcode.png'),
+    memory: require('../assets/task-icons/memory.png'),
   };
 
   return (
