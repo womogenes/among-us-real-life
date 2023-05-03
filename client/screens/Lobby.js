@@ -149,11 +149,15 @@ function LobbyScreen({ navigation }) {
             renderItem={({ item }) => (
               <TouchableWithoutFeedback>
                 <View style={styles.playerItem}>
+                  <ProfileIcon
+                    player={item}
+                    size={50}
+                    style={{ marginRight: 10 }}
+                  />
                   <CustomText textSize={50}>
                     {item.username || 'Anonymous'}
                     {item.isHost && ' (Host)'}
                   </CustomText>
-                  <ProfileIcon player={item} size={60} />
                 </View>
               </TouchableWithoutFeedback>
             )}
@@ -343,7 +347,6 @@ const styles = StyleSheet.create({
   },
   playerItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     borderColor: '#000',
     borderWidth: 2,

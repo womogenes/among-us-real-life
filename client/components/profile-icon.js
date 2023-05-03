@@ -1,6 +1,6 @@
 import { StyleSheet, View, Image } from 'react-native';
 
-export const ProfileIcon = ({ player, size }) => {
+export const ProfileIcon = ({ player, size, style }) => {
   if (!player) return;
 
   const images = {
@@ -13,7 +13,7 @@ export const ProfileIcon = ({ player, size }) => {
 
   return (
     <Image
-      style={[styles.image, { width: size, height: size }]}
+      style={[style, styles.image, { width: size, height: size }]}
       source={images[icon]}
     />
   );

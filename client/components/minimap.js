@@ -56,7 +56,7 @@ function Minimap(props) {
           latitudeDelta: 0.0025,
           longitudeDelta: 0.0001,
         }}
-        //changed from satellite for android for performance
+        // changed from satellite for android for performance
         mapType={Platform.OS === 'ios' ? 'standard' : 'standard'}
         // showsUserLocation={true}
         moveOnMarkerPress={false}
@@ -71,13 +71,6 @@ function Minimap(props) {
         >
           <ProfileIcon player={props.player} size={20} />
         </Marker>
-        {/* <Marker
-          key={'You'}
-          coordinate={{
-            latitude: props.userCoords[0],
-            longitude: props.userCoords[1],
-          }}
-        /> */}
         {taskMarkers()}
       </MapView>
     </View>
