@@ -353,7 +353,7 @@ export default function GameScreen({ navigation }) {
     });
 
     room.onMessage('beginEmerMeeting', () => {
-      // WRITE CODE TO BEGIN EMERGENCY MEETING
+      openVotingModal();
     });
 
     room.onStateChange((state) => {
@@ -583,6 +583,7 @@ export default function GameScreen({ navigation }) {
         code={1234}
         complete={completeTask}
         closeTask={closeTask}
+        sabotageActive={sabotageActive}
       />
       <MemoryTask
         active={activeTask.name === 'memory'}
@@ -595,7 +596,7 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
-      {emergencyMeetingLocation && (
+      {inProgressEmer && (
         <View style={styles.emergencyScreen}>
           <CustomText
             textSize={70}

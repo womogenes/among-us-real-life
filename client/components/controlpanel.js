@@ -41,6 +41,12 @@ function ControlPanel(props) {
     }
   }, [timer]);
 
+  useEffect(() => {
+    if (props.sabotageActive) {
+      closeSabotageTasks();
+    }
+  }, [props.sabotageActive]);
+
   return (
     <View style={styles.bottom}>
       <View style={styles.buttonContainer}>
