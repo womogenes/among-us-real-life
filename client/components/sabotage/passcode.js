@@ -11,7 +11,7 @@ import {
 import Modal from 'react-native-modal';
 import CustomText from '../text.js';
 
-function CodeTask({ active, code, complete, closeTask }) {
+function CodeTask({ active, code, complete, closeTask, sabotageActive }) {
   const [counter, setCounter] = useState(1);
   const [one, setOne] = useState('#');
   const [two, setTwo] = useState('#');
@@ -63,7 +63,7 @@ function CodeTask({ active, code, complete, closeTask }) {
   }
 
   return (
-    <Modal isVisible={active}>
+    <Modal isVisible={sabotageActive? false : active}>
       <View style={styles.modal}>
         <TouchableOpacity
           style={styles.closeButton}
