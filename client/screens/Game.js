@@ -75,8 +75,7 @@ export default function GameScreen({ navigation }) {
   const [taskCompletion, setTaskCompletion] = useState(0);
 
   const [activeTask, setActiveTask] = useState({
-    reCaptcha: false,
-    passcode: false,
+    name: null,
     taskId: undefined,
   });
 
@@ -184,24 +183,12 @@ export default function GameScreen({ navigation }) {
     getGameRoom().send('completeTask', taskId);
   }
 
-  function closeTask(task) {
-    if (task === 'reCaptcha') {
-      setActiveTask((prevArrState) => ({
-        ...prevArrState,
-        reCaptcha: false,
-        taskId: undefined,
-      }));
-    } else if (task === 'memory') {
-      console.log('memory task closing');
-      setMemoryTask(false);
-    } else if (task === 'passcode') {
-      console.log('passcode task closing');
-      setActiveTask((prevArrState) => ({
-        ...prevArrState,
-        passcode: false,
-        taskId: undefined,
-      }));
-    }
+  function closeTask() {
+    setActiveTask((prevArrState) => ({
+      ...prevArrState,
+      name: null,
+      taskId: null,
+    }));
   }
 
   function changeButtonState(button, state) {
@@ -231,19 +218,10 @@ export default function GameScreen({ navigation }) {
     let closestTask = findClosest(distTask);
 
     if (!closestTask.complete) {
-      if (closestTask.name == 'reCaptcha') {
-        if (playerState == 'crewmate') {
-          setActiveTask((prevArrState) => ({
-            ...prevArrState,
-            reCaptcha: true,
-            taskId: closestTask.taskId,
-          }));
-        }
-      }
-      if (closestTask.name == 'o2') {
+      if (playerState == 'crewmate') {
         setActiveTask((prevArrState) => ({
           ...prevArrState,
-          passcode: true,
+          name: closestTask.name,
           taskId: closestTask.taskId,
         }));
       }
@@ -289,11 +267,11 @@ export default function GameScreen({ navigation }) {
 
   function activateUseButton() {
     if (distTask.length > 0) {
-      if (buttonState.use === true) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-      }
       if (playerState == 'crewmate') {
         changeButtonState('use', false);
+        if (buttonState.use === true) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        }
       } else if (
         playerState == 'impostor' &&
         findClosest(distTask).name == 'o2'
@@ -529,7 +507,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
         />
       ) : playerState == 'impostor' ? (
         <ControlPanel
@@ -551,7 +529,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
           o2={() => sabotage('o2')}
         />
@@ -564,7 +542,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovement}
+          setManualMovement={setManualMovementHook}
         />
       ) : (
         <ControlPanel />
@@ -592,10 +570,11 @@ export default function GameScreen({ navigation }) {
         closeTask={closeTask}
       />
       <CodeTask
-        active={activeTask.passcode}
+        active={activeTask.name === 'passcode'}
         code={1234}
         complete={completeTask}
         closeTask={closeTask}
+        sabotageActive={sabotageActive}
       />
       <MemoryTask
         active={activeTask.name === 'memory'}
