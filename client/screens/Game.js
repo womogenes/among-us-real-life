@@ -92,6 +92,7 @@ export default function GameScreen({ navigation }) {
   const openVotingModal = () => {
     getGameRoom()?.send('startVoting');
     setVotingModalVisible(true);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     const timeout = setTimeout(() => {
       setVotingModalVisible(false);
     }, votingTimer * 1000 + 1500); //buffer the timer a bit for transition smoothness
