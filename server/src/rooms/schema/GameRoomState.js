@@ -31,11 +31,16 @@ schema.defineTypes(Location, {
 });
 
 export class Task extends Schema {
-  constructor(name, location) {
+  constructor(name, location, taskId) {
     super();
 
     this.name = name;
-    this.taskId = nanoid();
+    if (taskId) {
+      this.taskId = taskId;
+    }
+    else {
+      this.taskId = nanoid();
+    }
     this.location = location;
     this.complete = false;
   }
@@ -49,11 +54,12 @@ schema.defineTypes(Task, {
 
 // Player schema
 export class Player extends Schema {
-  constructor(sessionId, isHost) {
+  constructor(sessionId, isHost, icon) {
     super();
 
     this.sessionId = sessionId;
     this.username = 'Anonymous';
+    this.icon = icon; // Automatically assigned for now
     this.location = new Location();
     this.lastAliveLocation = new Location();
     this.isHost = isHost;
@@ -65,9 +71,9 @@ export class Player extends Schema {
     this.tasks.push(
       new Task('reCaptcha', new Location(47.731475, -122.328036, 0)), // AG
       new Task('reCaptcha', new Location(47.731392, -122.327791, 0)), // East end of AG
-      new Task('reCaptcha', new Location(47.732346, -122.326806, 0)), // Moore
-      new Task('reCaptcha', new Location(47.731639, -122.327612, 0)), // Red square
-      new Task('reCaptcha', new Location(47.731779, -122.32705, 0)), // Bliss
+      new Task('memory', new Location(47.732346, -122.326806, 0)), // Moore
+      new Task('memory', new Location(47.731639, -122.327612, 0)), // Red square
+      new Task('memory', new Location(47.731779, -122.32705, 0)), // Bliss
 
       new Task('reCaptcha', new Location(47.73206, -122.326362, 0)), // St. Nicks
 
@@ -87,6 +93,7 @@ export class Player extends Schema {
 schema.defineTypes(Player, {
   sessionId: 'string',
   username: 'string',
+  icon: 'string',
   location: Location,
   lastAliveLocation: Location,
   isHost: 'boolean',

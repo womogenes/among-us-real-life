@@ -13,8 +13,10 @@ import {
 import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
 import { Slider } from '@miblanchard/react-native-slider';
-import CustomText from '../components/text.js';
 import * as Haptics from 'expo-haptics';
+
+import CustomText from '../components/text.js';
+import { ProfileIcon } from '../components/profile-icon.js';
 
 import { getGameRoom, leaveGameRoom } from '../networking.js';
 
@@ -69,7 +71,8 @@ function LobbyScreen({ navigation }) {
     return () => {
       // Disconnect from the room
       console.log(`Left game room ${room.sessionId}, code: ${room.state.code}`);
-      leaveGameRoom();
+      // DEV: don't leave immediately
+      // leaveGameRoom();
     };
   }, []);
 
@@ -130,7 +133,7 @@ function LobbyScreen({ navigation }) {
             />
           </TouchableOpacity>
           <TextInput
-            style={styles.nameContainer}
+            style={styles.nameInputContainer}
             onChangeText={changeNameText}
             placeholder="Username"
             maxLength={16}
@@ -145,19 +148,13 @@ function LobbyScreen({ navigation }) {
             data={memberList}
             renderItem={({ item }) => (
               <TouchableWithoutFeedback>
-                <CustomText
-                  textColor={'black'}
-                  centerText={true}
-                  textSize={50}
-                  marginHorizontal={20}
-                  marginVertical={10}
-                  padding={10}
-                  borderWidth={2}
-                  borderRadius={15}
-                >
-                  {item.username || 'Anonymous'}
-                  {item.isHost && ' (Host)'}
-                </CustomText>
+                <View style={styles.playerItem}>
+                  <CustomText textSize={50}>
+                    {item.username || 'Anonymous'}
+                    {item.isHost && ' (Host)'}
+                  </CustomText>
+                  <ProfileIcon player={item} size={60} />
+                </View>
               </TouchableWithoutFeedback>
             )}
           />
@@ -302,7 +299,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
   },
-  nameContainer: {
+  nameInputContainer: {
     backgroundColor: '#BDC9C9',
     marginHorizontal: 10,
     borderRadius: 20,
@@ -343,6 +340,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     color: '#000',
     flex: 0.7,
+  },
+  playerItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderColor: '#000',
+    borderWidth: 2,
+    borderRadius: 10,
+    margin: 10,
+    padding: 10,
   },
   bodyContainer: {
     flex: 0.2,

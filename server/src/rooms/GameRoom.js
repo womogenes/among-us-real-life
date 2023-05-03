@@ -7,10 +7,18 @@ import {
   Location,
 } from './schema/GameRoomState.js';
 import {
+  GameRoomState,
+  Player,
+  Task,
+  Location,
+} from './schema/GameRoomState.js';
+import {
   onCreateGameRoom,
   onDisposeGameRoom,
   onGameStart,
 } from './LobbyRoom.js';
+
+import { nanoid } from 'nanoid';
 
 export class GameRoom extends Room {
   onCreate(options) {
@@ -59,7 +67,12 @@ export class GameRoom extends Room {
 
     this.onMessage('o2', () => {
       console.log('sabotage!!!!');
-      const newTask = new Task('o2', new Location(47.731386, -122.327199, 0));
+      const newId = nanoid();
+      const newTask = new Task(
+        'o2',
+        new Location(47.731386, -122.327199, 0),
+        newId
+      );
       this.state.players.forEach((p) => {
         p.tasks.push(newTask);
         console.log(p.tasks);
@@ -166,8 +179,13 @@ export class GameRoom extends Room {
 
   onJoin(client, options) {
     console.log(`${client.sessionId} joined room ${this.state.code}!`);
+
+    const availIcons = ['blue', 'green', 'red', 'white'];
+    const usedIcons = this.state.players.map((player) => player.icon);
+    const icon = availIcons.find((i) => !usedIcons.includes(i));
+
     const isHost = this.state.players.length === 0;
-    this.state.players.push(new Player(client.sessionId, isHost));
+    this.state.players.push(new Player(client.sessionId, isHost, icon));
 
     this.state.refresh += 1;
   }

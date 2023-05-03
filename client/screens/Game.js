@@ -23,10 +23,12 @@ import ControlPanel from '../components/controlpanel.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 import CodeTask from '../components/sabotage/passcode.js';
+import MemoryTask from '../components/tasks/memory.js';
 
 import CustomText from '../components/text.js';
 import VotingModal from '../components/voting.js';
 import { ProfileIcon } from '../components/profile-icon.js';
+import { TaskIcon } from '../components/task-icon.js';
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
@@ -39,7 +41,8 @@ export default function GameScreen({ navigation }) {
     manualMovementVar = value;
   };
   const setLocationHook = (loc) => {
-    if (manualMovementVar) return; // Dev override
+    console.log(`manualMovement=${manualMovement}`);
+    if (manualMovement) return;
 
     getGameRoom()?.send('location', loc);
     setLocation(loc);
@@ -73,6 +76,7 @@ export default function GameScreen({ navigation }) {
 
   const [activeTask, setActiveTask] = useState({
     reCaptcha: false,
+    passcode: false,
     taskId: undefined,
   });
 
@@ -84,6 +88,7 @@ export default function GameScreen({ navigation }) {
   const [votingTimer, setVotingTimer] = useState(10);
 
   const [passcode, setPasscode] = useState(false);
+  const [electricityTask, setElectricityTask] = useState(false);
 
   const openVotingModal = () => {
     getGameRoom()?.send('startVoting');
@@ -118,11 +123,6 @@ export default function GameScreen({ navigation }) {
       let markerLabel = item.name;
       if (item.complete) markerLabel += ' (Complete)';
 
-      const taskIcons = {
-        reCaptcha: require('../assets/task-icons/recaptcha.png'),
-        passcode: require('../assets/task-icons/passcode.png'),
-      };
-
       if (item.name != 'o2') {
         return (
           <Marker
@@ -133,11 +133,13 @@ export default function GameScreen({ navigation }) {
               longitude: item.location.longitude,
             }}
             title={markerLabel}
+            zIndex={-1}
           >
-            <Image
-              source={taskIcons[item.name]}
-              style={{ width: 40, height: 40, resizeMode: 'contain' }}
-            />
+            <TaskIcon
+              name={item.name}
+              complete={item.complete}
+              size={60}
+            ></TaskIcon>
           </Marker>
         );
       } else {
@@ -173,26 +175,30 @@ export default function GameScreen({ navigation }) {
     }
   }
 
-  function completeTask(task) {
-    if (task == 'reCaptcha') {
-      const { taskId } = activeTask;
+  function completeTask() {
+    const { name, taskId } = activeTask;
+    closeTask();
+
+    // Mark task as complete
+    console.log(`${name} task ${taskId} completed`);
+    getGameRoom().send('completeTask', taskId);
+  }
+
+  function closeTask(task) {
+    if (task === 'reCaptcha') {
       setActiveTask((prevArrState) => ({
         ...prevArrState,
         reCaptcha: false,
         taskId: undefined,
       }));
-
-      // Mark task as complete
-      console.log(`reCaptcha task ${taskId} completed`);
-      getGameRoom().send('completeTask', taskId);
-    }
-  }
-
-  function closeTask(task) {
-    if (task == 'reCaptcha') {
+    } else if (task === 'memory') {
+      console.log('memory task closing');
+      setMemoryTask(false);
+    } else if (task === 'passcode') {
+      console.log('passcode task closing');
       setActiveTask((prevArrState) => ({
         ...prevArrState,
-        reCaptcha: false,
+        passcode: false,
         taskId: undefined,
       }));
     }
@@ -226,9 +232,18 @@ export default function GameScreen({ navigation }) {
 
     if (!closestTask.complete) {
       if (closestTask.name == 'reCaptcha') {
+        if (playerState == 'crewmate') {
+          setActiveTask((prevArrState) => ({
+            ...prevArrState,
+            reCaptcha: true,
+            taskId: closestTask.taskId,
+          }));
+        }
+      }
+      if (closestTask.name == 'o2') {
         setActiveTask((prevArrState) => ({
           ...prevArrState,
-          reCaptcha: true,
+          passcode: true,
           taskId: closestTask.taskId,
         }));
       }
@@ -274,7 +289,17 @@ export default function GameScreen({ navigation }) {
 
   function activateUseButton() {
     if (distTask.length > 0) {
-      changeButtonState('use', false);
+      if (buttonState.use === true) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      }
+      if (playerState == 'crewmate') {
+        changeButtonState('use', false);
+      } else if (
+        playerState == 'impostor' &&
+        findClosest(distTask).name == 'o2'
+      ) {
+        changeButtonState('use', false);
+      }
     } else {
       changeButtonState('use', true);
     }
@@ -421,7 +446,7 @@ export default function GameScreen({ navigation }) {
     return async () => {
       // Unmount listener when component unmounts
       // TODO: dev setting, uncomment when done
-      // await locationWatcher?.remove();
+      await locationWatcher?.remove();
     };
   }, []);
 
@@ -449,7 +474,9 @@ export default function GameScreen({ navigation }) {
           latitudeDelta: 0.002,
           longitudeDelta: 0.002,
         }}
-        mapType={Platform.OS === 'ios' ? 'standard' : 'satellite'}
+        //changed from satellite for android for performance
+        mapType={Platform.OS === 'ios' ? 'standard' : 'standard'}
+        moveOnMarkerPress={false}
       >
         {players.map((player) => {
           return (
@@ -459,12 +486,12 @@ export default function GameScreen({ navigation }) {
                 latitude: player.location.latitude,
                 longitude: player.location.longitude,
               }}
-              title={`Player ${player.sessionId}`}
+              // title={`Player ${player.sessionId}`}
+              title={player.username}
             >
               <ProfileIcon
-                id={getGameRoom().state.players.findIndex(
-                  (p) => p.sessionId === player.sessionId
-                )}
+                player={player} // Pass the whole player object
+                size={40}
               />
             </Marker>
           );
@@ -481,6 +508,9 @@ export default function GameScreen({ navigation }) {
         {taskMarkers()}
       </MapView>
       <Minimap
+        player={getGameRoom().state.players.find(
+          (p) => p.sessionId === getGameRoom().sessionId
+        )}
         userCoords={[location.latitude, location.longitude]}
         tasks={tasks}
       />
@@ -498,11 +528,13 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovementHook}
+          setManualMovement={setManualMovement}
         />
       ) : playerState == 'impostor' ? (
         <ControlPanel
           userType={'impostor'}
+          useButtonState={emergencyMeetingLocation ? true : buttonState.use}
+          useButtonPress={useButton}
           killButtonState={emergencyMeetingLocation ? true : buttonState.kill}
           killButtonPress={killButton}
           cooldown={10}
@@ -518,7 +550,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovementHook}
+          setManualMovement={setManualMovement}
           sabotageActive={sabotageActive}
           o2={() => sabotage('o2')}
         />
@@ -531,7 +563,7 @@ export default function GameScreen({ navigation }) {
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
-          setManualMovement={setManualMovementHook}
+          setManualMovement={setManualMovement}
         />
       ) : (
         <ControlPanel />
@@ -541,6 +573,12 @@ export default function GameScreen({ navigation }) {
         <Text>toggle voting modal</Text>
       </TouchableOpacity>
       <TouchableOpacity
+        onPress={() => setElectricityTask(true)}
+        style={styles.testButton}
+      >
+        <Text>open electricity task</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
         onPress={() => setPasscode(true)}
         style={styles.testButton}
       >
@@ -548,17 +586,22 @@ export default function GameScreen({ navigation }) {
       </TouchableOpacity>
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
       <CaptchaTask
-        active={activeTask.reCaptcha}
+        active={activeTask.name === 'reCaptcha'}
         complete={completeTask}
         closeTask={closeTask}
       />
       <CodeTask
-        active={passcode}
+        active={activeTask.passcode}
         code={1234}
         complete={completeTask}
         closeTask={closeTask}
       />
-      {inProgressEmer && (
+      <MemoryTask
+        active={activeTask.name === 'memory'}
+        complete={completeTask}
+        closeTask={closeTask}
+      ></MemoryTask>
+      {emergencyMeetingLocation && (
         <View style={styles.emergencyScreen}>
           <CustomText
             textSize={70}
