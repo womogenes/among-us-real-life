@@ -7,6 +7,12 @@ import {
   Location,
 } from './schema/GameRoomState.js';
 import {
+  GameRoomState,
+  Player,
+  Task,
+  Location,
+} from './schema/GameRoomState.js';
+import {
   onCreateGameRoom,
   onDisposeGameRoom,
   onGameStart,
@@ -56,13 +62,18 @@ export class GameRoom extends Room {
       player.isAlive = false;
       player.lastAliveLocation = player.location;
       this.broadcast('emergencyMeeting');
+      console.log('broadcastedEmergencyMeeting');
     });
 
     this.onMessage('o2', () => {
-      console.log('sabotage!!!!')
+      console.log('sabotage!!!!');
       const newId = nanoid();
-      const newTask = new Task('o2', new Location(47.731386, -122.327199, 0), newId)
-      this.state.players.forEach(p => {
+      const newTask = new Task(
+        'o2',
+        new Location(47.731386, -122.327199, 0),
+        newId
+      );
+      this.state.players.forEach((p) => {
         p.tasks.push(newTask);
         console.log(p.tasks);
       });
@@ -83,17 +94,24 @@ export class GameRoom extends Room {
     }
 
     this.onMessage('emergencyMeetingLoc', (client, emergencyMeetingLoc) => {
-      console.log('TESTTT');
+      let inMeetingCount = 0;
+      let playerCount = 0;
       for (let i = 0; i < this.state.players.length; i++) {
         if (this.state.players[i].isAlive == true) {
-          dist = emergencyDist(
+          playerCount++;
+          let dist = emergencyDist(
             this.state.players[i].location,
             emergencyMeetingLoc
           );
-          if (dist < 20) {
+          if (dist < 200) {
             console.log('YEAHHHHH');
+            inMeetingCount++;
           }
         }
+      }
+      if (playerCount == inMeetingCount) {
+        console.log('Begin emergency meeting yay');
+        this.broadcast('beginEmerMeeting');
       }
     });
 
