@@ -24,6 +24,7 @@ import ControlPanel from '../components/controlpanel.js';
 import CaptchaTask from '../components/tasks/recaptcha.js';
 import CodeTask from '../components/sabotage/passcode.js';
 import MemoryTask from '../components/tasks/memory.js';
+import ElectricityTask from '../components/tasks/electricity.js';
 
 import CustomText from '../components/text.js';
 import VotingModal from '../components/voting.js';
@@ -31,10 +32,15 @@ import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
 
 var mapView;
+let manualMovementVar; // !! HACK !! React state sucks
 
 export default function GameScreen({ navigation }) {
   const [sabotageActive, setSabotageActive] = useState(false);
   const [manualMovement, setManualMovement] = useState(false);
+  const setManualMovementHook = (value) => {
+    setManualMovement(value); // This is terrible :( why must React be like this
+    manualMovementVar = value;
+  };
   const setLocationHook = (loc) => {
     if (manualMovement) return;
 
@@ -52,6 +58,7 @@ export default function GameScreen({ navigation }) {
 
   const [emergencyMeetingLocation, setEmergencyMeetingLocation] =
     useState(null);
+  const [inProgressEmer, setInProgressEmer] = useState(false);
 
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
@@ -311,16 +318,13 @@ export default function GameScreen({ navigation }) {
   ]);
 
   useEffect(() => {
-    const room = getGameRoom();
-    room.onMessage('emergencyMeeting', () => {
-      setEmergencyMeetingLocation({
-        latitude: 47.731317,
-        longitude: -122.327169,
-      });
-      room.send('emergencyMeetingLoc', () => {
-        emergencyMeetingLocation;
-      });
-    });
+    if (emergencyMeetingLocation != null) {
+      console.log(emergencyMeetingLocation);
+      getGameRoom().send('emergencyMeetingLoc', emergencyMeetingLocation);
+      //Refreshing emergency meeting location after sent to game room
+      setEmergencyMeetingLocation(null);
+      setInProgressEmer(true);
+    }
   });
 
   useEffect(() => {
@@ -333,6 +337,17 @@ export default function GameScreen({ navigation }) {
       (p) => p.sessionId === room.sessionId
     );
     setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
+
+    room.onMessage('emergencyMeeting', () => {
+      setEmergencyMeetingLocation({
+        latitude: 47.731317,
+        longitude: -122.327169,
+      });
+    });
+
+    room.onMessage('beginEmerMeeting', () => {
+      // WRITE CODE TO BEGIN EMERGENCY MEETING
+    });
 
     room.onStateChange((state) => {
       setPlayers(state.players);
@@ -565,7 +580,13 @@ export default function GameScreen({ navigation }) {
         active={activeTask.name === 'memory'}
         complete={completeTask}
         closeTask={closeTask}
-      ></MemoryTask>
+      />
+      <ElectricityTask
+        // active={activeTask.name === 'electricity'}
+        active={electricityTask}
+        complete={completeTask}
+        closeTask={closeTask}
+      />
       {emergencyMeetingLocation && (
         <View style={styles.emergencyScreen}>
           <CustomText
