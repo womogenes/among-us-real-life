@@ -230,6 +230,7 @@ export default function GameScreen({ navigation }) {
   function reportButton() {
     console.log('REPORT');
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    getGameRoom().send('startEmergencyMeeting');
   }
 
   function killButton() {
@@ -284,12 +285,18 @@ export default function GameScreen({ navigation }) {
 
   function activateKillButton() {
     if (playerState == 'impostor') {
-      if (distPlayer.length > 0) {
-        changeButtonState('kill', false);
-      } else {
-        changeButtonState('kill', true);
-      }
+      changeButtonState(
+        'kill',
+        !(distPlayer.filter((p) => p.isAlive).length > 0)
+      );
     }
+  }
+
+  function activateReportButton() {
+    changeButtonState(
+      'report',
+      !(distPlayer.filter((p) => !p.isAlive).length > 0)
+    );
   }
 
   useEffect(() => {
@@ -300,6 +307,7 @@ export default function GameScreen({ navigation }) {
   useEffect(() => {
     // Detects when distPlayer is updated and reevaluates KILL button activation
     activateKillButton();
+    activateReportButton();
   }, [distPlayer]);
 
   useEffect(() => {
@@ -320,7 +328,7 @@ export default function GameScreen({ navigation }) {
     if (emergencyMeetingLocation != null) {
       console.log(`emergencyMeetingLocation: ${emergencyMeetingLocation}`);
       getGameRoom().send('emergencyMeetingLoc', emergencyMeetingLocation);
-      //Refreshing emergency meeting location after sent to game room
+      // Refreshing emergency meeting location after sent to game room
       setEmergencyMeetingLocation(null);
       setInProgressEmer(true);
     }

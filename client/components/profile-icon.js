@@ -1,5 +1,7 @@
 import { StyleSheet, View, Image } from 'react-native';
 
+import { getGameRoom } from '../networking';
+
 export const ProfileIcon = ({ player, size, style }) => {
   if (!player) return;
 
@@ -18,6 +20,7 @@ export const ProfileIcon = ({ player, size, style }) => {
         styles.image,
         !player.isAlive ? styles.imageDead : {},
         { width: size, height: size },
+        { zIndex: getGameRoom()?.sessionId === player.sessionId ? 9 : 1 },
       ]}
       source={images[icon]}
     />
@@ -29,7 +32,6 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
     borderColor: '#000',
     borderWidth: 3,
-    zIndex: 9,
   },
   imageDead: {
     borderColor: '#f00',

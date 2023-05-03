@@ -56,8 +56,12 @@ export class GameRoom extends Room {
       let player = this.state.players.find((p) => p.sessionId === sessionId);
       player.isAlive = false;
       player.location.update(player.location);
+    });
+
+    this.onMessage('startEmergencyMeeting', (client) => {
+      this.state.gameState = 'emergency';
       this.broadcast('emergencyMeeting');
-      console.log('broadcastedEmergencyMeeting');
+      console.log('emergency meeting started');
     });
 
     this.onMessage('o2', () => {
