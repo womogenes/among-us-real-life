@@ -13,7 +13,12 @@ export const ProfileIcon = ({ player, size, style }) => {
 
   return (
     <Image
-      style={[style, styles.image, { width: size, height: size }]}
+      style={[
+        style,
+        styles.image,
+        !player.isAlive ? styles.imageDead : {},
+        { width: size, height: size },
+      ]}
       source={images[icon]}
     />
   );
@@ -25,5 +30,9 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     borderWidth: 3,
     zIndex: 9,
+  },
+  imageDead: {
+    borderColor: '#f00',
+    opacity: 0.5,
   },
 });

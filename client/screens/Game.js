@@ -125,7 +125,6 @@ export default function GameScreen({ navigation }) {
       if (item.name != 'o2') {
         return (
           <Marker
-            // pinColor={item.complete ? 'turquoise' : 'gold'}
             key={item.taskId}
             coordinate={{
               latitude: item.location.latitude,
@@ -454,19 +453,20 @@ export default function GameScreen({ navigation }) {
           latitudeDelta: 0.002,
           longitudeDelta: 0.002,
         }}
-        //changed from satellite for android for performance
+        // Changed from satellite for android for performance
         mapType={Platform.OS === 'ios' ? 'standard' : 'standard'}
         moveOnMarkerPress={false}
       >
         {players.map((player) => {
+          let displayLoc =
+            player.isAlive || player.sessionId === getGameRoom().sessionId
+              ? player.location
+              : player.lastAliveLocation;
+
           return (
             <Marker
               key={player.sessionId}
-              coordinate={{
-                latitude: player.location.latitude,
-                longitude: player.location.longitude,
-              }}
-              // title={`Player ${player.sessionId}`}
+              coordinate={{ ...displayLoc }}
               title={player.username}
             >
               <ProfileIcon
