@@ -267,11 +267,11 @@ export default function GameScreen({ navigation }) {
 
   function activateUseButton() {
     if (distTask.length > 0) {
-      if (buttonState.use === true) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-      }
       if (playerState == 'crewmate') {
         changeButtonState('use', false);
+        if (buttonState.use === true) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        }
       } else if (
         playerState == 'impostor' &&
         findClosest(distTask).name == 'o2'
