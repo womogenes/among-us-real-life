@@ -37,8 +37,7 @@ export class Task extends Schema {
     this.name = name;
     if (taskId) {
       this.taskId = taskId;
-    }
-    else {
+    } else {
       this.taskId = nanoid();
     }
     this.location = location;
@@ -61,7 +60,7 @@ export class Player extends Schema {
     this.username = 'Anonymous';
     this.icon = icon; // Automatically assigned for now
     this.location = new Location();
-    this.lastAliveLocation = new Location();
+    this.trueLocation = new Location();
     this.isHost = isHost;
     this.isImpostor = false;
     this.isAlive = true;
@@ -95,7 +94,7 @@ schema.defineTypes(Player, {
   username: 'string',
   icon: 'string',
   location: Location,
-  lastAliveLocation: Location,
+  trueLocation: Location,
   isHost: 'boolean',
   isImpostor: 'boolean',
   isAlive: 'boolean',
@@ -109,6 +108,8 @@ class Settings extends Schema {
 
     this.killRadius = 5;
     this.killCooldown = 10;
+    this.imposterNum = 1;
+    this.votingTimer = 60;
   }
 
   update(newSettings) {
@@ -120,6 +121,8 @@ class Settings extends Schema {
 schema.defineTypes(Settings, {
   killRadius: 'number',
   killCooldown: 'number',
+  imposterNum: 'number',
+  votingTimer: 'number',
 });
 
 // Big game room schema
