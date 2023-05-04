@@ -62,6 +62,48 @@ function CodeTask({ active, code, complete, closeTask }) {
     }
   }
 
+  function col(arr) {
+    arr.map((num) => {
+      if(num === '×'){
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => deleteValue()}
+        >
+          <CustomText textSize={60} textColor={'red'}>{num}</CustomText>
+        </TouchableOpacity>
+      }
+      else if(num === '○'){
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => verifyValue()}
+        >
+          <CustomText textSize={50} textColor={'green'}>{num}</CustomText>
+        </TouchableOpacity>
+      }
+      else{
+        return (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => changeValue(num)}
+          >
+            <CustomText textSize={60}>{num}</CustomText>
+          </TouchableOpacity>
+        )
+      }
+    })
+  }
+  function keypad() {
+    let keypad = [[1, 2, 3], [4, 5, 6], [7, 8, 9], ['×', 0, '○']]
+    
+    keypad.map((arr) => {
+      return(
+        <View style={styles.buttonContainer}>
+          {() => col(arr)}
+        </View>
+      )
+    })
+  }
+
   return (
     <Modal isVisible={active}>
       <View style={styles.modal}>
