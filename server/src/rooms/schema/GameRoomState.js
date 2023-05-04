@@ -145,6 +145,7 @@ export class GameRoomState extends Schema {
     this.settings = new Settings();
 
     this.players = new ArraySchema();
+    this.sabotageTaskList = new ArraySchema();
     this.votes = new MapSchema();
   }
 }
@@ -156,5 +157,6 @@ schema.defineTypes(GameRoomState, {
   settings: Settings,
 
   players: [Player],
+  sabotageTaskList: [Task],
   votes: { map: 'string' },
 });

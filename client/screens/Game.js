@@ -367,6 +367,10 @@ export default function GameScreen({ navigation }) {
       openVotingModal();
     });
 
+    room.onMessage('sabotageOver', () => {
+      setSabotageActive(false);
+    })
+
     room.onStateChange((state) => {
       setPlayers(state.players);
       setPlayerAlive(thisPlayer.isAlive);

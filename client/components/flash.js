@@ -57,11 +57,22 @@ function SabotageFlash(props) {
     ]).start();
   }
 
+  function toggleFade() {
+    Animated.timing(flash.opacity, {
+      toValue: 0,
+      duration: 2500,
+      useNativeDriver: false,
+      easing: Easing.inOut(Easing.sin),
+    }).start();
+  }
+
   useEffect(() => {
     if(props.sabotageActive){
-      console.log('flash');
       toggleText();
       toggleColor();
+    }
+    else{
+      toggleFade();
     }
   }, [props.sabotageActive])
 

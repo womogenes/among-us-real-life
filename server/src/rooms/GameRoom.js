@@ -42,8 +42,30 @@ export class GameRoom extends Room {
       const taskIdx = this.state.players[playerIdx].tasks.findIndex(
         (task) => task.taskId === taskId
       );
-
       this.state.players[playerIdx].tasks[taskIdx].complete = true;
+      const sabotageTaskIndex = this.state.sabotageTaskList.findIndex(
+        (task) => task.taskId === taskId
+      );
+
+      if(sabotageTaskIndex != -1){
+        this.state.sabotageTaskList.splice(sabotageTaskIndex, 1);
+      }
+
+      if(this.state.sabotageTaskList.length == 0){
+        this.broadcast('sabotageOver');
+        this.state.players.forEach((p) => {
+          let taskIndex = 0;
+          while(taskIndex != -1){
+            taskIndex = p.tasks.findIndex(
+              (task) => task.name === 'o2'
+              );
+            if(taskIndex != -1){
+              p.tasks.splice(taskIndex, 1);
+            }
+          }
+        })
+      }
+
     });
 
     this.onMessage('setUsername', (client, username) => {
@@ -69,7 +91,7 @@ export class GameRoom extends Room {
       const newId1 = nanoid();
       const newTask1 = new Task(
         'o2',
-        new Location(47.731386, -122.327199, 0),
+        new Location(47.73731712202693, -122.3394061888169, 0), // 47.731386, -122.327199 Lakeside Coords
         newId1
       );
       const newId2 = nanoid();
@@ -78,6 +100,8 @@ export class GameRoom extends Room {
         new Location(47.737305, -122.33942, 0),
         newId2
       );
+      this.state.sabotageTaskList.push(newTask1);
+      this.state.sabotageTaskList.push(newTask2);
       this.state.players.forEach((p) => {
         p.tasks.push(newTask1);
         p.tasks.push(newTask2);
