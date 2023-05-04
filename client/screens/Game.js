@@ -27,6 +27,7 @@ import MemoryTask from '../components/tasks/memory.js';
 import ElectricityTask from '../components/tasks/electricity.js';
 
 import CustomText from '../components/text.js';
+import SabotageFlash from '../components/flash.js';
 import VotingModal from '../components/voting.js';
 import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
@@ -514,6 +515,9 @@ export default function GameScreen({ navigation }) {
       />
 
       {deathScreen()}
+      <SabotageFlash 
+        sabotageActive={sabotageActive}
+      />
       {playerState == 'crewmate' ? (
         <ControlPanel
           userType={'crewmate'}

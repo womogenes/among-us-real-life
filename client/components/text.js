@@ -41,6 +41,8 @@ function CustomText(props) {
             ? { backgroundColor: props.backgroundColor }
             : {},
           props.overflow ? { overflow: props.overflow } : {},
+          props.shadowColor ? { textShadowColor: props.shadowColor } : {},
+          props.shadowRadius ? { textShadowRadius: props.shadowRadius } : {},
         ]}
       >
         {props.children}
