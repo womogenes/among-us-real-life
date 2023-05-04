@@ -63,30 +63,38 @@ function CodeTask({ active, code, complete, closeTask }) {
   }
 
   function col(arr) {
-    arr.map((num) => {
+    return arr.map((num) => {
+      let key = Math.random();
       if(num === '×'){
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => deleteValue()}
-        >
-          <CustomText textSize={60} textColor={'red'}>{num}</CustomText>
-        </TouchableOpacity>
+        return (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => deleteValue()}
+            key={key}
+          >
+            <CustomText textSize={60} textColor={'red'} key={key}>{num}</CustomText>
+          </TouchableOpacity>
+        )
       }
       else if(num === '○'){
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => verifyValue()}
-        >
-          <CustomText textSize={50} textColor={'green'}>{num}</CustomText>
-        </TouchableOpacity>
+        return (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => verifyValue()}
+            key={key}
+          >
+            <CustomText textSize={50} textColor={'green'} key={key}>{num}</CustomText>
+          </TouchableOpacity>
+        )
       }
       else{
         return (
           <TouchableOpacity
             style={styles.button}
             onPress={() => changeValue(num)}
+            key={key}
           >
-            <CustomText textSize={60}>{num}</CustomText>
+            <CustomText textSize={60} key={key}>{num}</CustomText>
           </TouchableOpacity>
         )
       }
@@ -95,11 +103,29 @@ function CodeTask({ active, code, complete, closeTask }) {
   function keypad() {
     let keypad = [[1, 2, 3], [4, 5, 6], [7, 8, 9], ['×', 0, '○']]
     
-    keypad.map((arr) => {
+    return keypad.map((arr) => {
       return(
-        <View style={styles.buttonContainer}>
-          {() => col(arr)}
+        <View style={styles.buttonContainer} key={Math.random()}>
+          {col(arr)}
         </View>
+      )
+    })
+  }
+
+  function keyNum() {
+    let keyNums = [one, two, three, four];
+    return keyNums.map((variable) => {
+      return(
+        <CustomText
+          textSize={60}
+          letterSpacing={1}
+          textColor={'red'}
+          centerText={'center'}
+          flex={1}
+          key={Math.random()}
+        >
+          {variable}
+        </CustomText>
       )
     })
   }
@@ -114,121 +140,9 @@ function CodeTask({ active, code, complete, closeTask }) {
           <CustomText textSize={30}>&#10006;</CustomText>
         </TouchableOpacity>
         <View style={styles.inputContainer}>
-          <CustomText
-            textSize={60}
-            letterSpacing={1}
-            textColor={'red'}
-            centerText={'center'}
-            flex={1}
-          >
-            {one}
-          </CustomText>
-          <CustomText
-            textSize={60}
-            letterSpacing={1}
-            textColor={'red'}
-            centerText={'center'}
-            flex={1}
-          >
-            {two}
-          </CustomText>
-          <CustomText
-            textSize={60}
-            letterSpacing={1}
-            textColor={'red'}
-            centerText={'center'}
-            flex={1}
-          >
-            {three}
-          </CustomText>
-          <CustomText
-            textSize={60}
-            letterSpacing={1}
-            textColor={'red'}
-            centerText={'center'}
-            flex={1}
-          >
-            {four}
-          </CustomText>
+          {keyNum()}
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => changeValue(1)}
-          >
-            <CustomText textSize={60}>1</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => changeValue(2)}
-          >
-            <CustomText textSize={60}>2</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => changeValue(3)}
-          >
-            <CustomText textSize={60}>3</CustomText>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => changeValue(4)}
-          >
-            <CustomText textSize={60}>4</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => changeValue(5)}
-          >
-            <CustomText textSize={60}>5</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => changeValue(6)}
-          >
-            <CustomText textSize={60}>6</CustomText>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => changeValue(7)}
-          >
-            <CustomText textSize={60}>7</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => changeValue(8)}
-          >
-            <CustomText textSize={60}>8</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => changeValue(9)}
-          >
-            <CustomText textSize={60}>9</CustomText>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => deleteValue()}>
-            <CustomText textSize={60} textColor={'red'}>
-              ×
-            </CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => changeValue(0)}
-          >
-            <CustomText textSize={60}>0</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => verifyValue()}>
-            <CustomText textSize={50} textColor={'green'}>
-              ○
-            </CustomText>
-          </TouchableOpacity>
-        </View>
+        {keypad()}
         <View style={styles.hintContainer}>
           <CustomText textSize={40}>HINT:</CustomText>
           <CustomText textSize={60} centerText={'center'}>

@@ -568,7 +568,10 @@ export default function GameScreen({ navigation }) {
         <Text>open electricity task</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => setPasscode(true)}
+        onPress={() => setActiveTask((prevArrState) => ({
+          ...prevArrState,
+          name: 'passcode',
+        }))}
         style={styles.testButton}
       >
         <Text>open passcode task</Text>
@@ -584,7 +587,6 @@ export default function GameScreen({ navigation }) {
         code={1234}
         complete={completeTask}
         closeTask={closeTask}
-        sabotageActive={sabotageActive}
       />
       <MemoryTask
         active={activeTask.name === 'memory'}
