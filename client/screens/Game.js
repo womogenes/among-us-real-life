@@ -86,7 +86,6 @@ export default function GameScreen({ navigation }) {
   //set timer in settings later, 10 is for faster testing
   const [votingTimer, setVotingTimer] = useState(120);
 
-  const [passcode, setPasscode] = useState(false);
   const [electricityTask, setElectricityTask] = useState(false);
 
   const openVotingModal = () => {
@@ -115,6 +114,16 @@ export default function GameScreen({ navigation }) {
   function sabotage(type) {
     getGameRoom().send(type);
     setSabotageActive(true);
+  }
+
+  function genRandFour() { // Generates random 4 digit code for passcode task
+    let fourDigitNum = "";
+    let num;
+    for(let i = 0; i < 4; i++){
+      num = Math.trunc(Math.random()*9);
+      fourDigitNum += num.toString();
+    }
+    return(fourDigitNum);
   }
 
   function taskMarkers() {
@@ -218,7 +227,7 @@ export default function GameScreen({ navigation }) {
     let closestTask = findClosest(distTask);
 
     if (!closestTask.complete) {
-      if (playerState == 'crewmate') {
+      if (playerState == 'crewmate' || playerState == 'impostor' && sabotageActive && closestTask.name === 'o2') {
         setActiveTask((prevArrState) => ({
           ...prevArrState,
           name: closestTask.name,
@@ -570,7 +579,7 @@ export default function GameScreen({ navigation }) {
       <TouchableOpacity
         onPress={() => setActiveTask((prevArrState) => ({
           ...prevArrState,
-          name: 'passcode',
+          name: 'o2',
         }))}
         style={styles.testButton}
       >
@@ -583,8 +592,8 @@ export default function GameScreen({ navigation }) {
         closeTask={closeTask}
       />
       <CodeTask
-        active={activeTask.name === 'passcode'}
-        code={1234}
+        active={activeTask.name === 'o2'}
+        code={genRandFour}
         complete={completeTask}
         closeTask={closeTask}
       />

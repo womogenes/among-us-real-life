@@ -66,15 +66,21 @@ export class GameRoom extends Room {
 
     this.onMessage('o2', () => {
       console.log('sabotage!!!!');
-      const newId = nanoid();
-      const newTask = new Task(
+      const newId1 = nanoid();
+      const newTask1 = new Task(
         'o2',
         new Location(47.731386, -122.327199, 0),
-        newId
+        newId1
+      );
+      const newId2 = nanoid();
+      const newTask2 = new Task(
+        'o2',
+        new Location(47.737305, -122.33942, 0),
+        newId2
       );
       this.state.players.forEach((p) => {
-        p.tasks.push(newTask);
-        console.log(p.tasks);
+        p.tasks.push(newTask1);
+        p.tasks.push(newTask2);
       });
     });
 

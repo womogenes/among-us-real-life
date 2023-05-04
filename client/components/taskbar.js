@@ -1,4 +1,4 @@
-import { StyleSheet, View, Animated, Button } from 'react-native';
+import { StyleSheet, View, Animated } from 'react-native';
 import { useEffect, useState } from 'react';
 import Easing from 'react-native/Libraries/Animated/Easing';
 

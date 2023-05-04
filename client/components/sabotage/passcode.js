@@ -7,16 +7,52 @@ import {
   Button,
   TouchableOpacity,
   SafeAreaView,
+  Animated,
 } from 'react-native';
+import Easing from 'react-native/Libraries/Animated/Easing';
 import Modal from 'react-native-modal';
 import CustomText from '../text.js';
 
 function CodeTask({ active, code, complete, closeTask }) {
   const [counter, setCounter] = useState(1);
+  const [currCode, setCurrCode] = useState('1234');
   const [one, setOne] = useState('#');
   const [two, setTwo] = useState('#');
   const [three, setThree] = useState('#');
   const [four, setFour] = useState('#');
+
+  const [flash, setFlash] = useState({
+    opacity: new Animated.Value(0),
+  });
+
+  const [inputColor, setInputColor] = useState('red');
+  
+  function toggleColor(color) {
+    if(color === 'red'){
+      Animated.sequence([
+        Animated.timing(flash.opacity, {
+          toValue: 0.8,
+          duration: 100,
+          useNativeDriver: false,
+          easing: Easing.inOut(Easing.sin),
+        }),
+        Animated.timing(flash.opacity, {
+          toValue: 0,
+          duration: 50,
+          useNativeDriver: false,
+          easing: Easing.inOut(Easing.sin),
+        })
+      ]).start();
+    }
+    else {
+      Animated.timing(flash.opacity, {
+        toValue: 0.8,
+        duration: 0,
+        useNativeDriver: false,
+        easing: Easing.inOut(Easing.sin),
+      }).start();
+    }
+  }
 
   function changeValue(value) {
     if (counter == 1) {
@@ -56,9 +92,24 @@ function CodeTask({ active, code, complete, closeTask }) {
     }
   }
 
+  function reset() {
+    setOne('#');
+    setTwo('#');
+    setThree('#');
+    setFour('#');
+    setCounter(1);
+  }
+
   function verifyValue() {
-    if (one * 1000 + two * 100 + three * 10 + four == code) {
-      console.log('success!');
+    if (one + two + three + four === currCode) {
+      setInputColor('green');
+      toggleColor('green');
+      complete('o2');
+    }
+    else {
+      reset();
+      setInputColor('red');
+      toggleColor('red');
     }
   }
 
@@ -101,7 +152,7 @@ function CodeTask({ active, code, complete, closeTask }) {
     })
   }
   function keypad() {
-    let keypad = [[1, 2, 3], [4, 5, 6], [7, 8, 9], ['×', 0, '○']]
+    let keypad = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['×', '0', '○']]
     
     return keypad.map((arr) => {
       return(
@@ -130,6 +181,13 @@ function CodeTask({ active, code, complete, closeTask }) {
     })
   }
 
+  useEffect(() => {
+    if (active){
+      setCurrCode(code);
+      reset();
+    }
+  }, [active])
+
   return (
     <Modal isVisible={active}>
       <View style={styles.modal}>
@@ -141,12 +199,14 @@ function CodeTask({ active, code, complete, closeTask }) {
         </TouchableOpacity>
         <View style={styles.inputContainer}>
           {keyNum()}
+          <Animated.View style={[styles.errorBox, { backgroundColor: inputColor }, { opacity: flash.opacity }]}>
+          </Animated.View>
         </View>
         {keypad()}
         <View style={styles.hintContainer}>
           <CustomText textSize={40}>HINT:</CustomText>
           <CustomText textSize={60} centerText={'center'}>
-            {code}
+            {currCode}
           </CustomText>
         </View>
       </View>
@@ -204,5 +264,10 @@ const styles = StyleSheet.create({
         right: 0,
         top: 0,
         margin: 10,
+    },
+    errorBox: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
     }
 });
