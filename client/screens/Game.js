@@ -89,6 +89,7 @@ export default function GameScreen({ navigation }) {
 
   const openVotingModal = () => {
     const room = getGameRoom();
+    if (!room) return;
 
     if (room.state.gameState !== 'voting') {
       // If this is triggered manually
@@ -532,7 +533,9 @@ export default function GameScreen({ navigation }) {
           userType={'impostor'}
           useButtonState={disableActions || buttonState.use}
           useButtonPress={useButton}
-          killButtonState={disableActions || buttonState.kill}
+          killButtonState={
+            disableActions || !player?.isAlive || buttonState.kill
+          }
           killButtonPress={killButton}
           cooldown={10}
           disguiseButtonState={buttonState.disguise}

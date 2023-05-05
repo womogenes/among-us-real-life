@@ -38,10 +38,6 @@ export default function votingModal(props) {
     };
   }, []);
 
-  useEffect(() => {
-    console.log(`votes=${votes}`);
-  }, [votes]);
-
   return (
     <Modal isVisible={props.isModalVisible} animationType="slide">
       <View style={styles.votingModal}>

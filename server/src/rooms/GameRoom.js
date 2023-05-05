@@ -69,6 +69,28 @@ export class GameRoom extends Room {
           clearInterval(handle);
 
           // Determine who gets killed
+          let countsObj = {};
+          for (let vote of this.state.votes.values()) {
+            countsObj[vote] = countsObj[vote] ? countsObj[vote] + 1 : 1;
+          }
+          let counts = Object.entries(countsObj);
+          counts.sort((a, b) => a[1] < b[1]);
+
+          // Is there a tie?
+          const isTie =
+            counts.length === 0 ||
+            (counts.length >= 2 && counts[0][1] === counts[1][1]);
+
+          if (isTie) {
+            this.broadcast('playerKilled', null);
+          } else {
+            const killed = counts[0][0];
+            this.state.players.find(
+              (p) => p.sessionId === killed
+            ).isAlive = false;
+            this.broadcast('playerKilled', killed);
+          }
+
           this.state.gameState = 'normal';
         }
       }, 1000);
