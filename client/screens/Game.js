@@ -356,6 +356,10 @@ export default function GameScreen({ navigation }) {
       openVotingModal();
     });
 
+    room.onMessage('playerKilled', (playerId) => {
+      console.log(`Player ${playerId} was voted out`);
+    });
+
     room.onMessage('sabotageOver', () => {
       setSabotageActive(false);
     });

@@ -84,12 +84,17 @@ export default function votingModal(props) {
                 <View style={styles.votes}>
                   {votes
                     ?.filter(([key, playerId]) => playerId == item.sessionId)
-                    .map(([key, playerId]) => {
-                      const player = getGameRoom().state.players.find(
-                        (p) => p.sessionId === playerId
+                    ?.map(([key, playerId]) => {
+                      const player = gameRoom.state.players.find(
+                        (p) => p.sessionId === key
                       );
                       return (
-                        <ProfileIcon player={player} size={20} key={playerId} />
+                        <ProfileIcon
+                          style={{ marginLeft: 5 }}
+                          player={player}
+                          size={20}
+                          key={key}
+                        />
                       );
                     })}
                 </View>
@@ -139,7 +144,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   votes: {
+    display: 'flex',
+    flexDirection: 'row',
     alignSelf: 'flex-end',
-    textAlign: 'right',
   },
 });
