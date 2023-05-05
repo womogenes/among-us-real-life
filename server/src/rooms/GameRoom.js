@@ -1,4 +1,6 @@
 import { Room } from '@colyseus/core';
+import * as schema from '@colyseus/schema';
+const { MapSchema } = schema;
 
 import {
   GameRoomState,
@@ -45,11 +47,11 @@ export class GameRoom extends Room {
       if (this.state.gameState !== 'emergency') return;
       if (!this.state.emergencyMeetingLocation) return;
 
-      // Check if all players are within 200m of emergency location
+      // Check if all players are within 30m of emergency location
       const allInRange = this.state.players.every(
         (player) =>
           !player.isAlive ||
-          findDist(player.location, this.state.emergencyMeetingLocation) < 200
+          findDist(player.location, this.state.emergencyMeetingLocation) < 30
       );
       if (allInRange) {
         startVoting();
@@ -57,6 +59,7 @@ export class GameRoom extends Room {
     };
 
     const startVoting = () => {
+      this.state.votes = new MapSchema();
       this.state.gameState = 'voting';
       this.state.votingTimer = this.state.settings.votingTimer; // Reset the timer
       this.broadcast('startVoting');
@@ -92,6 +95,7 @@ export class GameRoom extends Room {
           }
 
           this.state.gameState = 'normal';
+          this.state.emergencyMeetingLocation = new Location();
         }
       }, 1000);
     };

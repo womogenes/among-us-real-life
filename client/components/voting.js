@@ -58,10 +58,20 @@ export default function votingModal(props) {
               onPress={() => {
                 // may have to change how this is done later
                 // using ids?
+                if (!item.isAlive) return;
+
                 getGameRoom()?.send('vote', item.sessionId);
               }}
             >
-              <View style={styles.candidate}>
+              <View
+                style={[
+                  styles.candidate,
+                  {
+                    opacity: item.isAlive ? 1 : 0.5,
+                    borderColor: item.isAlive ? '#000' : '#f00',
+                  },
+                ]}
+              >
                 <CustomText
                   textColor={'black'}
                   centerText={false}
@@ -79,11 +89,7 @@ export default function votingModal(props) {
                         (p) => p.sessionId === playerId
                       );
                       return (
-                        <ProfileIcon
-                          player={player}
-                          size={20}
-                          key={player.sessionId}
-                        />
+                        <ProfileIcon player={player} size={20} key={playerId} />
                       );
                     })}
                 </View>

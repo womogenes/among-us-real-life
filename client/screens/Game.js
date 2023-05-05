@@ -517,11 +517,9 @@ export default function GameScreen({ navigation }) {
       {playerState == 'crewmate' ? (
         <ControlPanel
           userType={'crewmate'}
-          useButtonState={emergencyMeetingLocation ? true : buttonState.use}
+          useButtonState={disableActions || buttonState.use}
           useButtonPress={useButton}
-          reportButtonState={
-            emergencyMeetingLocation ? true : buttonState.report
-          }
+          reportButtonState={disableActions || buttonState.report}
           reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
           tasks={tasks}
