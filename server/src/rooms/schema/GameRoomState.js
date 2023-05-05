@@ -109,7 +109,7 @@ class Settings extends Schema {
     this.killRadius = 5;
     this.killCooldown = 10;
     this.imposterNum = 1;
-    this.votingTimer = 60;
+    this.votingTimer = 10;
   }
 
   update(newSettings) {
@@ -141,11 +141,14 @@ export class GameRoomState extends Schema {
         voting
     */
     this.gameState = 'lobby';
+    this.emergencyMeetingLocation = new Location();
+
     this.settings = new Settings();
 
     this.players = new ArraySchema();
     this.sabotageTaskList = new ArraySchema();
     this.votes = new MapSchema();
+    this.votingTimer = this.settings.votingTimer;
   }
 }
 schema.defineTypes(GameRoomState, {
@@ -153,9 +156,12 @@ schema.defineTypes(GameRoomState, {
   code: 'string',
   gameStarted: 'boolean',
   gameState: 'string',
+  emergencyMeetingLocation: Location,
+
   settings: Settings,
 
   players: [Player],
   sabotageTaskList: [Task],
   votes: { map: 'string' },
+  votingTimer: 'number',
 });

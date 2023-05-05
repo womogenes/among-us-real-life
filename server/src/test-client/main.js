@@ -7,8 +7,13 @@ let getGameRoom = () => {};
 
 // Set some default room code
 $('#new-room-code').value = '1234';
-$('#latitude').value = 47.731417;
-$('#longitude').value = -122.328147;
+
+const coords = JSON.parse(localStorage.getItem('savedLocation')) || {
+  latitude: 47.731417,
+  longitude: -122.328147,
+};
+$('#latitude').value = coords.latitude;
+$('#longitude').value = coords.longitude;
 
 // Join the lobby
 const lobbyRoom = client.joinOrCreate('lobby');
@@ -62,11 +67,14 @@ const startGame = () => {
 
 // Listen for input changes
 const sendCoords = () => {
-  getGameRoom().send('location', {
+  const newLoc = {
     latitude: parseFloat($('#latitude').value),
     longitude: parseFloat($('#longitude').value),
     altitude: 0,
-  });
+  };
+
+  localStorage.setItem('savedLocation', JSON.stringify(newLoc));
+  getGameRoom()?.send('location', newLoc);
 };
 
 $('#latitude').addEventListener('input', sendCoords);

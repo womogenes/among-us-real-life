@@ -1,4 +1,6 @@
 import { Room } from '@colyseus/core';
+import * as schema from '@colyseus/schema';
+const { MapSchema } = schema;
 
 import {
   GameRoomState,
@@ -11,6 +13,7 @@ import {
   onDisposeGameRoom,
   onGameStart,
 } from './LobbyRoom.js';
+import { findDist } from '../utils.js';
 
 import { nanoid } from 'nanoid';
 
@@ -24,6 +27,8 @@ export class GameRoom extends Room {
       );
       player.trueLocation.update(loc);
       if (player.isAlive) player.location.update(loc);
+
+      checkCanStartVoting();
     });
 
     this.onMessage('deltaLocation', (client, dLoc) => {
@@ -33,7 +38,89 @@ export class GameRoom extends Room {
       );
       player.trueLocation.deltaUpdate(dLoc);
       if (player.isAlive) player.location.deltaUpdate(dLoc);
+
+      checkCanStartVoting();
     });
+
+    // Check if everyone is in range to begin voting
+    const checkCanStartVoting = () => {
+      if (this.state.gameState !== 'emergency') return;
+      if (!this.state.emergencyMeetingLocation) return;
+
+      // Check if all players are within 30m of emergency location
+      const allInRange = this.state.players.every(
+        (player) =>
+          !player.isAlive ||
+          findDist(player.location, this.state.emergencyMeetingLocation) < 30
+      );
+      if (allInRange) {
+        startVoting();
+      }
+    };
+
+    const startVoting = () => {
+      this.state.votes = new MapSchema();
+      this.state.gameState = 'voting';
+      this.state.votingTimer = this.state.settings.votingTimer; // Reset the timer
+      this.broadcast('startVoting');
+
+      let handle = setInterval(() => {
+        this.state.votingTimer--;
+
+        if (this.state.votingTimer <= 0) {
+          // End condition
+          clearInterval(handle);
+
+          // Determine who gets killed
+          let countsObj = {};
+          for (let vote of this.state.votes.values()) {
+            countsObj[vote] = countsObj[vote] ? countsObj[vote] + 1 : 1;
+          }
+          let counts = Object.entries(countsObj);
+          counts.sort((a, b) => a[1] < b[1]);
+
+          // Is there a tie?
+          const isTie =
+            counts.length === 0 ||
+            (counts.length >= 2 && counts[0][1] === counts[1][1]);
+
+          if (isTie) {
+            this.broadcast('playerKilled', null);
+          } else {
+            const killed = counts[0][0];
+            this.state.players.find(
+              (p) => p.sessionId === killed
+            ).isAlive = false;
+            this.broadcast('playerKilled', killed);
+          }
+
+          this.state.gameState = 'normal';
+          this.state.emergencyMeetingLocation = new Location();
+        }
+      }, 1000);
+    };
+
+    this.onMessage('startVoting', () => {
+      if (this.state.gameState === 'voting') return;
+
+      this.state.votes = new Map();
+      startVoting();
+    });
+
+    this.onMessage('vote', (client, vote) => {
+      let voter = client.sessionId;
+
+      // Double vote effectively cancels
+      if (vote === this.state.votes.get(voter)) {
+        this.state.votes.delete(voter);
+      } else {
+        this.state.votes.set(voter, vote);
+      }
+      // console.log(this.state.votes.$items);
+    });
+
+    // Notify the lobby that this room has been created
+    onCreateGameRoom(this);
 
     this.onMessage('completeTask', (client, taskId) => {
       const playerIdx = this.state.players.findIndex(
@@ -42,11 +129,15 @@ export class GameRoom extends Room {
       const taskIdx = this.state.players[playerIdx].tasks.findIndex(
         (task) => task.taskId === taskId
       );
+
+      if (taskIdx === -1) return; // Probably a dev task
+
       this.state.players[playerIdx].tasks[taskIdx].complete = true;
       const sabotageTaskIndex = this.state.sabotageTaskList.findIndex(
         (task) => task.taskId === taskId
       );
 
+<<<<<<< HEAD
       if(this.state.players[playerIdx].tasks[taskIdx].name === 'o2') {
         this.broadcast('task complete', taskId);
         console.log('yay')
@@ -54,24 +145,24 @@ export class GameRoom extends Room {
 
 
       if(sabotageTaskIndex != -1){
+=======
+      if (sabotageTaskIndex != -1) {
+>>>>>>> 845a25455d0440133d541e7a37a08df87f69de32
         this.state.sabotageTaskList.splice(sabotageTaskIndex, 1);
       }
 
-      if(this.state.sabotageTaskList.length == 0){
+      if (this.state.sabotageTaskList.length == 0) {
         this.broadcast('sabotageOver');
         this.state.players.forEach((p) => {
           let taskIndex = 0;
-          while(taskIndex != -1){
-            taskIndex = p.tasks.findIndex(
-              (task) => task.name === 'o2'
-              );
-            if(taskIndex != -1){
+          while (taskIndex != -1) {
+            taskIndex = p.tasks.findIndex((task) => task.name === 'o2');
+            if (taskIndex != -1) {
               p.tasks.splice(taskIndex, 1);
             }
           }
-        })
+        });
       }
-
     });
 
     this.onMessage('setUsername', (client, username) => {
@@ -86,10 +177,11 @@ export class GameRoom extends Room {
       player.location.update(player.location);
     });
 
-    this.onMessage('startEmergencyMeeting', (client) => {
+    this.onMessage('callEmergency', (client, location) => {
       this.state.gameState = 'emergency';
-      this.broadcast('emergencyMeeting');
-      console.log('emergency meeting started');
+      this.state.emergencyMeetingLocation.update(location);
+
+      console.log('emergency meeting called');
     });
 
     this.onMessage('o2', () => {
@@ -113,42 +205,6 @@ export class GameRoom extends Room {
         p.tasks.push(newTask1);
         p.tasks.push(newTask2);
       });
-    });
-
-    function emergencyDist(playerCoords, emCoords) {
-      /* 111139 converts lat and long in degrees to meters */
-      const x =
-        111139 *
-        Math.abs(Math.abs(playerCoords.latitude) - Math.abs(emCoords.latitude));
-      const y =
-        111139 *
-        Math.abs(
-          Math.abs(playerCoords.longitude) - Math.abs(emCoords.longitude)
-        );
-      const dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-      return dist;
-    }
-
-    this.onMessage('emergencyMeetingLoc', (client, emergencyMeetingLoc) => {
-      let inMeetingCount = 0;
-      let playerCount = 0;
-      for (let i = 0; i < this.state.players.length; i++) {
-        if (this.state.players[i].isAlive == true) {
-          playerCount++;
-          let dist = emergencyDist(
-            this.state.players[i].location,
-            emergencyMeetingLoc
-          );
-          if (dist < 200) {
-            console.log('YEAHHHHH');
-            inMeetingCount++;
-          }
-        }
-      }
-      if (playerCount == inMeetingCount) {
-        console.log('Begin emergency meeting yay');
-        this.broadcast('beginEmerMeeting');
-      }
     });
 
     this.onMessage('startGame', (client) => {
@@ -190,20 +246,6 @@ export class GameRoom extends Room {
       this.broadcast('gameEnded');
       this.disconnect();
     });
-
-    this.onMessage('startVoting', () => {
-      this.state.votes = new Map();
-    });
-
-    this.onMessage('vote', (client, vote) => {
-      let voter = Object.keys(vote)[0];
-      let target = vote[voter];
-      this.state.votes.set(voter, target);
-      // console.log(this.state.votes.$items);
-    });
-
-    // Notify the lobby that this room has been created
-    onCreateGameRoom(this);
   }
 
   onAuth(client, options, request) {

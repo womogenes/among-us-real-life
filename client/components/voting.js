@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   Button,
 } from 'react-native';
+import Constants from 'expo-constants';
 import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 
@@ -16,9 +17,7 @@ import { ProfileIcon } from './profile-icon.js';
 export default function votingModal(props) {
   const gameRoom = getGameRoom();
 
-  const [timer, setTimer] = useState(props.timer);
   const [votes, setVotes] = useState(new Map());
-  const [loading, setLoading] = useState(true);
 
   let playerArr = gameRoom.state.players;
 
@@ -27,43 +26,22 @@ export default function votingModal(props) {
   )[0];
 
   useEffect(() => {
-    if (props.isModalVisible) {
-      // basically a reset
-      setTimer(props.timer);
-      setVotes(new Map());
-      setLoading(false);
-    }
-  }, [props.isModalVisible]);
-
-  useEffect(() => {
-    if (!loading) {
-      let countdown = setTimeout(() => {
-        setTimer(timer - 1);
-      }, 1000);
-      if (!props.isModalVisible) {
-        setLoading(true);
-        return clearTimeout(countdown);
-      }
-    }
-  });
-
-  useEffect(() => {
-    gameRoom.state.votes.onChange = (target, player) => {
+    gameRoom.onStateChange((state) => {
       // console.log(player, ' has voted for ', target);
       // console.log(getGameRoom().state.votes.$items);
-      setVotes((prev) => ({ ...prev, [player]: target }));
-    };
-    gameRoom.state.votes.onAdd = (target, player) => {
-      // console.log(player, ' has voted for ', target);
-      // console.log(getGameRoom().state.votes.$items);
-      setVotes((prev) => ({ ...prev, [player]: target }));
+      const votes = Array.from(state.votes);
+      setVotes(votes);
+    });
+
+    return () => {
+      gameRoom.removeAllListeners();
     };
   }, []);
 
   return (
     <Modal isVisible={props.isModalVisible} animationType="slide">
       <View style={styles.votingModal}>
-        <Button
+        {/* <Button
           onPress={() =>
             console.log(
               new Map(getGameRoom().state.votes.$items),
@@ -72,20 +50,28 @@ export default function votingModal(props) {
             )
           }
           title="test click (log)"
-        ></Button>
+        ></Button> */}
         <FlatList
           data={playerArr}
           renderItem={({ item }) => (
             <TouchableWithoutFeedback
               onPress={() => {
-                //may have to change how this is done later
-                //using ids?
-                getGameRoom()?.send('vote', {
-                  [user.sessionId]: item.sessionId,
-                });
+                // may have to change how this is done later
+                // using ids?
+                if (!item.isAlive) return;
+
+                getGameRoom()?.send('vote', item.sessionId);
               }}
             >
-              <View style={styles.candidate}>
+              <View
+                style={[
+                  styles.candidate,
+                  {
+                    opacity: item.isAlive ? 1 : 0.5,
+                    borderColor: item.isAlive ? '#000' : '#f00',
+                  },
+                ]}
+              >
                 <CustomText
                   textColor={'black'}
                   centerText={false}
@@ -96,20 +82,18 @@ export default function votingModal(props) {
 
                 {/* maybe change to view later for icons? */}
                 <View style={styles.votes}>
-                  {Object.keys(votes)
-                    .filter(
-                      // change this to icons later
-                      (key) => votes[key] == item.sessionId
-                    )
-                    .map((playerId) => {
-                      const player = getGameRoom().state.players.find(
-                        (p) => p.sessionId === playerId
+                  {votes
+                    ?.filter(([key, playerId]) => playerId == item.sessionId)
+                    ?.map(([key, playerId]) => {
+                      const player = gameRoom.state.players.find(
+                        (p) => p.sessionId === key
                       );
                       return (
                         <ProfileIcon
+                          style={{ marginLeft: 5 }}
                           player={player}
                           size={20}
-                          key={player.sessionId}
+                          key={key}
                         />
                       );
                     })}
@@ -125,7 +109,7 @@ export default function votingModal(props) {
           textSize={40}
           marginVertical={10}
         >
-          Voting ends in <Text style={styles.red}>{timer}</Text> sec
+          Voting ends in <Text style={styles.red}>{props.timer}</Text> sec
         </CustomText>
       </View>
     </Modal>
@@ -134,6 +118,9 @@ export default function votingModal(props) {
 
 const styles = StyleSheet.create({
   votingModal: {
+    marginTop: Constants.statusBarHeight,
+    marginBottom: 10,
+    paddingTop: 10,
     borderRadius: 20,
     flex: 1,
     alignItems: 'center',
@@ -141,7 +128,6 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   player: {
-    flex: 0.9,
     width: '100%',
   },
   red: {
@@ -158,7 +144,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   votes: {
+    display: 'flex',
+    flexDirection: 'row',
     alignSelf: 'flex-end',
-    textAlign: 'right',
   },
 });

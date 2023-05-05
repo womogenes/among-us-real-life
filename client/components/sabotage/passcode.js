@@ -26,9 +26,9 @@ function CodeTask({ active, code, complete, closeTask }) {
   });
 
   const [inputColor, setInputColor] = useState('red');
-  
+
   function toggleColor(color) {
-    if(color === 'red'){
+    if (color === 'red') {
       Animated.sequence([
         Animated.timing(flash.opacity, {
           toValue: 0.8,
@@ -41,7 +41,7 @@ function CodeTask({ active, code, complete, closeTask }) {
           duration: 50,
           useNativeDriver: false,
           easing: Easing.inOut(Easing.sin),
-        })
+        }),
       ]).start();
     }
     else if (color === 'green') {
@@ -125,57 +125,66 @@ function CodeTask({ active, code, complete, closeTask }) {
   function col(arr) {
     return arr.map((num) => {
       let key = Math.random();
-      if(num === '×'){
+      if (num === '×') {
         return (
           <TouchableOpacity
             style={styles.button}
             onPress={() => deleteValue()}
             key={key}
           >
-            <CustomText textSize={60} textColor={'red'} key={key}>{num}</CustomText>
+            <CustomText textSize={60} textColor={'red'} key={key}>
+              {num}
+            </CustomText>
           </TouchableOpacity>
-        )
-      }
-      else if(num === '○'){
+        );
+      } else if (num === '○') {
         return (
           <TouchableOpacity
             style={styles.button}
             onPress={() => verifyValue()}
             key={key}
           >
-            <CustomText textSize={50} textColor={'green'} key={key}>{num}</CustomText>
+            <CustomText textSize={50} textColor={'green'} key={key}>
+              {num}
+            </CustomText>
           </TouchableOpacity>
-        )
-      }
-      else{
+        );
+      } else {
         return (
           <TouchableOpacity
             style={styles.button}
             onPress={() => changeValue(num)}
             key={key}
           >
-            <CustomText textSize={60} key={key}>{num}</CustomText>
+            <CustomText textSize={60} key={key}>
+              {num}
+            </CustomText>
           </TouchableOpacity>
-        )
+        );
       }
-    })
+    });
   }
   function keypad() {
-    let keypad = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9'], ['×', '0', '○']]
-    
+    let keypad = [
+      ['1', '2', '3'],
+      ['4', '5', '6'],
+      ['7', '8', '9'],
+      ['×', '0', '○'],
+    ];
+
     return keypad.map((arr) => {
-      return(
+      return (
         <View style={styles.buttonContainer} key={Math.random()}>
           {col(arr)}
         </View>
-      )
-    })
+      );
+    });
   }
 
   function keyNum() {
     let keyNums = [one, two, three, four];
     return keyNums.map((variable) => {
-      return(
+      return (
         <CustomText
           textSize={60}
           letterSpacing={1}
@@ -186,16 +195,16 @@ function CodeTask({ active, code, complete, closeTask }) {
         >
           {variable}
         </CustomText>
-      )
-    })
+      );
+    });
   }
 
   useEffect(() => {
-    if (active){
+    if (active) {
       setCurrCode(code);
       reset();
     }
-  }, [active])
+  }, [active]);
 
   return (
     <Modal isVisible={active}>
@@ -208,8 +217,13 @@ function CodeTask({ active, code, complete, closeTask }) {
         </TouchableOpacity>
         <View style={styles.inputContainer}>
           {keyNum()}
-          <Animated.View style={[styles.errorBox, { backgroundColor: inputColor }, { opacity: flash.opacity }]}>
-          </Animated.View>
+          <Animated.View
+            style={[
+              styles.errorBox,
+              { backgroundColor: inputColor },
+              { opacity: flash.opacity },
+            ]}
+          ></Animated.View>
         </View>
         {keypad()}
         <View style={styles.hintContainer}>
@@ -226,57 +240,57 @@ function CodeTask({ active, code, complete, closeTask }) {
 export default CodeTask;
 
 const styles = StyleSheet.create({
-    modal: {
-        margin: 20,
-        borderRadius: 20,
-        flex: 1,
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        color: '#000',
-        padding: 20,
-      },
-    inputContainer: {
-        marginTop: 20,
-        marginBottom: 20,
-        width: '80%',
-        height: 80,
-        borderWidth: 5,
-        borderColor: 'black',
-        backgroundColor: 'white',
-        flexDirection: 'row',
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        width: '100%',
-        height: '13%',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    button: {
-        flex: 1,
-        height: '95%',
-        borderWidth: 5,
-        borderRadius: 20,
-        margin: 2,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    hintContainer: {
-        flex: 1,
-        marginTop: 20,
-        width: '50%',
-        backgroundColor: '#f7dd14',
-        padding: 20,
-    },
-    closeButton: {
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        margin: 10,
-    },
-    errorBox: {
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-    }
+  modal: {
+    margin: 20,
+    borderRadius: 20,
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    color: '#000',
+    padding: 20,
+  },
+  inputContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+    width: '80%',
+    height: 80,
+    borderWidth: 5,
+    borderColor: 'black',
+    backgroundColor: 'white',
+    flexDirection: 'row',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    height: '13%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  button: {
+    flex: 1,
+    height: '95%',
+    borderWidth: 5,
+    borderRadius: 20,
+    margin: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  hintContainer: {
+    flex: 1,
+    marginTop: 20,
+    width: '50%',
+    backgroundColor: '#f7dd14',
+    padding: 20,
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    margin: 10,
+  },
+  errorBox: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
 });

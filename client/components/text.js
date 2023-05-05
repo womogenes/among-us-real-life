@@ -11,7 +11,7 @@ function CustomText(props) {
         props.bottom && { bottom: props.bottom },
         props.right && { right: props.right },
         props.left && { left: props.left },
-        props.flex && { flex: props.flex},
+        props.flex && { flex: props.flex },
       ]}
     >
       <Text
