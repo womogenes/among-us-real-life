@@ -335,7 +335,7 @@ export default function GameScreen({ navigation }) {
   }, [location]);
 
   useEffect(() => {
-    if(activeTask.taskId === sabNotif) {
+    if (activeTask.taskId === sabNotif) {
       closeTask();
     }
   }, [sabNotif]);
@@ -581,17 +581,22 @@ export default function GameScreen({ navigation }) {
       ) : (
         <ControlPanel />
       )}
-      {/* testing button below */}
-      <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
-        <Text>toggle voting modal</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => setElectricityTask(true)}
-        style={styles.testButton}
-      >
-        <Text>open electricity task</Text>
-      </TouchableOpacity>
+
+      <View style={styles.debugContainer}>
+        {/* testing button below */}
+        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
+          <Text>toggle voting modal</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setElectricityTask(true)}
+          style={styles.testButton}
+        >
+          <Text>open electricity task</Text>
+        </TouchableOpacity>
+      </View>
+
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
+
       <CaptchaTask
         active={activeTask.name === 'reCaptcha'}
         complete={completeTask}

@@ -63,6 +63,7 @@ export class GameRoom extends Room {
       this.state.gameState = 'voting';
       this.state.votingTimer = this.state.settings.votingTimer; // Reset the timer
       this.broadcast('startVoting');
+      this.refresh += 1;
 
       let handle = setInterval(() => {
         this.state.votingTimer--;
@@ -116,11 +117,7 @@ export class GameRoom extends Room {
       } else {
         this.state.votes.set(voter, vote);
       }
-      // console.log(this.state.votes.$items);
     });
-
-    // Notify the lobby that this room has been created
-    onCreateGameRoom(this);
 
     this.onMessage('completeTask', (client, taskId) => {
       const playerIdx = this.state.players.findIndex(
@@ -137,12 +134,11 @@ export class GameRoom extends Room {
         (task) => task.taskId === taskId
       );
 
-      if(this.state.players[playerIdx].tasks[taskIdx].name === 'o2') {
+      if (this.state.players[playerIdx].tasks[taskIdx].name === 'o2') {
         this.broadcast('task complete', taskId);
       }
 
-
-      if(sabotageTaskIndex != -1){
+      if (sabotageTaskIndex != -1) {
         this.state.sabotageTaskList.splice(sabotageTaskIndex, 1);
       }
 
@@ -185,7 +181,7 @@ export class GameRoom extends Room {
       const newId1 = nanoid();
       const newTask1 = new Task(
         'o2',
-        new Location(47.731502, -122.328040, 0), // 47.73731712202693, -122.3394061888169 Felix's Coords 
+        new Location(47.731502, -122.32804, 0), // 47.73731712202693, -122.3394061888169 Felix's Coords
         newId1
       );
       const newId2 = nanoid();
@@ -200,42 +196,6 @@ export class GameRoom extends Room {
         p.tasks.push(newTask1);
         p.tasks.push(newTask2);
       });
-    });
-
-    function emergencyDist(playerCoords, emCoords) {
-      /* 111139 converts lat and long in degrees to meters */
-      const x =
-        111139 *
-        Math.abs(Math.abs(playerCoords.latitude) - Math.abs(emCoords.latitude));
-      const y =
-        111139 *
-        Math.abs(
-          Math.abs(playerCoords.longitude) - Math.abs(emCoords.longitude)
-        );
-      const dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-      return dist;
-    }
-
-    this.onMessage('emergencyMeetingLoc', (client, emergencyMeetingLoc) => {
-      let inMeetingCount = 0;
-      let playerCount = 0;
-      for (let i = 0; i < this.state.players.length; i++) {
-        if (this.state.players[i].isAlive == true) {
-          playerCount++;
-          let dist = emergencyDist(
-            this.state.players[i].location,
-            emergencyMeetingLoc
-          );
-          if (dist < 200) {
-            console.log('YEAHHHHH');
-            inMeetingCount++;
-          }
-        }
-      }
-      if (playerCount == inMeetingCount) {
-        console.log('Begin emergency meeting yay');
-        this.broadcast('beginEmerMeeting');
-      }
     });
 
     this.onMessage('startGame', (client) => {
@@ -264,7 +224,7 @@ export class GameRoom extends Room {
 
     this.onMessage('settingsUpdated', (client, settings) => {
       this.state.settings.update(settings);
-      this.state.refresh++;
+      this.state.refresh += 1;
     });
 
     // Currently not used
@@ -279,14 +239,10 @@ export class GameRoom extends Room {
     });
 
     this.onMessage('startVoting', () => {
-      this.state.votes = new Map();
-    });
+      if (this.state.gameState === 'voting') return;
 
-    this.onMessage('vote', (client, vote) => {
-      let voter = Object.keys(vote)[0];
-      let target = vote[voter];
-      this.state.votes.set(voter, target);
-      // console.log(this.state.votes.$items);
+      this.state.votes = new Map();
+      startVoting();
     });
 
     // Notify the lobby that this room has been created
