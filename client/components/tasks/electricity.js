@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 import { Slider } from '@miblanchard/react-native-slider';
 import Modal from 'react-native-modal';
+
+import CustomText from '../text.js';
 
 function ElectricityTask(props) {
   const [code, setCode] = useState(
@@ -25,6 +27,13 @@ function ElectricityTask(props) {
   return (
     <Modal isVisible={props.active} style={{ alignItems: 'center' }}>
       <View style={styles.modal}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => props.closeTask('electricity')}
+        >
+          <CustomText textSize={30}>&#10006;</CustomText>
+        </TouchableOpacity>
+
         {[...Array(3).keys()].map((num) => (
           <View style={styles.sliderContainer} key={num}>
             <Text>this is under construction</Text>
@@ -76,5 +85,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'powderblue',
     width: 80,
     height: 50,
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 5,
+    top: 0,
+    margin: 10,
   },
 });

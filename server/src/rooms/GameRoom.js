@@ -97,6 +97,9 @@ export class GameRoom extends Room {
       const taskIdx = this.state.players[playerIdx].tasks.findIndex(
         (task) => task.taskId === taskId
       );
+
+      if (!taskIdx) return; // Probably a dev task
+
       this.state.players[playerIdx].tasks[taskIdx].complete = true;
       const sabotageTaskIndex = this.state.sabotageTaskList.findIndex(
         (task) => task.taskId === taskId

@@ -87,8 +87,6 @@ export default function GameScreen({ navigation }) {
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
 
-  const [electricityTask, setElectricityTask] = useState(false);
-
   const openVotingModal = () => {
     const room = getGameRoom();
 
@@ -570,7 +568,12 @@ export default function GameScreen({ navigation }) {
           <Text>toggle voting modal</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setElectricityTask(true)}
+          onPress={() =>
+            setActiveTask((prevArrState) => ({
+              ...prevArrState,
+              name: 'electricity',
+            }))
+          }
           style={styles.testButton}
         >
           <Text>open electricity task</Text>
@@ -606,8 +609,7 @@ export default function GameScreen({ navigation }) {
         closeTask={closeTask}
       />
       <ElectricityTask
-        // active={activeTask.name === 'electricity'}
-        active={electricityTask}
+        active={activeTask.name === 'electricity'}
         complete={completeTask}
         closeTask={closeTask}
       />
