@@ -40,6 +40,56 @@ export class GameRoom extends Room {
       checkCanStartVoting();
     });
 
+    // Check if everyone is in range to begin voting
+    const checkCanStartVoting = () => {
+      if (this.state.gameState !== 'emergency') return;
+      if (!this.state.emergencyMeetingLocation) return;
+
+      // Check if all players are within 200m of emergency location
+      const allInRange = this.state.players.every(
+        (player) =>
+          !player.isAlive ||
+          findDist(player.location, this.state.emergencyMeetingLocation) < 200
+      );
+      if (allInRange) {
+        startVoting();
+      }
+    };
+
+    const startVoting = () => {
+      this.state.gameState = 'voting';
+      this.broadcast('startVoting');
+
+      let handle = setInterval(() => {
+        this.state.votingTimer--;
+
+        if (this.state.votingTimer <= 0) {
+          // End condition
+          clearInterval(handle);
+
+          // Determine who gets killed
+          this.state.gameState = 'normal';
+        }
+      }, 1000);
+    };
+
+    this.onMessage('startVoting', () => {
+      if (this.state.gameState === 'voting') return;
+
+      this.state.votes = new Map();
+      startVoting();
+    });
+
+    this.onMessage('vote', (client, vote) => {
+      let voter = Object.keys(vote)[0];
+      let target = vote[voter];
+      this.state.votes.set(voter, target);
+      // console.log(this.state.votes.$items);
+    });
+
+    // Notify the lobby that this room has been created
+    onCreateGameRoom(this);
+
     this.onMessage('completeTask', (client, taskId) => {
       const playerIdx = this.state.players.findIndex(
         (p) => p.sessionId === client.sessionId
@@ -88,23 +138,6 @@ export class GameRoom extends Room {
 
       console.log('emergency meeting called');
     });
-
-    // Check if everyone is in range
-    const checkCanStartVoting = () => {
-      if (this.state.gameState !== 'normal') return;
-      if (!this.state.emergencyMeetingLocation) return;
-
-      // Check if all players are within 200m of emergency location
-      const allInRange = this.state.players.every(
-        (player) =>
-          !player.isAlive ||
-          findDist(player.location, this.state.emergencyMeetingLocation) < 200
-      );
-      if (allInRange) {
-        this.state.gameState = 'voting';
-        this.broadcast('beginVoting');
-      }
-    };
 
     this.onMessage('o2', () => {
       console.log('sabotage!!!!');
@@ -167,20 +200,6 @@ export class GameRoom extends Room {
       this.broadcast('gameEnded');
       this.disconnect();
     });
-
-    this.onMessage('startVoting', () => {
-      this.state.votes = new Map();
-    });
-
-    this.onMessage('vote', (client, vote) => {
-      let voter = Object.keys(vote)[0];
-      let target = vote[voter];
-      this.state.votes.set(voter, target);
-      // console.log(this.state.votes.$items);
-    });
-
-    // Notify the lobby that this room has been created
-    onCreateGameRoom(this);
   }
 
   onAuth(client, options, request) {

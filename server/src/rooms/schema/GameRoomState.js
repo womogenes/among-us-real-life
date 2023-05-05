@@ -141,13 +141,14 @@ export class GameRoomState extends Schema {
         voting
     */
     this.gameState = 'lobby';
+    this.emergencyMeetingLocation = new Location();
 
     this.settings = new Settings();
 
     this.players = new ArraySchema();
     this.sabotageTaskList = new ArraySchema();
     this.votes = new MapSchema();
-    this.emergencyMeetingLocation = new Location();
+    this.votingTimer = this.settings.votingTimer;
   }
 }
 schema.defineTypes(GameRoomState, {
@@ -155,10 +156,12 @@ schema.defineTypes(GameRoomState, {
   code: 'string',
   gameStarted: 'boolean',
   gameState: 'string',
+  emergencyMeetingLocation: Location,
+
   settings: Settings,
 
   players: [Player],
   sabotageTaskList: [Task],
   votes: { map: 'string' },
-  emergencyMeetingLocation: Location,
+  votingTimer: 'number',
 });

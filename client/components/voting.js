@@ -17,9 +17,7 @@ import { ProfileIcon } from './profile-icon.js';
 export default function votingModal(props) {
   const gameRoom = getGameRoom();
 
-  const [timer, setTimer] = useState(props.timer);
   const [votes, setVotes] = useState(new Map());
-  const [loading, setLoading] = useState(true);
 
   let playerArr = gameRoom.state.players;
 
@@ -30,30 +28,17 @@ export default function votingModal(props) {
   useEffect(() => {
     if (props.isModalVisible) {
       // basically a reset
-      setTimer(props.timer);
       setVotes(new Map());
-      setLoading(false);
     }
   }, [props.isModalVisible]);
-
-  useEffect(() => {
-    if (!loading) {
-      let countdown = setTimeout(() => {
-        setTimer(timer - 1);
-      }, 1000);
-
-      if (!props.isModalVisible) {
-        setLoading(true);
-        return clearTimeout(countdown);
-      }
-    }
-  });
 
   useEffect(() => {
     gameRoom.state.votes.onChange = (target, player) => {
       // console.log(player, ' has voted for ', target);
       // console.log(getGameRoom().state.votes.$items);
       setVotes((prev) => ({ ...prev, [player]: target }));
+
+      console.log(`votingTimer: ${props.timer}`);
     };
     gameRoom.state.votes.onAdd = (target, player) => {
       // console.log(player, ' has voted for ', target);
@@ -127,7 +112,7 @@ export default function votingModal(props) {
           textSize={40}
           marginVertical={10}
         >
-          Voting ends in <Text style={styles.red}>{timer}</Text> sec
+          Voting ends in <Text style={styles.red}>{props.timer}</Text> sec
         </CustomText>
       </View>
     </Modal>
@@ -137,6 +122,7 @@ export default function votingModal(props) {
 const styles = StyleSheet.create({
   votingModal: {
     marginTop: Constants.statusBarHeight,
+    marginBottom: 10,
     paddingTop: 10,
     borderRadius: 20,
     flex: 1,

@@ -85,19 +85,20 @@ export default function GameScreen({ navigation }) {
   const [distPlayer, setDistPlayer] = useState([]);
 
   const [votingModalVisible, setVotingModalVisible] = useState(false);
-  //set timer in settings later, 10 is for faster testing
-  const [votingTimer, setVotingTimer] = useState(120);
+  const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
 
   const [electricityTask, setElectricityTask] = useState(false);
 
   const openVotingModal = () => {
-    getGameRoom()?.send('startVoting');
+    const room = getGameRoom();
+
+    if (room.state.gameState !== 'voting') {
+      // If this is triggered manually
+      room?.send('startVoting');
+    }
+
     setVotingModalVisible(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-
-    const timeout = setTimeout(() => {
-      setVotingModalVisible(false);
-    }, votingTimer * 1000 + 1500); // buffer the timer a bit for transition smoothness
 
     return () => {
       clearTimeout(timeout);
@@ -352,7 +353,7 @@ export default function GameScreen({ navigation }) {
     );
     setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
 
-    room.onMessage('beginVoting', () => {
+    room.onMessage('startVoting', () => {
       openVotingModal();
     });
 
@@ -375,11 +376,12 @@ export default function GameScreen({ navigation }) {
       animate(player.trueLocation);
 
       // Set emergency meeting location, if applicable
-      console.log(
-        `meeting loc: ${JSON.stringify(state.emergencyMeetingLocation)}`
-      );
-      // setEmergencyMeetingLocation(state.emergencyMeetingLocation);
+      setEmergencyMeetingLocation({ ...state.emergencyMeetingLocation });
       setDisableActions(state.emergencyMeetingLocation.latitude !== 0);
+
+      // Voting stuff
+      setVotingTimer(state.votingTimer);
+      setVotingModalVisible(room.state.gameState === 'voting');
 
       // Set progress bar based on task completion percentage
       // Array.reduce documentation: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
@@ -495,7 +497,7 @@ export default function GameScreen({ navigation }) {
         {emergencyMeetingLocation && (
           <Marker
             key="Emergency Meeting"
-            pinColor="gold"
+            pinColor="purple"
             coordinate={emergencyMeetingLocation}
             title="EmergencyMeeting"
           />
