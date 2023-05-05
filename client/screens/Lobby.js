@@ -33,8 +33,8 @@ function LobbyScreen({ navigation }) {
   const [killCooldown, setKillCooldown] = useState([60]);
   const [prevKillCooldown, setPrevKillCooldown] = useState([60]);
 
-  const [imposterNum, setImposterNum] = useState([1]);
-  const [prevImposterNum, setPrevImposterNum] = useState([1]);
+  const [impostorNum, setImpostorNum] = useState([1]);
+  const [prevImpostorNum, setPrevImpostorNum] = useState([1]);
 
   const [votingTimer, setVotingTimer] = useState([60]);
   const [prevVotingTimer, setPrevVotingTimer] = useState([60]);
@@ -64,7 +64,7 @@ function LobbyScreen({ navigation }) {
       if (!isHost) {
         setKillRadius(state.settings.killRadius);
         setKillCooldown(state.settings.killCooldown);
-        setImposterNum(state.settings.imposterNum);
+        setImpostorNum(state.settings.impostorNum);
         setVotingTimer(state.settings.votingTimer);
       }
     });
@@ -88,19 +88,19 @@ function LobbyScreen({ navigation }) {
   function storePrev() {
     setPrevKillRadius(killRadius);
     setPrevKillCooldown(killCooldown);
-    setPrevImposterNum(imposterNum);
+    setPrevImpostorNum(impostorNum);
     setPrevVotingTimer(votingTimer);
   }
 
   function dontSave() {
     setKillRadius(prevKillRadius);
     setKillCooldown(prevKillCooldown);
-    setImposterNum(prevImposterNum);
+    setImpostorNum(prevImpostorNum);
     setVotingTimer(prevVotingTimer);
     getGameRoom().send('settingsUpdated', {
       killRadius: prevKillRadius[0],
       killCooldown: prevKillCooldown[0],
-      imposterNum: prevImposterNum[0],
+      impostorNum: prevImpostorNum[0],
       votingTimer: prevVotingTimer[0],
     });
   }
@@ -120,7 +120,7 @@ function LobbyScreen({ navigation }) {
     getGameRoom().send('settingsUpdated', {
       killRadius: killRadius[0],
       killCooldown: killCooldown[0],
-      imposterNum: imposterNum[0],
+      impostorNum: impostorNum[0],
       votingTimer: votingTimer[0],
     });
   }
@@ -243,15 +243,15 @@ function LobbyScreen({ navigation }) {
               </View>
               <View>
                 <CustomText centerText={true} textSize={40}>
-                  Number of Imposters: {imposterNum}
+                  Number of Impostors: {impostorNum}
                 </CustomText>
                 <Slider
-                  value={imposterNum}
+                  value={impostorNum}
                   minimumValue={30}
                   maximumValue={120}
                   step={5}
-                  onValueChange={(imposterNum) => {
-                    setImposterNum(imposterNum);
+                  onValueChange={(impostorNum) => {
+                    setImpostorNum(impostorNum);
                     settingsUpdated();
                   }}
                   trackClickable={true}
