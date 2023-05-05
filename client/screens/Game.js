@@ -43,7 +43,7 @@ export default function GameScreen({ navigation }) {
     manualMovementVar = value;
   };
   const setLocationHook = (loc) => {
-    if (manualMovement) return;
+    if (manualMovementVar) return;
 
     getGameRoom()?.send('location', loc);
     setLocation(loc);
@@ -55,14 +55,15 @@ export default function GameScreen({ navigation }) {
   });
 
   const [playerState, setPlayerState] = useState('impostor');
-  const [playerAlive, setPlayerAlive] = useState(true);
-
-  const [emergencyMeetingLocation, setEmergencyMeetingLocation] =
-    useState(null);
-  const [inProgressEmer, setInProgressEmer] = useState(false);
+  const [emergencyMeetingLocation, setEmergencyMeetingLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [disableActions, setDisableActions] = useState(false);
 
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
+  const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
   const [buttonState, setButtonState] = useState({
@@ -93,9 +94,10 @@ export default function GameScreen({ navigation }) {
     getGameRoom()?.send('startVoting');
     setVotingModalVisible(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+
     const timeout = setTimeout(() => {
       setVotingModalVisible(false);
-    }, votingTimer * 1000 + 1500); //buffer the timer a bit for transition smoothness
+    }, votingTimer * 1000 + 1500); // buffer the timer a bit for transition smoothness
 
     return () => {
       clearTimeout(timeout);
@@ -117,14 +119,15 @@ export default function GameScreen({ navigation }) {
     setSabotageActive(true);
   }
 
-  function genRandFour() { // Generates random 4 digit code for passcode task
-    let fourDigitNum = "";
+  function genRandFour() {
+    // Generates random 4 digit code for passcode task
+    let fourDigitNum = '';
     let num;
-    for(let i = 0; i < 4; i++){
-      num = Math.trunc(Math.random()*9);
+    for (let i = 0; i < 4; i++) {
+      num = Math.trunc(Math.random() * 9);
       fourDigitNum += num.toString();
     }
-    return(fourDigitNum);
+    return fourDigitNum;
   }
 
   function taskMarkers() {
@@ -168,12 +171,12 @@ export default function GameScreen({ navigation }) {
   }
 
   function deathScreen() {
-    if (!playerAlive) {
+    if (player && !player.isAlive) {
       return (
         <View style={styles.deathScreen}>
           <CustomText
             numberOfLines={1}
-            textSize={100}
+            textSize={80}
             letterSpacing={3}
             textColor={'white'}
           >
@@ -228,7 +231,12 @@ export default function GameScreen({ navigation }) {
     let closestTask = findClosest(distTask);
 
     if (!closestTask.complete) {
-      if (playerState == 'crewmate' || playerState == 'impostor' && sabotageActive && closestTask.name === 'o2') {
+      if (
+        playerState == 'crewmate' ||
+        (playerState == 'impostor' &&
+          sabotageActive &&
+          closestTask.name === 'o2')
+      ) {
         setActiveTask((prevArrState) => ({
           ...prevArrState,
           name: closestTask.name,
@@ -241,7 +249,7 @@ export default function GameScreen({ navigation }) {
   function reportButton() {
     console.log('REPORT');
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    getGameRoom().send('startEmergencyMeeting');
+    getGameRoom().send('callEmergency', location);
   }
 
   function killButton() {
@@ -263,7 +271,7 @@ export default function GameScreen({ navigation }) {
 
   function findAllDist(loc) {
     let taskDist = distAll('task', loc, tasks, 20);
-    let playerArr = getGameRoom().state.players.filter(
+    let playerArr = players.filter(
       (p) => p.sessionId !== getGameRoom().sessionId
     );
     let playerDist = distAll(
@@ -329,21 +337,9 @@ export default function GameScreen({ navigation }) {
     findAllDist(location);
   }, [
     JSON.stringify(
-      getGameRoom().state.players.filter(
-        (p) => p.sessionId !== getGameRoom().sessionId
-      )
+      players.filter((p) => p.sessionId !== getGameRoom().sessionId)
     ),
   ]);
-
-  useEffect(() => {
-    if (emergencyMeetingLocation != null) {
-      console.log(`emergencyMeetingLocation: ${emergencyMeetingLocation}`);
-      getGameRoom().send('emergencyMeetingLoc', emergencyMeetingLocation);
-      // Refreshing emergency meeting location after sent to game room
-      setEmergencyMeetingLocation(null);
-      setInProgressEmer(true);
-    }
-  });
 
   useEffect(() => {
     // Networking update loop
@@ -356,37 +352,34 @@ export default function GameScreen({ navigation }) {
     );
     setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
 
-    room.onMessage('emergencyMeeting', () => {
-      setEmergencyMeetingLocation({
-        latitude: 47.731317,
-        longitude: -122.327169,
-      });
-    });
-
-    room.onMessage('beginEmerMeeting', () => {
+    room.onMessage('beginVoting', () => {
       openVotingModal();
     });
 
     room.onMessage('sabotageOver', () => {
       setSabotageActive(false);
-    })
+    });
 
     room.onStateChange((state) => {
       setPlayers(state.players);
-      setPlayerAlive(thisPlayer.isAlive);
+      setPlayer();
 
-      // Animate to new given location and update local state
       const player = state.players.find(
         (player) => player.sessionId === getGameRoom().sessionId
       );
-      setLocation({ ...player.location }); // VERY IMPORTANT to make new object here, or useEffect will not fire
-      animate(player.location);
+      setPlayer(player);
+      setTasks(player.tasks);
 
-      // Get player tasks from room state
-      const tasks = state.players.find(
-        (p) => p.sessionId === room.sessionId
-      ).tasks;
-      setTasks(tasks);
+      // Animate to new given location and update local state
+      setLocation({ ...player.trueLocation }); // VERY IMPORTANT to make new object here, or useEffect will not fire
+      animate(player.trueLocation);
+
+      // Set emergency meeting location, if applicable
+      console.log(
+        `meeting loc: ${JSON.stringify(state.emergencyMeetingLocation)}`
+      );
+      // setEmergencyMeetingLocation(state.emergencyMeetingLocation);
+      setDisableActions(state.emergencyMeetingLocation.latitude !== 0);
 
       // Set progress bar based on task completion percentage
       // Array.reduce documentation: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
@@ -480,20 +473,20 @@ export default function GameScreen({ navigation }) {
         mapType={Platform.OS === 'ios' ? 'standard' : 'standard'}
         moveOnMarkerPress={false}
       >
-        {players.map((player) => {
+        {players.map((p) => {
           let displayLoc =
-            player.isAlive || player.sessionId === getGameRoom().sessionId
-              ? player.trueLocation
-              : player.location;
+            p?.isAlive || p.sessionId === getGameRoom().sessionId
+              ? p.trueLocation
+              : p.location;
 
           return (
             <Marker
-              key={player.sessionId}
+              key={p.sessionId}
               coordinate={{ ...displayLoc }}
-              title={player.username}
+              title={p.username}
             >
               <ProfileIcon
-                player={player} // Pass the whole player object
+                player={p} // Pass the whole player object
                 size={40}
               />
             </Marker>
@@ -502,7 +495,7 @@ export default function GameScreen({ navigation }) {
         {emergencyMeetingLocation && (
           <Marker
             key="Emergency Meeting"
-            pinColor="purple"
+            pinColor="gold"
             coordinate={emergencyMeetingLocation}
             title="EmergencyMeeting"
           />
@@ -519,9 +512,7 @@ export default function GameScreen({ navigation }) {
       />
 
       {deathScreen()}
-      <SabotageFlash 
-        sabotageActive={sabotageActive}
-      />
+      <SabotageFlash sabotageActive={sabotageActive} />
       {playerState == 'crewmate' ? (
         <ControlPanel
           userType={'crewmate'}
@@ -539,18 +530,14 @@ export default function GameScreen({ navigation }) {
       ) : playerState == 'impostor' ? (
         <ControlPanel
           userType={'impostor'}
-          useButtonState={emergencyMeetingLocation ? true : buttonState.use}
+          useButtonState={disableActions || buttonState.use}
           useButtonPress={useButton}
-          killButtonState={emergencyMeetingLocation ? true : buttonState.kill}
+          killButtonState={disableActions || buttonState.kill}
           killButtonPress={killButton}
           cooldown={10}
           disguiseButtonState={buttonState.disguise}
-          sabotageButtonState={
-            emergencyMeetingLocation ? true : buttonState.sabotage
-          }
-          reportButtonState={
-            emergencyMeetingLocation ? true : buttonState.report
-          }
+          sabotageButtonState={disableActions || buttonState.sabotage}
+          reportButtonState={disableActions || buttonState.report}
           reportButtonPress={reportButton}
           disguiseButtonPress={disguiseButton}
           taskCompletion={taskCompletion}
@@ -574,25 +561,31 @@ export default function GameScreen({ navigation }) {
       ) : (
         <ControlPanel />
       )}
-      {/* testing button below */}
-      <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
-        <Text>toggle voting modal</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => setElectricityTask(true)}
-        style={styles.testButton}
-      >
-        <Text>open electricity task</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => setActiveTask((prevArrState) => ({
-          ...prevArrState,
-          name: 'o2',
-        }))}
-        style={styles.testButton}
-      >
-        <Text>open passcode task</Text>
-      </TouchableOpacity>
+
+      <View style={styles.debugContainer}>
+        {/* testing button below */}
+        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
+          <Text>toggle voting modal</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setElectricityTask(true)}
+          style={styles.testButton}
+        >
+          <Text>open electricity task</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            setActiveTask((prevArrState) => ({
+              ...prevArrState,
+              name: 'o2',
+            }))
+          }
+          style={styles.testButton}
+        >
+          <Text>open passcode task</Text>
+        </TouchableOpacity>
+      </View>
+
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
       <CaptchaTask
         active={activeTask.name === 'reCaptcha'}
@@ -616,21 +609,21 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
-      {inProgressEmer && (
+      {getGameRoom().state.gameState === 'emergency' && player?.isAlive && (
         <View style={styles.emergencyScreen}>
           <CustomText
             textSize={70}
             letterSpacing={3}
-            textColor={'red'}
+            textColor={'#ffffffff'}
             centerText={true}
           >
-            Emergency Meeting Declared
+            Emergency Meeting Called
           </CustomText>
-          <CustomText textSize={30} centerText={true} textColor={'black'}>
-            Actions are now disabled
+          <CustomText textSize={30} centerText={true} textColor={'white'}>
+            Actions are temporarily disabled
           </CustomText>
-          <CustomText textSize={30} centerText={true} textColor={'black'}>
-            Proceed to the Purple Pin
+          <CustomText textSize={30} centerText={true} textColor={'white'}>
+            Please Proceed to the Purple Pin
           </CustomText>
         </View>
       )}
@@ -662,12 +655,16 @@ const styles = StyleSheet.create({
     opacity: 0.2,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: 300, // To put text slightly above center
   },
 
-  emergencyText: {
+  emergencyScreen: {
+    position: 'absolute',
     width: '100%',
-    height: '100%',
-    backgroundColor: 'black',
+    bottom: 0,
+    backgroundColor: '#ff0000e0',
+    padding: 20,
+    paddingBottom: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -675,19 +672,17 @@ const styles = StyleSheet.create({
   deathText: {},
 
   debugContainer: {
-    // alignItems: 'flex-start',
-    margin: 20,
+    alignItems: 'flex-end',
     marginTop: Constants.statusBarHeight,
-    padding: 20,
     borderRadius: 10,
-    backgroundColor: '#ffffffdd',
     zIndex: 2,
   },
 
   testButton: {
-    marginTop: Constants.statusBarHeight,
-    padding: 5,
+    padding: 10,
+    margin: 5,
     backgroundColor: 'powderblue',
+    borderRadius: 5,
   },
 });
 

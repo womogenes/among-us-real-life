@@ -27,8 +27,8 @@ function LobbyScreen({ navigation }) {
     setIsModalVisible(() => !isModalVisible);
   };
 
-  const [killRadius, setKillRadius] = useState([5]);
-  const [prevKillRadius, setPrevKillRadius] = useState([5]);
+  const [killRadius, setKillRadius] = useState([10]);
+  const [prevKillRadius, setPrevKillRadius] = useState([10]);
 
   const [killCooldown, setKillCooldown] = useState([60]);
   const [prevKillCooldown, setPrevKillCooldown] = useState([60]);

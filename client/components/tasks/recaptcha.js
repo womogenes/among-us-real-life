@@ -68,10 +68,13 @@ export default CaptchaTask;
 
 const styles = StyleSheet.create({
   closeButton: {
-    backgroundColor: 'blue',
-    height: 50,
+    position: 'absolute',
+    backgroundColor: '#ddd',
+    height: 100,
+    width: '100%',
     alignItems: 'center',
     padding: 10,
+    bottom: 0,
   },
   closeText: {
     fontSize: 40,

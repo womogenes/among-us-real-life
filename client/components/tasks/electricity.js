@@ -26,10 +26,9 @@ function ElectricityTask(props) {
     <Modal isVisible={props.active} style={{ alignItems: 'center' }}>
       <View style={styles.modal}>
         {[...Array(3).keys()].map((num) => (
-          <View style={styles.sliderContainer}>
+          <View style={styles.sliderContainer} key={num}>
             <Text>this is under construction</Text>
             <Slider
-              key={num}
               value={sliders[num]}
               minimumValue={0}
               maximumValue={8}

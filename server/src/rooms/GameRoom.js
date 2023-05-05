@@ -11,6 +11,7 @@ import {
   onDisposeGameRoom,
   onGameStart,
 } from './LobbyRoom.js';
+import { findDist } from '../utils.js';
 
 import { nanoid } from 'nanoid';
 
@@ -24,6 +25,8 @@ export class GameRoom extends Room {
       );
       player.trueLocation.update(loc);
       if (player.isAlive) player.location.update(loc);
+
+      checkCanStartVoting();
     });
 
     this.onMessage('deltaLocation', (client, dLoc) => {
@@ -33,6 +36,8 @@ export class GameRoom extends Room {
       );
       player.trueLocation.deltaUpdate(dLoc);
       if (player.isAlive) player.location.deltaUpdate(dLoc);
+
+      checkCanStartVoting();
     });
 
     this.onMessage('completeTask', (client, taskId) => {
@@ -47,25 +52,22 @@ export class GameRoom extends Room {
         (task) => task.taskId === taskId
       );
 
-      if(sabotageTaskIndex != -1){
+      if (sabotageTaskIndex != -1) {
         this.state.sabotageTaskList.splice(sabotageTaskIndex, 1);
       }
 
-      if(this.state.sabotageTaskList.length == 0){
+      if (this.state.sabotageTaskList.length == 0) {
         this.broadcast('sabotageOver');
         this.state.players.forEach((p) => {
           let taskIndex = 0;
-          while(taskIndex != -1){
-            taskIndex = p.tasks.findIndex(
-              (task) => task.name === 'o2'
-              );
-            if(taskIndex != -1){
+          while (taskIndex != -1) {
+            taskIndex = p.tasks.findIndex((task) => task.name === 'o2');
+            if (taskIndex != -1) {
               p.tasks.splice(taskIndex, 1);
             }
           }
-        })
+        });
       }
-
     });
 
     this.onMessage('setUsername', (client, username) => {
@@ -80,11 +82,29 @@ export class GameRoom extends Room {
       player.location.update(player.location);
     });
 
-    this.onMessage('startEmergencyMeeting', (client) => {
+    this.onMessage('callEmergency', (client, location) => {
       this.state.gameState = 'emergency';
-      this.broadcast('emergencyMeeting');
-      console.log('emergency meeting started');
+      this.state.emergencyMeetingLocation.update(location);
+
+      console.log('emergency meeting called');
     });
+
+    // Check if everyone is in range
+    const checkCanStartVoting = () => {
+      if (this.state.gameState !== 'normal') return;
+      if (!this.state.emergencyMeetingLocation) return;
+
+      // Check if all players are within 200m of emergency location
+      const allInRange = this.state.players.every(
+        (player) =>
+          !player.isAlive ||
+          findDist(player.location, this.state.emergencyMeetingLocation) < 200
+      );
+      if (allInRange) {
+        this.state.gameState = 'voting';
+        this.broadcast('beginVoting');
+      }
+    };
 
     this.onMessage('o2', () => {
       console.log('sabotage!!!!');
@@ -106,42 +126,6 @@ export class GameRoom extends Room {
         p.tasks.push(newTask1);
         p.tasks.push(newTask2);
       });
-    });
-
-    function emergencyDist(playerCoords, emCoords) {
-      /* 111139 converts lat and long in degrees to meters */
-      const x =
-        111139 *
-        Math.abs(Math.abs(playerCoords.latitude) - Math.abs(emCoords.latitude));
-      const y =
-        111139 *
-        Math.abs(
-          Math.abs(playerCoords.longitude) - Math.abs(emCoords.longitude)
-        );
-      const dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-      return dist;
-    }
-
-    this.onMessage('emergencyMeetingLoc', (client, emergencyMeetingLoc) => {
-      let inMeetingCount = 0;
-      let playerCount = 0;
-      for (let i = 0; i < this.state.players.length; i++) {
-        if (this.state.players[i].isAlive == true) {
-          playerCount++;
-          let dist = emergencyDist(
-            this.state.players[i].location,
-            emergencyMeetingLoc
-          );
-          if (dist < 200) {
-            console.log('YEAHHHHH');
-            inMeetingCount++;
-          }
-        }
-      }
-      if (playerCount == inMeetingCount) {
-        console.log('Begin emergency meeting yay');
-        this.broadcast('beginEmerMeeting');
-      }
     });
 
     this.onMessage('startGame', (client) => {

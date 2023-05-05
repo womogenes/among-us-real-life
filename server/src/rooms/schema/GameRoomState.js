@@ -147,6 +147,7 @@ export class GameRoomState extends Schema {
     this.players = new ArraySchema();
     this.sabotageTaskList = new ArraySchema();
     this.votes = new MapSchema();
+    this.emergencyMeetingLocation = new Location();
   }
 }
 schema.defineTypes(GameRoomState, {
@@ -159,4 +160,5 @@ schema.defineTypes(GameRoomState, {
   players: [Player],
   sabotageTaskList: [Task],
   votes: { map: 'string' },
+  emergencyMeetingLocation: Location,
 });

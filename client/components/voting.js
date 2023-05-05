@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   Button,
 } from 'react-native';
+import Constants from 'expo-constants';
 import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 
@@ -40,6 +41,7 @@ export default function votingModal(props) {
       let countdown = setTimeout(() => {
         setTimer(timer - 1);
       }, 1000);
+
       if (!props.isModalVisible) {
         setLoading(true);
         return clearTimeout(countdown);
@@ -63,7 +65,7 @@ export default function votingModal(props) {
   return (
     <Modal isVisible={props.isModalVisible} animationType="slide">
       <View style={styles.votingModal}>
-        <Button
+        {/* <Button
           onPress={() =>
             console.log(
               new Map(getGameRoom().state.votes.$items),
@@ -72,7 +74,7 @@ export default function votingModal(props) {
             )
           }
           title="test click (log)"
-        ></Button>
+        ></Button> */}
         <FlatList
           data={playerArr}
           renderItem={({ item }) => (
@@ -134,6 +136,8 @@ export default function votingModal(props) {
 
 const styles = StyleSheet.create({
   votingModal: {
+    marginTop: Constants.statusBarHeight,
+    paddingTop: 10,
     borderRadius: 20,
     flex: 1,
     alignItems: 'center',
@@ -141,7 +145,6 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   player: {
-    flex: 0.9,
     width: '100%',
   },
   red: {
