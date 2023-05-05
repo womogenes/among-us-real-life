@@ -79,7 +79,7 @@ export default function GameScreen({ navigation }) {
 
   const [activeTask, setActiveTask] = useState({
     name: null,
-    taskId: undefined,
+    taskId: null,
   });
 
   const [distTask, setDistTask] = useState([]);
@@ -588,7 +588,13 @@ export default function GameScreen({ navigation }) {
           <Text>toggle voting modal</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setElectricityTask(true)}
+          onPress={() => {
+            setActiveTask((prevArrState) => ({
+              ...prevArrState,
+              name: 'electricity',
+              taskId: null,
+            }));
+          }}
           style={styles.testButton}
         >
           <Text>open electricity task</Text>
