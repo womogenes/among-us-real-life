@@ -26,26 +26,21 @@ export default function votingModal(props) {
   )[0];
 
   useEffect(() => {
-    if (props.isModalVisible) {
-      // basically a reset
-      setVotes(new Map());
-    }
-  }, [props.isModalVisible]);
-
-  useEffect(() => {
-    gameRoom.state.votes.onChange = (target, player) => {
+    gameRoom.onStateChange((state) => {
       // console.log(player, ' has voted for ', target);
       // console.log(getGameRoom().state.votes.$items);
-      setVotes((prev) => ({ ...prev, [player]: target }));
+      const votes = Array.from(state.votes);
+      setVotes(votes);
+    });
 
-      console.log(`votingTimer: ${props.timer}`);
-    };
-    gameRoom.state.votes.onAdd = (target, player) => {
-      // console.log(player, ' has voted for ', target);
-      // console.log(getGameRoom().state.votes.$items);
-      setVotes((prev) => ({ ...prev, [player]: target }));
+    return () => {
+      gameRoom.removeAllListeners();
     };
   }, []);
+
+  useEffect(() => {
+    console.log(`votes=${votes}`);
+  }, [votes]);
 
   return (
     <Modal isVisible={props.isModalVisible} animationType="slide">
@@ -65,11 +60,9 @@ export default function votingModal(props) {
           renderItem={({ item }) => (
             <TouchableWithoutFeedback
               onPress={() => {
-                //may have to change how this is done later
-                //using ids?
-                getGameRoom()?.send('vote', {
-                  [user.sessionId]: item.sessionId,
-                });
+                // may have to change how this is done later
+                // using ids?
+                getGameRoom()?.send('vote', item.sessionId);
               }}
             >
               <View style={styles.candidate}>
@@ -83,12 +76,9 @@ export default function votingModal(props) {
 
                 {/* maybe change to view later for icons? */}
                 <View style={styles.votes}>
-                  {Object.keys(votes)
-                    .filter(
-                      // change this to icons later
-                      (key) => votes[key] == item.sessionId
-                    )
-                    .map((playerId) => {
+                  {votes
+                    ?.filter(([key, playerId]) => playerId == item.sessionId)
+                    .map(([key, playerId]) => {
                       const player = getGameRoom().state.players.find(
                         (p) => p.sessionId === playerId
                       );

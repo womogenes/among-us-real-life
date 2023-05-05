@@ -58,6 +58,7 @@ export class GameRoom extends Room {
 
     const startVoting = () => {
       this.state.gameState = 'voting';
+      this.state.votingTimer = this.state.settings.votingTimer; // Reset the timer
       this.broadcast('startVoting');
 
       let handle = setInterval(() => {
@@ -81,9 +82,14 @@ export class GameRoom extends Room {
     });
 
     this.onMessage('vote', (client, vote) => {
-      let voter = Object.keys(vote)[0];
-      let target = vote[voter];
-      this.state.votes.set(voter, target);
+      let voter = client.sessionId;
+
+      // Double vote effectively cancels
+      if (vote === this.state.votes.get(voter)) {
+        this.state.votes.delete(voter);
+      } else {
+        this.state.votes.set(voter, vote);
+      }
       // console.log(this.state.votes.$items);
     });
 
