@@ -684,7 +684,7 @@ const styles = StyleSheet.create({
 
   testButton: {
     padding: 10,
-    margin: 5,
+    margin: 10,
     backgroundColor: 'powderblue',
     borderRadius: 5,
   },
