@@ -141,7 +141,6 @@ export class GameRoomState extends Schema {
         voting
     */
     this.gameState = 'lobby';
-
     this.settings = new Settings();
 
     this.players = new ArraySchema();

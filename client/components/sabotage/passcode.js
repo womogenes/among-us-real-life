@@ -44,10 +44,18 @@ function CodeTask({ active, code, complete, closeTask }) {
         })
       ]).start();
     }
-    else {
+    else if (color === 'green') {
       Animated.timing(flash.opacity, {
         toValue: 0.8,
         duration: 0,
+        useNativeDriver: false,
+        easing: Easing.inOut(Easing.sin),
+      }).start();
+    }
+    else {
+      Animated.timing(flash.opacity, {
+        toValue: 0,
+        duration: 10,
         useNativeDriver: false,
         easing: Easing.inOut(Easing.sin),
       }).start();
@@ -105,6 +113,7 @@ function CodeTask({ active, code, complete, closeTask }) {
       setInputColor('green');
       toggleColor('green');
       complete('o2');
+      toggleColor('blank');
     }
     else {
       reset();

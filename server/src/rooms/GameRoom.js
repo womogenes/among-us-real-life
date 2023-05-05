@@ -47,6 +47,12 @@ export class GameRoom extends Room {
         (task) => task.taskId === taskId
       );
 
+      if(this.state.players[playerIdx].tasks[taskIdx].name === 'o2') {
+        this.broadcast('task complete', taskId);
+        console.log('yay')
+      }
+
+
       if(sabotageTaskIndex != -1){
         this.state.sabotageTaskList.splice(sabotageTaskIndex, 1);
       }
@@ -87,6 +93,7 @@ export class GameRoom extends Room {
     });
 
     this.onMessage('o2', () => {
+      this.broadcast('sabotage');
       console.log('sabotage!!!!');
       const newId1 = nanoid();
       const newTask1 = new Task(

@@ -37,6 +37,7 @@ let manualMovementVar; // !! HACK !! React state sucks
 
 export default function GameScreen({ navigation }) {
   const [sabotageActive, setSabotageActive] = useState(false);
+  const [sabNotif, setSabNotif] = useState(false);
   const [manualMovement, setManualMovement] = useState(false);
   const setManualMovementHook = (value) => {
     setManualMovement(value); // This is terrible :( why must React be like this
@@ -326,6 +327,12 @@ export default function GameScreen({ navigation }) {
   }, [location]);
 
   useEffect(() => {
+    if(activeTask.taskId === sabNotif) {
+      closeTask();
+    }
+  }, [sabNotif]);
+
+  useEffect(() => {
     findAllDist(location);
   }, [
     JSON.stringify(
@@ -367,9 +374,17 @@ export default function GameScreen({ navigation }) {
       openVotingModal();
     });
 
+    room.onMessage('sabotage', () => {
+      setSabotageActive(true);
+    });
+
     room.onMessage('sabotageOver', () => {
       setSabotageActive(false);
-    })
+    });
+
+    room.onMessage('task complete', (taskId) => {
+      setSabNotif(taskId);
+    });
 
     room.onStateChange((state) => {
       setPlayers(state.players);
@@ -583,15 +598,6 @@ export default function GameScreen({ navigation }) {
         style={styles.testButton}
       >
         <Text>open electricity task</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => setActiveTask((prevArrState) => ({
-          ...prevArrState,
-          name: 'o2',
-        }))}
-        style={styles.testButton}
-      >
-        <Text>open passcode task</Text>
       </TouchableOpacity>
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
       <CaptchaTask
