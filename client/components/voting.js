@@ -80,7 +80,6 @@ export default function votingModal(props) {
                   {item.username}
                 </CustomText>
 
-                {/* maybe change to view later for icons? */}
                 <View style={styles.votes}>
                   {votes
                     ?.filter(([key, playerId]) => playerId == item.sessionId)

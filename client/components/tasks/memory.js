@@ -3,9 +3,7 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
 
 function MemoryTask(props) {
-  const [code, setCode] = useState(
-    Array.from({ length: 4 }, () => Math.floor(Math.random() * 16))
-  );
+  const [code, setCode] = useState(props.code);
   const [input, setInput] = useState([-1, -1, -1, -1]);
   const [ind, setInd] = useState(0);
   const [disable, setDisable] = useState(true);
@@ -76,9 +74,7 @@ function MemoryTask(props) {
                 clearTimeout(timer);
               }, 1000);
             } else if (ind == code.length - 1) {
-              console.log('done');
               props.complete('memory');
-              props.closeTask('memory');
             }
           }}
         />

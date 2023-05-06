@@ -8,37 +8,24 @@ import { ProfileIcon } from './profile-icon';
 function Minimap(props) {
   function taskMarkers() {
     return props.tasks.map((item) => {
-      if (item.name != 'o2') {
-        return (
-          <Marker
-            key={item.taskId}
-            coordinate={{
-              latitude: item.location.latitude,
-              longitude: item.location.longitude,
-            }}
-            title={item.name}
-            zIndex={-1}
-          >
-            <TaskIcon
-              name={item.name}
-              complete={item.complete}
-              size={20}
-            ></TaskIcon>
-          </Marker>
-        );
-      } else {
-        return (
-          <Marker
-            pinColor={item.complete ? 'wheat' : 'violet'}
-            key={item.taskId}
-            coordinate={{
-              latitude: item.location.latitude,
-              longitude: item.location.longitude,
-            }}
-            title={`${item.name} (${item.taskId.substring(0, 4)})`}
-          />
-        );
-      }
+      return (
+        <Marker
+          tracksViewChanges={item.complete}
+          key={item.taskId}
+          coordinate={{
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+          }}
+          title={item.name}
+          zIndex={item.name == 'o2' ? 9 : -1}
+        >
+          <TaskIcon
+            name={item.name}
+            complete={item.complete}
+            size={20}
+          ></TaskIcon>
+        </Marker>
+      );
     });
   }
 
@@ -62,6 +49,7 @@ function Minimap(props) {
         moveOnMarkerPress={false}
       >
         <Marker
+          tracksViewChanges={props.player.isAlive}
           key={props.player.sessionId}
           coordinate={{
             latitude: props.player.location.latitude,

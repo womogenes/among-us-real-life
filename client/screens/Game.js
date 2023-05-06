@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
   View,
@@ -6,7 +5,6 @@ import {
   Button,
   Text,
   Platform,
-  Image,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -17,6 +15,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { getGameRoom, lobbyRoom } from '../networking.js';
 import { findDistance, distAll, findClosest } from '../utils.js';
+import * as taskUtils from '../tasks-utils.js';
 
 import Minimap from '../components/minimap.js';
 import ControlPanel from '../components/controlpanel.js';
@@ -36,37 +35,27 @@ var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
 
 export default function GameScreen({ navigation }) {
-  const [sabotageActive, setSabotageActive] = useState(false);
-  const [sabNotif, setSabNotif] = useState(false);
+  //TESTING
   const [manualMovement, setManualMovement] = useState(false);
   const setManualMovementHook = (value) => {
     setManualMovement(value); // This is terrible :( why must React be like this
     manualMovementVar = value;
   };
-  const setLocationHook = (loc) => {
-    if (manualMovementVar) return;
 
-    getGameRoom()?.send('location', loc);
-    setLocation(loc);
-  };
+  //// HOOKS
 
-  const [location, setLocation] = useState({
-    latitude: 0,
-    longitude: 0,
-  });
-
-  const [playerState, setPlayerState] = useState('impostor');
+  //SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
+  const [sabotageActive, setSabotageActive] = useState(false);
+  const [sabNotif, setSabNotif] = useState(false);
   const [emergencyMeetingLocation, setEmergencyMeetingLocation] = useState({
     latitude: 0,
     longitude: 0,
   });
+  const [votingModalVisible, setVotingModalVisible] = useState(false);
+  const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
+
+  //BUTTON HOOKS
   const [disableActions, setDisableActions] = useState(false);
-
-  const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
-  const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
-  const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
-  const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
-
   const [buttonState, setButtonState] = useState({
     use: true, // These should all be true at the beginning of the game
     report: true,
@@ -75,19 +64,35 @@ export default function GameScreen({ navigation }) {
     sabotage: false,
   });
 
+  //TASK HOOKS
   const [taskCompletion, setTaskCompletion] = useState(0);
-
   const [activeTask, setActiveTask] = useState({
     name: null,
     taskId: null,
   });
-
   const [distTask, setDistTask] = useState([]);
+  const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+
+  //PLAYER HOOKS
+  const [location, setLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [playerState, setPlayerState] = useState('impostor');
+  const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
+  const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
   const [distPlayer, setDistPlayer] = useState([]);
 
-  const [votingModalVisible, setVotingModalVisible] = useState(false);
-  const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
+  //REFRESH HOOK
+  const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
 
+  //// FUNCTIONS
+
+  //SABOTAGE, EMERGENCY MEETING AND VOTING FUNCTIONS
+  function sabotage(type) {
+    getGameRoom().send(type);
+    setSabotageActive(true);
+  }
   const openVotingModal = () => {
     const room = getGameRoom();
     if (!room) return;
@@ -99,192 +104,47 @@ export default function GameScreen({ navigation }) {
 
     setVotingModalVisible(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-
-    return () => {
-      clearTimeout(timeout);
-    };
   };
 
-  const animate = (loc) => {
-    let r = {
-      latitude: loc.latitude,
-      longitude: loc.longitude,
-      latitudeDelta: 0.001,
-      longitudeDelta: 0.001,
-    };
-    mapView?.animateToRegion(r, 500);
-  };
-
-  function sabotage(type) {
-    getGameRoom().send(type);
-    setSabotageActive(true);
-  }
-
-  function genRandFour() {
-    // Generates random 4 digit code for passcode task
-    let fourDigitNum = '';
-    let num;
-    for (let i = 0; i < 4; i++) {
-      num = Math.trunc(Math.random() * 9);
-      fourDigitNum += num.toString();
-    }
-    return fourDigitNum;
-  }
-
-  function taskMarkers() {
-    return tasks.map((item) => {
-      // let markerLabel = `${item.name} ${item.taskId.substring(0, 4)}`;
-      let markerLabel = item.name;
-      if (item.complete) markerLabel += ' (Complete)';
-
-      if (item.name != 'o2') {
-        return (
-          <Marker
-            key={item.taskId}
-            coordinate={{
-              latitude: item.location.latitude,
-              longitude: item.location.longitude,
-            }}
-            title={markerLabel}
-            zIndex={-1}
-          >
-            <TaskIcon
-              name={item.name}
-              complete={item.complete}
-              size={60}
-            ></TaskIcon>
-          </Marker>
-        );
-      } else {
-        return (
-          <Marker
-            pinColor={item.complete ? 'wheat' : 'violet'}
-            key={item.taskId}
-            coordinate={{
-              latitude: item.location.latitude,
-              longitude: item.location.longitude,
-            }}
-            title={markerLabel}
-          ></Marker>
-        );
-      }
-    });
-  }
-
-  function deathScreen() {
-    if (player && !player.isAlive) {
-      return (
-        <View style={styles.deathScreen}>
-          <CustomText
-            numberOfLines={1}
-            textSize={80}
-            letterSpacing={3}
-            textColor={'white'}
-          >
-            You Are Dead
-          </CustomText>
-        </View>
-      );
-    }
-  }
-
-  function completeTask() {
-    const { name, taskId } = activeTask;
-    closeTask();
-
-    // Mark task as complete
-    console.log(`${name} task ${taskId} completed`);
-    getGameRoom().send('completeTask', taskId);
-  }
-
-  function closeTask() {
-    setActiveTask((prevArrState) => ({
-      ...prevArrState,
-      name: null,
-      taskId: null,
+  //BUTTON FUNCTIONS
+  function changeButtonState(button, state) {
+    setButtonState((prevButtonState) => ({
+      ...prevButtonState,
+      [button]: state,
     }));
   }
-
-  function changeButtonState(button, state) {
-    if (button == 'use') {
-      setButtonState((prevButtonState) => ({
-        ...prevButtonState,
-        use: state,
-      }));
-    }
-    if (button == 'report') {
-      setButtonState((prevButtonState) => ({
-        ...prevButtonState,
-        report: state,
-      }));
-    }
-    if (button == 'kill') {
-      setButtonState((prevButtonState) => ({
-        ...prevButtonState,
-        kill: state,
-      }));
-    }
-  }
-
   function useButton() {
-    console.log('USE');
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     let closestTask = findClosest(distTask);
-
-    if (!closestTask.complete) {
-      if (
-        playerState == 'crewmate' ||
+    if (
+      !closestTask.complete &&
+      (playerState == 'crewmate' ||
         (playerState == 'impostor' &&
           sabotageActive &&
-          closestTask.name === 'o2')
-      ) {
-        setActiveTask((prevArrState) => ({
-          ...prevArrState,
-          name: closestTask.name,
-          taskId: closestTask.taskId,
-        }));
-      }
+          closestTask.name === 'o2'))
+    ) {
+      setActiveTask((prevArrState) => ({
+        ...prevArrState,
+        name: closestTask.name,
+        taskId: closestTask.taskId,
+      }));
     }
   }
-
   function reportButton() {
-    console.log('REPORT');
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     getGameRoom().send('callEmergency', location);
   }
-
   function killButton() {
-    console.log('KILL');
     let closestPlayer = findClosest(distPlayer);
     console.log(closestPlayer.sessionId);
     getGameRoom().send('playerDeath', closestPlayer.sessionId);
   }
-
   function disguiseButton() {
     setPlayerState('disguised');
-    console.log('DISGUISE');
   }
-
   function revealButton() {
     setPlayerState('impostor');
-    console.log('REVEAL');
   }
-
-  function findAllDist(loc) {
-    let taskDist = distAll('task', loc, tasks, 20);
-    let playerArr = players.filter(
-      (p) => p.sessionId !== getGameRoom().sessionId
-    );
-    let playerDist = distAll(
-      'player',
-      loc,
-      playerArr,
-      getGameRoom().state.settings.killRadius
-    );
-    setDistTask(taskDist);
-    setDistPlayer(playerDist);
-  }
-
   function activateUseButton() {
     if (distTask.length > 0) {
       if (playerState == 'crewmate') {
@@ -302,7 +162,6 @@ export default function GameScreen({ navigation }) {
       changeButtonState('use', true);
     }
   }
-
   function activateKillButton() {
     if (playerState == 'impostor') {
       changeButtonState(
@@ -311,7 +170,6 @@ export default function GameScreen({ navigation }) {
       );
     }
   }
-
   function activateReportButton() {
     changeButtonState(
       'report',
@@ -319,27 +177,115 @@ export default function GameScreen({ navigation }) {
     );
   }
 
+  //TASK FUNCTIONS
+  const taskMarkers = () => taskUtils.taskMarkers(tasks);
+  const completeTask = () =>
+    taskUtils.completeTask(activeTask, setActiveTask, getGameRoom);
+  const closeTask = () => taskUtils.closeTask(setActiveTask);
+
+  //PLAYER AND TASK LOCATION
+  const setLocationHook = (loc) => {
+    //for testing only
+    if (manualMovementVar) return;
+    //
+    getGameRoom()?.send('location', loc);
+    setLocation(loc);
+  };
+  const animate = (loc) => {
+    let r = {
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      latitudeDelta: 0.001,
+      longitudeDelta: 0.001,
+    };
+    mapView?.animateToRegion(r, 500);
+  };
+  function findAllDist(loc) {
+    let taskDist = distAll('task', loc, tasks, 20);
+    let playerArr = players.filter(
+      (p) => p.sessionId !== getGameRoom().sessionId
+    );
+    let playerDist = distAll(
+      'player',
+      loc,
+      playerArr,
+      getGameRoom().state.settings.killRadius
+    );
+    setDistTask(taskDist);
+    setDistPlayer(playerDist);
+  }
+
+  //PLAYER STATE
+  function deathScreen() {
+    if (player && !player.isAlive) {
+      return (
+        <View style={styles.deathScreen}>
+          <CustomText
+            numberOfLines={1}
+            textSize={80}
+            letterSpacing={3}
+            textColor={'white'}
+          >
+            You Are Dead
+          </CustomText>
+        </View>
+      );
+    }
+  }
+
+  //// USEEFFECTS
+
+  //PLAYER AND TASK LOCATION
+  useEffect(() => {
+    // Location update loop
+
+    // This is a listener that gets removed when the component unmounts
+    let locationWatcher;
+
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        return;
+      }
+
+      // Initial location update
+      let newLocation = await Location.getCurrentPositionAsync({});
+      // Necessary hook to send update to server
+      // ("Hook" might be an inaccurate term)
+      // See definition at top of this file
+      setLocationHook(newLocation.coords);
+
+      // Continued location update
+      locationWatcher = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          distanceInterval: 0.1,
+          timeInterval: 10,
+        },
+        (loc) => {
+          setLocationHook(loc.coords);
+        }
+      );
+    })();
+
+    return async () => {
+      // Unmount listener when component unmounts
+      // TODO: dev setting, uncomment when done
+      await locationWatcher?.remove();
+    };
+  }, []);
   useEffect(() => {
     // Detects when distTask is updated and reevaluates USE button activation
     activateUseButton();
   }, [distTask]);
-
   useEffect(() => {
     // Detects when distPlayer is updated and reevaluates KILL button activation
     activateKillButton();
     activateReportButton();
   }, [distPlayer]);
-
   useEffect(() => {
     findAllDist(location);
   }, [location]);
-
-  useEffect(() => {
-    if (activeTask.taskId === sabNotif) {
-      closeTask();
-    }
-  }, [sabNotif]);
-
   useEffect(() => {
     findAllDist(location);
   }, [
@@ -348,6 +294,14 @@ export default function GameScreen({ navigation }) {
     ),
   ]);
 
+  //SABOTAGE
+  useEffect(() => {
+    if (activeTask.taskId === sabNotif) {
+      closeTask();
+    }
+  }, [sabNotif]);
+
+  //SERVER STUFF
   useEffect(() => {
     // Networking update loop
     const room = getGameRoom();
@@ -426,45 +380,6 @@ export default function GameScreen({ navigation }) {
     };
   }, []);
 
-  useEffect(() => {
-    // Location update loop
-
-    // This is a listener that gets removed when the component unmounts
-    let locationWatcher;
-
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        return;
-      }
-
-      // Initial location update
-      let newLocation = await Location.getCurrentPositionAsync({});
-      // Necessary hook to send update to server
-      // ("Hook" might be an inaccurate term)
-      // See definition at top of this file
-      setLocationHook(newLocation.coords);
-
-      // Continued location update
-      locationWatcher = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          distanceInterval: 0.1,
-          timeInterval: 10,
-        },
-        (loc) => {
-          setLocationHook(loc.coords);
-        }
-      );
-    })();
-
-    return async () => {
-      // Unmount listener when component unmounts
-      // TODO: dev setting, uncomment when done
-      await locationWatcher?.remove();
-    };
-  }, []);
-
   return (
     <View style={styles.container}>
       {/* !! HACKY STUFF!! Force rerenders with this state */}
@@ -476,6 +391,7 @@ export default function GameScreen({ navigation }) {
         </CustomText>
       </View>
 
+      {/* MAIN MAP */}
       <MapView
         ref={(ref) => (mapView = ref)}
         style={styles.map}
@@ -493,6 +409,7 @@ export default function GameScreen({ navigation }) {
         mapType={Platform.OS === 'ios' ? 'standard' : 'standard'}
         moveOnMarkerPress={false}
       >
+        {/* PLAYER MARKERS */}
         {players.map((p) => {
           let displayLoc =
             p?.isAlive || p.sessionId === getGameRoom().sessionId
@@ -501,6 +418,7 @@ export default function GameScreen({ navigation }) {
 
           return (
             <Marker
+              tracksViewChanges={p.isAlive}
               key={p.sessionId}
               coordinate={{ ...displayLoc }}
               title={p.username}
@@ -512,6 +430,8 @@ export default function GameScreen({ navigation }) {
             </Marker>
           );
         })}
+
+        {/* EMERGENCY MEETING */}
         {emergencyMeetingLocation && (
           <Marker
             key="Emergency Meeting"
@@ -519,6 +439,24 @@ export default function GameScreen({ navigation }) {
             coordinate={emergencyMeetingLocation}
             title="EmergencyMeeting"
           />
+        )}
+        {getGameRoom().state.gameState === 'emergency' && player?.isAlive && (
+          <View style={styles.emergencyScreen}>
+            <CustomText
+              textSize={70}
+              letterSpacing={3}
+              textColor={'#ffffffff'}
+              centerText={true}
+            >
+              Emergency Meeting Called
+            </CustomText>
+            <CustomText textSize={30} centerText={true} textColor={'white'}>
+              Actions are temporarily disabled
+            </CustomText>
+            <CustomText textSize={30} centerText={true} textColor={'white'}>
+              Please Proceed to the Purple Pin
+            </CustomText>
+          </View>
         )}
 
         {taskMarkers()}
@@ -533,6 +471,8 @@ export default function GameScreen({ navigation }) {
 
       {deathScreen()}
       <SabotageFlash sabotageActive={sabotageActive} />
+
+      {/* CONTROL PANEL (BUTTONS) */}
       {playerState == 'crewmate' ? (
         <ControlPanel
           userType={'crewmate'}
@@ -582,6 +522,7 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
+      {/* TESTING BUTTONS */}
       <View style={styles.debugContainer}>
         {/* testing button below */}
         <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
@@ -603,6 +544,7 @@ export default function GameScreen({ navigation }) {
 
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
 
+      {/* TASKS */}
       <CaptchaTask
         active={activeTask.name === 'reCaptcha'}
         complete={completeTask}
@@ -610,12 +552,13 @@ export default function GameScreen({ navigation }) {
       />
       <CodeTask
         active={activeTask.name === 'o2'}
-        code={genRandFour}
+        code={Array.from({ length: 4 }, () => Math.floor(Math.random() * 10))}
         complete={completeTask}
         closeTask={closeTask}
       />
       <MemoryTask
         active={activeTask.name === 'memory'}
+        code={Array.from({ length: 4 }, () => Math.floor(Math.random() * 16))}
         complete={completeTask}
         closeTask={closeTask}
       />
@@ -624,24 +567,6 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
-      {getGameRoom().state.gameState === 'emergency' && player?.isAlive && (
-        <View style={styles.emergencyScreen}>
-          <CustomText
-            textSize={70}
-            letterSpacing={3}
-            textColor={'#ffffffff'}
-            centerText={true}
-          >
-            Emergency Meeting Called
-          </CustomText>
-          <CustomText textSize={30} centerText={true} textColor={'white'}>
-            Actions are temporarily disabled
-          </CustomText>
-          <CustomText textSize={30} centerText={true} textColor={'white'}>
-            Please Proceed to the Purple Pin
-          </CustomText>
-        </View>
-      )}
     </View>
   );
 }

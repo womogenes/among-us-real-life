@@ -167,7 +167,7 @@ function ControlPanel(props) {
                   style={styles.sabotageListButton}
                   onPress={props.o2}
                 >
-                  <Text style={styles.sabotageListButtonText}>O2</Text>
+                  <Text style={styles.sabotageListButtonText}>o2</Text>
                 </TouchableOpacity>
               </View>
             </Modal>

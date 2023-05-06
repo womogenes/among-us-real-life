@@ -1,4 +1,10 @@
-import { StyleSheet, View, Text, TouchableOpacity, Animated } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+} from 'react-native';
 
 import { useRef, useEffect, useState } from 'react';
 
@@ -7,7 +13,6 @@ import CustomText from '../components/text.js';
 import Easing from 'react-native/Libraries/Animated/Easing';
 
 function SabotageFlash(props) {
-
   const [flash, setFlash] = useState({
     opacity: new Animated.Value(0),
   });
@@ -15,7 +20,7 @@ function SabotageFlash(props) {
   const [title, setTitle] = useState({
     opacity: new Animated.Value(0),
   });
-  
+
   function toggleColor() {
     Animated.loop(
       Animated.sequence([
@@ -30,8 +35,9 @@ function SabotageFlash(props) {
           duration: 1000,
           useNativeDriver: false,
           easing: Easing.inOut(Easing.sin),
-        })
-      ])).start();
+        }),
+      ])
+    ).start();
   }
 
   function toggleText() {
@@ -53,7 +59,7 @@ function SabotageFlash(props) {
         duration: 2000,
         useNativeDriver: false,
         easing: Easing.inOut(Easing.sin),
-      })
+      }),
     ]).start();
   }
 
@@ -67,21 +73,29 @@ function SabotageFlash(props) {
   }
 
   useEffect(() => {
-    if(props.sabotageActive){
+    if (props.sabotageActive) {
       toggleText();
       toggleColor();
-    }
-    else{
+    } else {
       toggleFade();
     }
-  }, [props.sabotageActive])
+  }, [props.sabotageActive]);
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.flash, { opacity: flash.opacity }]}>
-      </Animated.View>
+      <Animated.View
+        style={[styles.flash, { opacity: flash.opacity }]}
+      ></Animated.View>
       <Animated.View style={[styles.title, { opacity: title.opacity }]}>
-          <CustomText textSize={80} textColor={'white'} shadowColor={'black'} shadowRadius={3} centerText={'center'}>O2 has been Sabotaged!</CustomText>
+        <CustomText
+          textSize={80}
+          textColor={'white'}
+          shadowColor={'black'}
+          shadowRadius={3}
+          centerText={'center'}
+        >
+          O2 has been Sabotaged!
+        </CustomText>
       </Animated.View>
     </View>
   );

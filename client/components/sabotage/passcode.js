@@ -1,14 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TouchableOpacity,
-  SafeAreaView,
-  Animated,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, TouchableOpacity, Animated } from 'react-native';
 import Easing from 'react-native/Libraries/Animated/Easing';
 import Modal from 'react-native-modal';
 import CustomText from '../text.js';
@@ -43,16 +34,14 @@ function CodeTask({ active, code, complete, closeTask }) {
           easing: Easing.inOut(Easing.sin),
         }),
       ]).start();
-    }
-    else if (color === 'green') {
+    } else if (color === 'green') {
       Animated.timing(flash.opacity, {
         toValue: 0.8,
         duration: 0,
         useNativeDriver: false,
         easing: Easing.inOut(Easing.sin),
       }).start();
-    }
-    else {
+    } else {
       Animated.timing(flash.opacity, {
         toValue: 0,
         duration: 10,
@@ -114,8 +103,7 @@ function CodeTask({ active, code, complete, closeTask }) {
       toggleColor('green');
       complete('o2');
       toggleColor('blank');
-    }
-    else {
+    } else {
       reset();
       setInputColor('red');
       toggleColor('red');

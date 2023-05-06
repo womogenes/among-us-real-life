@@ -29,12 +29,13 @@ function TaskMenu(props) {
           style={[styles.listText]}
           textSize={14}
           key={task.taskId}
-          textColor={task.complete ? 'turquoise' : 'gold'}
+          textColor={task.complete ? '#AAFF00' : '#F7B500'}
         >
           {counter}.{' '}
-          {`${task.name} (${task.taskId.substring(0, 4).replace('_', '-')})${
+          {/* {`${task.name} (${task.taskId.substring(0, 4).replace('_', '-')})${
             task.complete ? ' (Complete)' : ''
-          }`}
+          }`} */}
+          {`${task.name} ${task.complete ? ' (Complete)' : ''}`}
         </CustomText>
       );
     });
@@ -73,9 +74,7 @@ function TaskMenu(props) {
         { backgroundColor: backgroundColor },
       ]}
     >
-      <View style={styles.taskList}>
-        {tasks()}
-      </View>
+      <View style={styles.taskList}>{tasks()}</View>
       <View style={styles.taskButtonContainer}>
         <TouchableOpacity style={styles.taskButton} onPress={() => toggleX()}>
           <Text style={styles.taskButtonText}>Tasks</Text>

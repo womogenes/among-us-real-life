@@ -215,7 +215,7 @@ export class GameRoom extends Room {
       // Necessary to make impostor assignment work
       setTimeout(() => {
         this.broadcast('gameStarted');
-      }, 100);
+      }, 1000);
 
       this.state.gameStarted = true;
       this.state.gameState = 'normal';
