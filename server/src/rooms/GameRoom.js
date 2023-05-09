@@ -250,9 +250,9 @@ export class GameRoom extends Room {
   }
 
   onAuth(client, options, request) {
-    return true;
+    // return true;
 
-    // Temporarily allow joining an in-progress game for the sake of testing
+    // undid: Temporarily allow joining an in-progress game for the sake of testing
     return !this.state.gameStarted;
   }
 
