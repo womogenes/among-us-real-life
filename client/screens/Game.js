@@ -494,7 +494,7 @@ export default function GameScreen({ navigation }) {
             disableActions || !player?.isAlive || buttonState.kill
           }
           killButtonPress={killButton}
-          cooldown={10}
+          cooldown={getGameRoom().state.settings.killCooldown}
           disguiseButtonState={buttonState.disguise}
           sabotageButtonState={disableActions || buttonState.sabotage}
           reportButtonState={disableActions || buttonState.report}

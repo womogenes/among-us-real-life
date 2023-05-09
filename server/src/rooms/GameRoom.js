@@ -209,7 +209,26 @@ export class GameRoom extends Room {
       }
 
       // Assign an impostor (for now, make it the host)
+      let impostorNum = this.state.settings.impostorNum;
       this.state.players.find((p) => p.isHost).isImpostor = true;
+      impostorNum--;
+      console.log(impostorNum);
+      if (impostorNum != 0) {
+        console.log('WE IN BABY');
+        const set = new Set();
+        while (set.size < impostorNum) {
+          set.add(Math.floor(Math.random() * this.state.players.length) + 1);
+        }
+        for (let i of set) {
+          this.state.players[i].isImpostor = true;
+        }
+      }
+
+      for (const i of this.state.players) {
+        if (i.isImpostor == true) {
+          console.log(i);
+        }
+      }
 
       // Extremely hacky and bad
       // Necessary to make impostor assignment work

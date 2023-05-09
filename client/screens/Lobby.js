@@ -30,14 +30,14 @@ function LobbyScreen({ navigation }) {
   const [killRadius, setKillRadius] = useState([10]);
   const [prevKillRadius, setPrevKillRadius] = useState([10]);
 
-  const [killCooldown, setKillCooldown] = useState([60]);
-  const [prevKillCooldown, setPrevKillCooldown] = useState([60]);
+  const [killCooldown, setKillCooldown] = useState([20]);
+  const [prevKillCooldown, setPrevKillCooldown] = useState([20]);
 
   const [impostorNum, setImpostorNum] = useState([1]);
   const [prevImpostorNum, setPrevImpostorNum] = useState([1]);
 
-  const [votingTimer, setVotingTimer] = useState([60]);
-  const [prevVotingTimer, setPrevVotingTimer] = useState([60]);
+  const [votingTimer, setVotingTimer] = useState([30]);
+  const [prevVotingTimer, setPrevVotingTimer] = useState([30]);
 
   const [roomState, setRoomState] = useState({});
   const [roomCode, setRoomCode] = useState('0000');
@@ -117,6 +117,7 @@ function LobbyScreen({ navigation }) {
   }
 
   function settingsUpdated() {
+    console.log(impostorNum[0]);
     getGameRoom().send('settingsUpdated', {
       killRadius: killRadius[0],
       killCooldown: killCooldown[0],
@@ -129,10 +130,13 @@ function LobbyScreen({ navigation }) {
     // In theory, only the host can click the "start game" button
     // But let's do this check anyway
     console.assert(isHost);
-
-    // Tell server to start game
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-    getGameRoom().send('startGame');
+    if (Math.ceil(getGameRoom().state.players.length / 2) > impostorNum) {
+      // Tell server to start game
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      getGameRoom().send('startGame');
+    } else {
+      console.log('IMPOSTER BROKE');
+    }
   };
 
   return (
@@ -231,8 +235,8 @@ function LobbyScreen({ navigation }) {
                 <Slider
                   value={killCooldown}
                   minimumValue={10}
-                  maximumValue={240}
-                  step={10}
+                  maximumValue={120}
+                  step={5}
                   onValueChange={(killCooldown) => {
                     setKillCooldown(killCooldown);
                     settingsUpdated();
@@ -247,9 +251,12 @@ function LobbyScreen({ navigation }) {
                 </CustomText>
                 <Slider
                   value={impostorNum}
-                  minimumValue={30}
-                  maximumValue={120}
-                  step={5}
+                  minimumValue={1}
+                  maximumValue={
+                    //Math.ceil(getGameRoom().state.players.length / 2) - 1
+                    8
+                  }
+                  step={1}
                   onValueChange={(impostorNum) => {
                     setImpostorNum(impostorNum);
                     settingsUpdated();
@@ -265,7 +272,7 @@ function LobbyScreen({ navigation }) {
                 <Slider
                   value={votingTimer}
                   minimumValue={10}
-                  maximumValue={240}
+                  maximumValue={180}
                   step={10}
                   onValueChange={(votingTimer) => {
                     setVotingTimer(votingTimer);

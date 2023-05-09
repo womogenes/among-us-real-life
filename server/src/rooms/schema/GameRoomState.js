@@ -108,10 +108,10 @@ class Settings extends Schema {
   constructor() {
     super();
 
-    this.killRadius = 5;
-    this.killCooldown = 10;
-    this.imposterNum = 1;
-    this.votingTimer = 10;
+    this.killRadius = 10;
+    this.killCooldown = 20;
+    this.impostorNum = 1;
+    this.votingTimer = 30;
   }
 
   update(newSettings) {
@@ -123,7 +123,7 @@ class Settings extends Schema {
 schema.defineTypes(Settings, {
   killRadius: 'number',
   killCooldown: 'number',
-  imposterNum: 'number',
+  impostorNum: 'number',
   votingTimer: 'number',
 });
 
