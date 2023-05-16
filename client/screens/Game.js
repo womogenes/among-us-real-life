@@ -19,6 +19,7 @@ import * as taskUtils from '../tasks-utils.js';
 
 import Minimap from '../components/minimap.js';
 import ControlPanel from '../components/controlpanel.js';
+import Timer from '../components/timer.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 import CodeTask from '../components/sabotage/passcode.js';
@@ -566,6 +567,9 @@ export default function GameScreen({ navigation }) {
         active={activeTask.name === 'electricity'}
         complete={completeTask}
         closeTask={closeTask}
+      />
+      <Timer
+        playing={sabotageActive}
       />
     </View>
   );
