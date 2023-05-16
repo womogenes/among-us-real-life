@@ -19,6 +19,7 @@ import * as taskUtils from '../tasks-utils.js';
 
 import Minimap from '../components/minimap.js';
 import ControlPanel from '../components/controlpanel.js';
+import Timer from '../components/timer.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 import CodeTask from '../components/sabotage/passcode.js';
@@ -525,6 +526,14 @@ export default function GameScreen({ navigation }) {
       <View style={styles.debugContainer}>
         {/* <TouchableOpacity
           onPress={() => {
+            getGameRoom().send('playerDeath', getGameRoom().sessionId);
+          }}
+          style={styles.testButton}
+        >
+          <Text>unalive self</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
             setActiveTask((prevArrState) => ({
               ...prevArrState,
               name: 'electricity',
@@ -562,6 +571,9 @@ export default function GameScreen({ navigation }) {
         code={Array.from({ length: 3 }, () => Math.floor(Math.random() * 9))}
         complete={completeTask}
         closeTask={closeTask}
+      />
+      <Timer
+        playing={sabotageActive}
       />
     </View>
   );

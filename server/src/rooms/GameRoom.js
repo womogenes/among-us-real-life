@@ -89,9 +89,14 @@ export class GameRoom extends Room {
             this.broadcast('playerKilled', null);
           } else {
             const killed = counts[0][0];
-            this.state.players.find(
-              (p) => p.sessionId === killed
-            ).isAlive = false;
+
+            if (killed != 'skip') {
+              // If most players vote to skip, don't update state
+              this.state.players.find(
+                (p) => p.sessionId === killed
+              ).isAlive = false;
+            }
+
             this.broadcast('playerKilled', killed);
           }
 
@@ -109,7 +114,11 @@ export class GameRoom extends Room {
     });
 
     this.onMessage('vote', (client, vote) => {
-      let voter = client.sessionId;
+      const voter = client.sessionId;
+      const { isAlive } = this.state.players.find(
+        (p) => p.sessionId === client.sessionId
+      );
+      if (!isAlive) return;
 
       // Double vote effectively cancels
       if (vote === this.state.votes.get(voter)) {

@@ -52,7 +52,14 @@ export default function votingModal(props) {
           title="test click (log)"
         ></Button> */}
         <FlatList
-          data={playerArr}
+          data={[
+            ...playerArr,
+            {
+              sessionId: 'skip', // ! HACK ! terrible naming convention
+              isAlive: true, // ugh ugh ugh
+              username: 'SKIP',
+            },
+          ]}
           renderItem={({ item }) => (
             <TouchableWithoutFeedback
               onPress={() => {
@@ -137,7 +144,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignContent: 'center',
     borderWidth: 2,
-    borderRadius: 15,
+    borderRadius: 10,
     marginHorizontal: 20,
     marginVertical: 10,
     padding: 10,
