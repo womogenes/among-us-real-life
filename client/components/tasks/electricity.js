@@ -6,7 +6,7 @@ import Modal from 'react-native-modal';
 import CustomText from '../text.js';
 
 function ElectricityTask(props) {
-  const [code, setCode] = useState([]);
+  const [code, setCode] = useState(props.code);
   const [sliders, setSliders] = useState([
     Math.floor(Math.random() * 9),
     Math.floor(Math.random() * 9),
@@ -21,12 +21,13 @@ function ElectricityTask(props) {
 
   useEffect(() => {
     if (props.active) {
+      console.log(code);
       setSliders([
         Math.floor(Math.random() * 9),
         Math.floor(Math.random() * 9),
         Math.floor(Math.random() * 9),
       ]);
-      setCode(Array.from({ length: 3 }, () => Math.floor(Math.random() * 9)));
+      // setCode(Array.from({ length: 3 }, () => Math.floor(Math.random() * 9)));
       setLoading(false);
     } else {
       setLoading(true);
@@ -34,14 +35,19 @@ function ElectricityTask(props) {
   }, [props.active]);
 
   useEffect(() => {
-    for (var i = 0; i < 3; i++) {
-      if (code[i] !== sliders[i]) {
-        break;
+    if (!loading) {
+      for (var i = 0; i < 3; i++) {
+        if (code[i] !== sliders[i]) {
+          break;
+        }
+        const end = setTimeout(() => {
+          props.complete('electricity');
+        }, 500);
+
+        return () => {
+          clearTimeout(end);
+        };
       }
-      const end = setTimeout(() => {
-        props.complete('electricity');
-      }, 500);
-      clearTimeout(end);
     }
   }, [sliders, refresh]);
 

@@ -523,7 +523,7 @@ export default function GameScreen({ navigation }) {
 
       {/* TESTING BUTTONS */}
       <View style={styles.debugContainer}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             setActiveTask((prevArrState) => ({
               ...prevArrState,
@@ -534,7 +534,7 @@ export default function GameScreen({ navigation }) {
           style={styles.testButton}
         >
           <Text>open electricity task</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
@@ -553,11 +553,13 @@ export default function GameScreen({ navigation }) {
       />
       <MemoryTask
         active={activeTask.name === 'memory'}
+        code={Array.from({ length: 4 }, () => Math.floor(Math.random() * 16))}
         complete={completeTask}
         closeTask={closeTask}
       />
       <ElectricityTask
         active={activeTask.name === 'electricity'}
+        code={Array.from({ length: 3 }, () => Math.floor(Math.random() * 9))}
         complete={completeTask}
         closeTask={closeTask}
       />

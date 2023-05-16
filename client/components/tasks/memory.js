@@ -4,7 +4,7 @@ import Modal from 'react-native-modal';
 import CustomText from '../text';
 
 function MemoryTask(props) {
-  const [code, setCode] = useState([]);
+  const [code, setCode] = useState(props.code);
   const [input, setInput] = useState([-1, -1, -1, -1]);
   const [ind, setInd] = useState(0);
   const [disable, setDisable] = useState(true);
@@ -23,28 +23,25 @@ function MemoryTask(props) {
       setInput([-1, -1, -1, -1]);
       setInd(0);
       setDisable(true);
-      setCode(Array.from({ length: 4 }, () => Math.floor(Math.random() * 16)));
       setLoading(false);
-      if (!loading) {
-        let timer = [];
-        let timerReset = [];
-        code.forEach((item, i) => {
-          timer[i] = setTimeout(() => {
-            setGreen(item);
-          }, (i + 1) * 750);
-          timerReset[i] = setTimeout(() => {
-            setGreen(-1);
-          }, (i + 2) * 750 - 250);
-        });
-        const dis = setTimeout(() => {
-          setDisable(false);
-        }, code.length + 2 * 750 - 250);
-        return () => {
-          clearTimeout(dis);
-          timer.forEach((t) => clearTimeout(t));
-          timerReset.forEach((t) => clearTimeout(t));
-        };
-      }
+      let timer = [];
+      let timerReset = [];
+      code.forEach((item, i) => {
+        timer[i] = setTimeout(() => {
+          setGreen(item);
+        }, (i + 1) * 750);
+        timerReset[i] = setTimeout(() => {
+          setGreen(-1);
+        }, (i + 2) * 750 - 250);
+      });
+      const dis = setTimeout(() => {
+        setDisable(false);
+      }, code.length + 2 * 750 - 250);
+      return () => {
+        clearTimeout(dis);
+        timer.forEach((t) => clearTimeout(t));
+        timerReset.forEach((t) => clearTimeout(t));
+      };
     } else {
       setLoading(true);
     }
