@@ -171,10 +171,9 @@ export default function GameScreen({ navigation }) {
     }
   }
   function activateReportButton() {
-    changeButtonState(
-      'report',
-      !(distPlayer.filter((p) => !p.isAlive).length > 0)
-    );
+    let c = !(distPlayer.filter((p) => !p.isAlive).length > 0);
+    if (!c) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    changeButtonState('report', c);
   }
 
   //TASK FUNCTIONS
@@ -524,10 +523,6 @@ export default function GameScreen({ navigation }) {
 
       {/* TESTING BUTTONS */}
       <View style={styles.debugContainer}>
-        {/* testing button below */}
-        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
-          <Text>toggle voting modal</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
             setActiveTask((prevArrState) => ({
@@ -558,7 +553,6 @@ export default function GameScreen({ navigation }) {
       />
       <MemoryTask
         active={activeTask.name === 'memory'}
-        code={Array.from({ length: 4 }, () => Math.floor(Math.random() * 16))}
         complete={completeTask}
         closeTask={closeTask}
       />

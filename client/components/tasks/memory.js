@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
+import CustomText from '../text';
 
 function MemoryTask(props) {
-  const [code, setCode] = useState(props.code);
+  const [code, setCode] = useState([]);
   const [input, setInput] = useState([-1, -1, -1, -1]);
   const [ind, setInd] = useState(0);
   const [disable, setDisable] = useState(true);
   const [green, setGreen] = useState(-1);
+  const [loading, setLoading] = useState(true);
 
   const greenColor = '#AAFF00';
   const yellowColor = '#F7B500';
@@ -21,24 +23,30 @@ function MemoryTask(props) {
       setInput([-1, -1, -1, -1]);
       setInd(0);
       setDisable(true);
-      let timer = [];
-      let timerReset = [];
-      code.forEach((item, i) => {
-        timer[i] = setTimeout(() => {
-          setGreen(item);
-        }, (i + 1) * 750);
-        timerReset[i] = setTimeout(() => {
-          setGreen(-1);
-        }, (i + 2) * 750 - 250);
-      });
-      const dis = setTimeout(() => {
-        setDisable(false);
-      }, code.length + 2 * 750 - 250);
-      return () => {
-        clearTimeout(dis);
-        timer.forEach((t) => clearTimeout(t));
-        timerReset.forEach((t) => clearTimeout(t));
-      };
+      setCode(Array.from({ length: 4 }, () => Math.floor(Math.random() * 16)));
+      setLoading(false);
+      if (!loading) {
+        let timer = [];
+        let timerReset = [];
+        code.forEach((item, i) => {
+          timer[i] = setTimeout(() => {
+            setGreen(item);
+          }, (i + 1) * 750);
+          timerReset[i] = setTimeout(() => {
+            setGreen(-1);
+          }, (i + 2) * 750 - 250);
+        });
+        const dis = setTimeout(() => {
+          setDisable(false);
+        }, code.length + 2 * 750 - 250);
+        return () => {
+          clearTimeout(dis);
+          timer.forEach((t) => clearTimeout(t));
+          timerReset.forEach((t) => clearTimeout(t));
+        };
+      }
+    } else {
+      setLoading(true);
     }
   }, [props.active]);
 
@@ -82,9 +90,17 @@ function MemoryTask(props) {
     </View>
   ));
 
-  return (
+  return loading ? (
+    <></>
+  ) : (
     <Modal isVisible={props.active} style={{ alignItems: 'center' }}>
       <View style={styles.modal}>
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => props.closeTask('electricity')}
+        >
+          <CustomText textSize={30}>&#10006;</CustomText>
+        </TouchableOpacity>
         <View style={styles.lights}>
           {[...Array(4).keys()].map((num) => (
             <View
@@ -118,6 +134,12 @@ const styles = StyleSheet.create({
     height: 405,
     width: 310,
     borderRadius: 15,
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 5,
+    top: 0,
+    margin: 10,
   },
   lights: {
     height: 100,

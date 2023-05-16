@@ -6,14 +6,14 @@ import Modal from 'react-native-modal';
 import CustomText from '../text.js';
 
 function ElectricityTask(props) {
-  const [code, setCode] = useState(
-    Array.from({ length: 3 }, () => Math.floor(Math.random() * 9))
-  );
+  const [code, setCode] = useState([]);
   const [sliders, setSliders] = useState([
     Math.floor(Math.random() * 9),
     Math.floor(Math.random() * 9),
     Math.floor(Math.random() * 9),
   ]);
+  const [refresh, setRefresh] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const greenColor = '#AAFF00';
   const yellowColor = '#F7B500';
@@ -21,10 +21,33 @@ function ElectricityTask(props) {
 
   useEffect(() => {
     if (props.active) {
+      setSliders([
+        Math.floor(Math.random() * 9),
+        Math.floor(Math.random() * 9),
+        Math.floor(Math.random() * 9),
+      ]);
+      setCode(Array.from({ length: 3 }, () => Math.floor(Math.random() * 9)));
+      setLoading(false);
+    } else {
+      setLoading(true);
     }
   }, [props.active]);
 
-  return (
+  useEffect(() => {
+    for (var i = 0; i < 3; i++) {
+      if (code[i] !== sliders[i]) {
+        break;
+      }
+      const end = setTimeout(() => {
+        props.complete('electricity');
+      }, 500);
+      clearTimeout(end);
+    }
+  }, [sliders, refresh]);
+
+  return loading ? (
+    <></>
+  ) : (
     <Modal isVisible={props.active} style={{ alignItems: 'center' }}>
       <View style={styles.modal}>
         <TouchableOpacity
@@ -33,31 +56,44 @@ function ElectricityTask(props) {
         >
           <CustomText textSize={30}>&#10006;</CustomText>
         </TouchableOpacity>
+        <Image source={require('../../assets/electricitySlider.png')}></Image>
 
-        {[...Array(3).keys()].map((num) => (
-          <View style={styles.sliderContainer} key={num}>
-            <Text>this is under construction</Text>
-            <Slider
-              value={sliders[num]}
-              minimumValue={0}
-              maximumValue={8}
-              step={1}
-              renderThumbComponent={() => {
-                <View style={styles.image}>
-                  <Text>test</Text>
-                  <Image
-                    source={require('../../assets/electricitySlider.png')}
-                  />
-                </View>;
-              }}
-              onValueChange={(value) => {
-                let c = sliders;
-                c[num] = value;
-                setSliders(c);
-              }}
-            />
-          </View>
-        ))}
+        <View style={styles.sliderContainer}>
+          {[...Array(3).keys()].map((num) => (
+            <View style={styles.slider} key={num}>
+              <Slider
+                key={num}
+                value={sliders[num]}
+                minimumValue={0}
+                maximumValue={8}
+                step={1}
+                vertical
+                thumbStyle={{
+                  width: 60,
+                  height: 30,
+                  backgroundColor: yellowColor,
+                }}
+                width={200}
+                onValueChange={(value) => {
+                  let c = sliders;
+                  c[num] = value[0];
+                  setSliders(c);
+                  setRefresh(refresh + 1);
+                }}
+              />
+
+              <View
+                style={[
+                  styles.circle,
+                  {
+                    backgroundColor:
+                      sliders[num] === code[num] ? greenColor : redColor,
+                  },
+                ]}
+              />
+            </View>
+          ))}
+        </View>
       </View>
     </Modal>
   );
@@ -74,15 +110,17 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   sliderContainer: {
-    flex: 1,
-    marginLeft: 10,
-    marginRight: 10,
-    alignItems: 'stretch',
+    height: 250,
+    width: 250,
+    marginTop: 30,
+    alignItems: 'center',
     justifyContent: 'space-evenly',
-    // transform: [{ rotate: '90deg' }],
+    flexDirection: 'row',
+  },
+  slider: {
+    flexDirection: 'column',
   },
   image: {
-    backgroundColor: 'powderblue',
     width: 80,
     height: 50,
   },
@@ -91,5 +129,12 @@ const styles = StyleSheet.create({
     right: 5,
     top: 0,
     margin: 10,
+  },
+  circle: {
+    marginTop: 100,
+    marginLeft: 85,
+    height: 30,
+    width: 30,
+    borderRadius: 15,
   },
 });
