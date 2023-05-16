@@ -109,7 +109,11 @@ export class GameRoom extends Room {
     });
 
     this.onMessage('vote', (client, vote) => {
-      let voter = client.sessionId;
+      const voter = client.sessionId;
+      const { isAlive } = this.state.players.find(
+        (p) => p.sessionId === client.sessionId
+      );
+      if (!isAlive) return;
 
       // Double vote effectively cancels
       if (vote === this.state.votes.get(voter)) {

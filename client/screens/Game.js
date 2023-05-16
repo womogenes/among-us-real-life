@@ -530,6 +530,14 @@ export default function GameScreen({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
+            getGameRoom().send('playerDeath', getGameRoom().sessionId);
+          }}
+          style={styles.testButton}
+        >
+          <Text>unalive self</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
             setActiveTask((prevArrState) => ({
               ...prevArrState,
               name: 'electricity',
