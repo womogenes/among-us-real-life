@@ -48,6 +48,7 @@ export default function GameScreen({ navigation }) {
   //SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
   const [sabotageActive, setSabotageActive] = useState(false);
   const [sabNotif, setSabNotif] = useState(false);
+  const [sabotageOnCooldown, setSabotageOnCooldown] = useState(false);
   const [emergencyMeetingLocation, setEmergencyMeetingLocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -106,6 +107,10 @@ export default function GameScreen({ navigation }) {
     setVotingModalVisible(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
   };
+
+  function endSabotageCooldown() {
+    setSabotageOnCooldown(false);
+  }
 
   //BUTTON FUNCTIONS
   function changeButtonState(button, state) {
@@ -327,6 +332,7 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('sabotageOver', () => {
       setSabotageActive(false);
+      setSabotageOnCooldown(true);
     });
 
     room.onMessage('task complete', (taskId) => {
@@ -494,7 +500,7 @@ export default function GameScreen({ navigation }) {
             disableActions || !player?.isAlive || buttonState.kill
           }
           killButtonPress={killButton}
-          cooldown={10}
+          killCooldown={10}
           disguiseButtonState={buttonState.disguise}
           sabotageButtonState={disableActions || buttonState.sabotage}
           reportButtonState={disableActions || buttonState.report}
@@ -505,6 +511,9 @@ export default function GameScreen({ navigation }) {
           manualMovement={manualMovement}
           setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
+          sabotageOnCooldown={sabotageOnCooldown}
+          sabotageCooldown={1000}
+          endSabotageCooldown={() => endSabotageCooldown()}
           o2={() => sabotage('o2')}
         />
       ) : playerState == 'disguised' ? (

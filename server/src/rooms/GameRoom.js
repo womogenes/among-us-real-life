@@ -153,6 +153,7 @@ export class GameRoom extends Room {
 
       if (this.state.sabotageTaskList.length == 0) {
         this.broadcast('sabotageOver');
+        this.state.sabotageCooldown = true;
         this.state.players.forEach((p) => {
           let taskIndex = 0;
           while (taskIndex != -1) {

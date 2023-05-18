@@ -13,15 +13,24 @@ import AxisPad from '../components/axispad.js';
 import { getGameRoom } from '../networking.js';
 
 function ControlPanel(props) {
-  const [timer, setTimer] = useState(null);
+  const [killTimer, setKillTimer] = useState(null);
+  const [sabotageTimer, setSabotageTimer] = useState(null);
   const [intervalID, setIntervalID] = useState();
   const [isModalVisible, setModalVisibility] = useState(false);
   const { manualMovement, setManualMovement } = props;
 
   function killCooldown() {
-    setTimer(props.cooldown);
+    setKillTimer(props.killCooldown);
     const interval = setInterval(() => {
-      setTimer((prevState) => prevState - 1);
+      setKillTimer((prevState) => prevState - 1);
+    }, 1000);
+    setIntervalID(interval);
+  }
+
+  function sabotageCooldown() {
+    setSabotageTimer(props.sabotageCooldown);
+    const interval = setInterval(() => {
+      setSabotageTimer((prevState) => prevState - 1);
     }, 1000);
     setIntervalID(interval);
   }
@@ -35,17 +44,31 @@ function ControlPanel(props) {
   }
 
   useEffect(() => {
-    if (timer <= 0) {
+    if (killTimer <= 0) {
       clearInterval(intervalID);
-      setTimer(null);
+      setKillTimer(null);
     }
-  }, [timer]);
+  }, [killTimer]);
+
+  useEffect(() => {
+    if (sabotageTimer <= 0) {
+      clearInterval(intervalID);
+      setSabotageTimer(null);
+      () => props.endSabotageCooldown();
+    }
+  }, [sabotageTimer]);
 
   useEffect(() => {
     if (props.sabotageActive) {
       closeSabotageTasks();
     }
   }, [props.sabotageActive]);
+
+  useEffect(() => {
+    if (props.sabotageOnCooldown && sabotageTimer == null) {
+      sabotageCooldown();
+    }
+  }, [props.sabotageOnCooldown]);
 
   return (
     <View style={styles.bottom}>
@@ -120,18 +143,20 @@ function ControlPanel(props) {
                 props.killButtonPress();
                 killCooldown();
               }}
-              cooldownTimer={timer}
-              text={timer}
+              cooldownTimer={killTimer}
+              text={killTimer}
               image={require('client/assets/killbutton.png')}
               backgroundColor={'#00000000'}
             />
             {props.sabotageActive ? (
               <CustomButton
-                type={'image'}
+                type={'cooldown'}
                 disabled={props.useButtonState}
                 onPress={props.useButtonPress}
                 image={require('client/assets/usebutton.png')}
                 roundness={50}
+                cooldownTimer={sabotageTimer}
+                text={sabotageTimer}
                 backgroundColor={'#00000000'}
               />
             ) : (
