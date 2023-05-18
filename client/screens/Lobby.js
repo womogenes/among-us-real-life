@@ -140,9 +140,7 @@ function LobbyScreen({ navigation }) {
     console.assert(isHost);
 
     // !! HACK !! for development only
-    if (
-      true ||
-      Math.ceil(getGameRoom().state.players.length / 2) > impostorNum
+    if (true || Math.ceil(getGameRoom().state.players.length / 2) > impostorNum
     ) {
       // Tell server to start game
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);

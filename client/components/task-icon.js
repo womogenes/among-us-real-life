@@ -7,21 +7,38 @@ export const TaskIcon = (props) => {
     memory: require('../assets/task-icons/memory.png'),
     electricity: require('../assets/task-icons/electricity.png'),
   };
-
-  return (
-    <Image
-      style={[
-        styles.image,
-        {
-          backgroundColor: props.complete ? '#35e82e' : '#Ee3a3a',
-          width: props.size,
-          height: props.size,
-          borderWidth: props.size / 20,
-        },
-      ]}
-      source={images[props.name || 0]}
-    />
-  );
+  if(props.name === 'o2') {
+    return (
+      <Image
+        style={[
+          styles.image,
+          {
+            backgroundColor: props.complete ? '#fff12e' : '#Ee3a3a',
+            width: props.size,
+            height: props.size,
+            borderWidth: props.size / 20,
+          },
+        ]}
+        source={images[props.name || 0]}
+      />
+    );
+  }
+  else{
+    return (
+      <Image
+        style={[
+          styles.image,
+          {
+            backgroundColor: props.complete ? '#35e82e' : '#b6b8b6',
+            width: props.size,
+            height: props.size,
+            borderWidth: props.size / 20,
+          },
+        ]}
+        source={images[props.name || 0]}
+      />
+    );
+  }
 };
 
 const styles = StyleSheet.create({
