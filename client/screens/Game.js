@@ -36,11 +36,8 @@ import CustomText from '../components/text.js';
 import SabotageFlash from '../components/flash.js';
 import VotingModal from '../components/voting.js';
 import { ProfileIcon } from '../components/profile-icon.js';
-<<<<<<< HEAD
-=======
 import { TaskIcon } from '../components/task-icon.js';
 import { EjectModal } from '../components/animation-modals/eject-modal.js';
->>>>>>> e05eeb3f9437f09687489abd38449796206989db
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
