@@ -22,26 +22,27 @@ import {
   
     return (
         <View style={[styles.container, props.playing? {opacity: 1} : {opacity: 0}]}>    
-        {props.playing && (        
+        {props.playing &&      
             <CountdownCircleTimer
                 size={120}
                 isPlaying={props.playing}
-                duration={180}
-                colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-                colorsTime={[10, 6, 3, 0]}
+                duration={90}
+                colors={["#00e808", "#ffe51f", "#f7f723", "#ff2200", "#6b0000"]}
+                colorsTime={[90, 80, 50, 20, 0]}
                 onComplete={() => [completion(), {shouldRepeat: false}]}
                 updateInterval={1}
             >
             {({ remainingTime, color }) => (
-                <CustomText
-                textSize={70}
-                textColor={color}
-                >
-                    {remainingTime}
-                </CustomText>
+                    <CustomText
+                    textSize={70}
+                    textColor={color}
+                    style={[{textShadowColor: '#000000'}, {textShadowRadius: 2}]}
+                    >
+                        {remainingTime}
+                    </CustomText>
             )}
             </CountdownCircleTimer>
-        )}
+        }
         </View>
     );
   }
@@ -51,7 +52,7 @@ import {
   const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        backgroundColor: 'white',
+        backgroundColor: '#ffffff99',
         width: 120,
         height: 120,
         borderRadius: 100,
