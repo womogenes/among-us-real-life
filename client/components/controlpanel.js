@@ -67,6 +67,7 @@ function ControlPanel(props) {
   useEffect(() => {
     if (props.sabotageOnCooldown && sabotageTimer == null) {
       sabotageCooldown();
+      props.endSabotageCooldown();
     }
   }, [props.sabotageOnCooldown]);
 
@@ -166,6 +167,8 @@ function ControlPanel(props) {
                 onPress={() => {
                   sabotageTasks();
                 }}
+                cooldownTimer={sabotageTimer}
+                text={sabotageTimer}
                 image={require('client/assets/sabotagebutton.png')}
                 backgroundColor={'#00000000'}
               />

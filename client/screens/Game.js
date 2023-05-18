@@ -5,6 +5,7 @@ import {
   Button,
   Text,
   Platform,
+  Modal,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -67,6 +68,8 @@ export default function GameScreen({ navigation }) {
     disguise: false,
     sabotage: false,
   });
+
+  // ENDING GAME HOOKS
 
   // TASK HOOKS
   const [taskCompletion, setTaskCompletion] = useState(0);
@@ -330,6 +333,7 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('sabotage', () => {
       setSabotageActive(true);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     });
 
     room.onMessage('sabotageOver', () => {
@@ -343,11 +347,7 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('endedGame', (message) => {
       if (message == 'impostor') {
-        return (
-          <View style="gameEnded">
-            <Text>Impostors won!</Text>
-          </View>
-        );
+        console.log('HUH');
       } else if (message == 'crewmate') {
         return (
           <View style="gameEnded">
@@ -530,7 +530,7 @@ export default function GameScreen({ navigation }) {
           setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
           sabotageOnCooldown={sabotageOnCooldown}
-          sabotageCooldown={1000}
+          sabotageCooldown={10}
           endSabotageCooldown={() => endSabotageCooldown()}
           o2={() => sabotage('o2')}
         />
@@ -665,6 +665,7 @@ const styles = StyleSheet.create({
   },
   gameEnded: {
     backgroundColor: 'black',
+    flex: 1,
   },
 });
 

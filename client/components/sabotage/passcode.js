@@ -99,8 +99,6 @@ function CodeTask({ active, code, complete, closeTask }) {
 
   function verifyValue() {
     const intArr = [parseInt(one), parseInt(two), parseInt(three), parseInt(four)]
-    console.log(currCode);
-    console.log(intArr);
     if (JSON.stringify(intArr) === JSON.stringify(currCode)) {
       setInputColor('green');
       toggleColor('green');

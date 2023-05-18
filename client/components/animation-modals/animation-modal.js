@@ -12,7 +12,9 @@ import { useState } from 'react';
 export const AnimationModal = (props) => {
   /*
     props:
-      children (React thing for content)
+      children:  content (React thing for content)
+      onClose:   function (gets called when x button is pressed)
+      isVisible: boolean  (React state for whether modal is visible)
   */
 
   return (
