@@ -89,9 +89,14 @@ export class GameRoom extends Room {
             this.broadcast('playerKilled', null);
           } else {
             const killed = counts[0][0];
-            this.state.players.find(
-              (p) => p.sessionId === killed
-            ).isAlive = false;
+
+            if (killed != 'skip') {
+              // If most players vote to skip, don't update state
+              this.state.players.find(
+                (p) => p.sessionId === killed
+              ).isAlive = false;
+            }
+
             this.broadcast('playerKilled', killed);
           }
 
@@ -126,7 +131,11 @@ export class GameRoom extends Room {
     });
 
     this.onMessage('vote', (client, vote) => {
-      let voter = client.sessionId;
+      const voter = client.sessionId;
+      const { isAlive } = this.state.players.find(
+        (p) => p.sessionId === client.sessionId
+      );
+      if (!isAlive) return;
 
       // Double vote effectively cancels
       if (vote === this.state.votes.get(voter)) {
@@ -161,6 +170,7 @@ export class GameRoom extends Room {
 
       if (this.state.sabotageTaskList.length == 0) {
         this.broadcast('sabotageOver');
+        this.state.sabotageCooldown = true;
         this.state.players.forEach((p) => {
           let taskIndex = 0;
           while (taskIndex != -1) {
@@ -282,9 +292,9 @@ export class GameRoom extends Room {
   }
 
   onAuth(client, options, request) {
-    return true;
+    // return true;
 
-    // Temporarily allow joining an in-progress game for the sake of testing
+    // undid: Temporarily allow joining an in-progress game for the sake of testing
     return !this.state.gameStarted;
   }
 

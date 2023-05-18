@@ -19,6 +19,7 @@ import * as taskUtils from '../tasks-utils.js';
 
 import Minimap from '../components/minimap.js';
 import ControlPanel from '../components/controlpanel.js';
+import Timer from '../components/timer.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 import CodeTask from '../components/sabotage/passcode.js';
@@ -47,6 +48,7 @@ export default function GameScreen({ navigation }) {
   //SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
   const [sabotageActive, setSabotageActive] = useState(false);
   const [sabNotif, setSabNotif] = useState(false);
+  const [sabotageOnCooldown, setSabotageOnCooldown] = useState(false);
   const [emergencyMeetingLocation, setEmergencyMeetingLocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -105,6 +107,10 @@ export default function GameScreen({ navigation }) {
     setVotingModalVisible(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
   };
+
+  function endSabotageCooldown() {
+    setSabotageOnCooldown(false);
+  }
 
   //BUTTON FUNCTIONS
   function changeButtonState(button, state) {
@@ -171,10 +177,9 @@ export default function GameScreen({ navigation }) {
     }
   }
   function activateReportButton() {
-    changeButtonState(
-      'report',
-      !(distPlayer.filter((p) => !p.isAlive).length > 0)
-    );
+    let c = !(distPlayer.filter((p) => !p.isAlive).length > 0);
+    if (!c) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    changeButtonState('report', c);
   }
 
   //TASK FUNCTIONS
@@ -327,6 +332,7 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('sabotageOver', () => {
       setSabotageActive(false);
+      setSabotageOnCooldown(true);
     });
 
     room.onMessage('task complete', (taskId) => {
@@ -521,6 +527,9 @@ export default function GameScreen({ navigation }) {
           manualMovement={manualMovement}
           setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
+          sabotageOnCooldown={sabotageOnCooldown}
+          sabotageCooldown={1000}
+          endSabotageCooldown={() => endSabotageCooldown()}
           o2={() => sabotage('o2')}
         />
       ) : playerState == 'disguised' ? (
@@ -540,9 +549,13 @@ export default function GameScreen({ navigation }) {
 
       {/* TESTING BUTTONS */}
       <View style={styles.debugContainer}>
-        {/* testing button below */}
-        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
-          <Text>toggle voting modal</Text>
+        {/* <TouchableOpacity
+          onPress={() => {
+            getGameRoom().send('playerDeath', getGameRoom().sessionId);
+          }}
+          style={styles.testButton}
+        >
+          <Text>unalive self</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -555,7 +568,7 @@ export default function GameScreen({ navigation }) {
           style={styles.testButton}
         >
           <Text>open electricity task</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
@@ -580,9 +593,11 @@ export default function GameScreen({ navigation }) {
       />
       <ElectricityTask
         active={activeTask.name === 'electricity'}
+        code={Array.from({ length: 3 }, () => Math.floor(Math.random() * 9))}
         complete={completeTask}
         closeTask={closeTask}
       />
+      <Timer playing={sabotageActive} />
     </View>
   );
 }
