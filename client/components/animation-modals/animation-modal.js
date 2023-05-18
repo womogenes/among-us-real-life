@@ -6,8 +6,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Constants from 'expo-constants';
-import { ProfileIcon } from './profile-icon';
-import CustomText from './text';
+import CustomText from '../text';
 import { useState } from 'react';
 
 export const AnimationModal = (props) => {
@@ -15,17 +14,15 @@ export const AnimationModal = (props) => {
     props:
       children (React thing for content)
   */
-  const [isVisible, setIsVisible] = useState(true);
 
   return (
-    <Modal animationType="fade" transparent={true} visible={isVisible}>
+    <Modal animationType="fade" transparent={true} visible={props.isVisible}>
       <View style={styles.modal}>
         <View style={styles.content}>
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => {
-              setIsVisible(false);
-              props.onClose();
+              if (props.onClose) props.onClose();
             }}
           >
             <CustomText textSize={30}>&#10006;</CustomText>
@@ -50,6 +47,7 @@ const styles = StyleSheet.create({
     right: 5,
     top: 0,
     margin: 10,
+    zIndex: 1,
   },
 
   content: {

@@ -31,7 +31,7 @@ import SabotageFlash from '../components/flash.js';
 import VotingModal from '../components/voting.js';
 import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
-import { AnimationModal } from '../components/animation-modal.js';
+import { EjectModal } from '../components/animation-modals/eject-modal.js';
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
@@ -46,7 +46,7 @@ export default function GameScreen({ navigation }) {
 
   //// HOOKS
 
-  //SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
+  // SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
   const [sabotageActive, setSabotageActive] = useState(false);
   const [sabNotif, setSabNotif] = useState(false);
   const [sabotageOnCooldown, setSabotageOnCooldown] = useState(false);
@@ -56,8 +56,9 @@ export default function GameScreen({ navigation }) {
   });
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
+  const [ejectModalVisible, setEjectModalVisible] = useState(false);
 
-  //BUTTON HOOKS
+  // BUTTON HOOKS
   const [disableActions, setDisableActions] = useState(false);
   const [buttonState, setButtonState] = useState({
     use: true, // These should all be true at the beginning of the game
@@ -67,7 +68,7 @@ export default function GameScreen({ navigation }) {
     sabotage: false,
   });
 
-  //TASK HOOKS
+  // TASK HOOKS
   const [taskCompletion, setTaskCompletion] = useState(0);
   const [activeTask, setActiveTask] = useState({
     name: null,
@@ -76,7 +77,7 @@ export default function GameScreen({ navigation }) {
   const [distTask, setDistTask] = useState([]);
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
-  //PLAYER HOOKS
+  // PLAYER HOOKS
   const [location, setLocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -86,12 +87,12 @@ export default function GameScreen({ navigation }) {
   const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
   const [distPlayer, setDistPlayer] = useState([]);
 
-  //REFRESH HOOK
+  // REFRESH HOOK
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
 
   //// FUNCTIONS
 
-  //SABOTAGE, EMERGENCY MEETING AND VOTING FUNCTIONS
+  // SABOTAGE, EMERGENCY MEETING AND VOTING FUNCTIONS
   function sabotage(type) {
     getGameRoom().send(type);
     setSabotageActive(true);
@@ -113,7 +114,7 @@ export default function GameScreen({ navigation }) {
     setSabotageOnCooldown(false);
   }
 
-  //BUTTON FUNCTIONS
+  // BUTTON FUNCTIONS
   function changeButtonState(button, state) {
     setButtonState((prevButtonState) => ({
       ...prevButtonState,
@@ -570,10 +571,21 @@ export default function GameScreen({ navigation }) {
         >
           <Text>open electricity task</Text>
         </TouchableOpacity> */}
+
+        <TouchableOpacity
+          onPress={() => setEjectModalVisible(true)}
+          style={styles.testButton}
+        >
+          <Text>open eject modal</Text>
+        </TouchableOpacity>
       </View>
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
-      <AnimationModal />
+      <EjectModal
+        isVisible={ejectModalVisible}
+        onClose={() => setEjectModalVisible(false)}
+        player={player}
+      />
 
       {/* TASKS */}
       <CaptchaTask
