@@ -328,6 +328,7 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('sabotage', () => {
       setSabotageActive(true);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     });
 
     room.onMessage('sabotageOver', () => {
@@ -512,7 +513,7 @@ export default function GameScreen({ navigation }) {
           setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
           sabotageOnCooldown={sabotageOnCooldown}
-          sabotageCooldown={1000}
+          sabotageCooldown={10}
           endSabotageCooldown={() => endSabotageCooldown()}
           o2={() => sabotage('o2')}
         />
