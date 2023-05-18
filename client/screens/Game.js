@@ -333,6 +333,22 @@ export default function GameScreen({ navigation }) {
       setSabNotif(taskId);
     });
 
+    room.onMessage('endedGame', (message) => {
+      if (message == 'impostor') {
+        return (
+          <View style="gameEnded">
+            <Text>Impostors won!</Text>
+          </View>
+        );
+      } else if (message == 'crewmate') {
+        return (
+          <View style="gameEnded">
+            <Text>Crewmates won!</Text>
+          </View>
+        );
+      }
+    });
+
     room.onStateChange((state) => {
       setPlayers(state.players);
       setPlayer();
@@ -578,7 +594,6 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'flex-start',
   },
-
   map: {
     position: 'absolute',
     top: 0,
@@ -586,7 +601,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-
   deathScreen: {
     width: '100%',
     height: '100%',
@@ -597,7 +611,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 300, // To put text slightly above center
   },
-
   emergencyScreen: {
     position: 'absolute',
     width: '100%',
@@ -608,21 +621,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   deathText: {},
-
   debugContainer: {
     alignItems: 'flex-end',
     marginTop: Constants.statusBarHeight,
     borderRadius: 10,
     zIndex: 2,
   },
-
   testButton: {
     padding: 10,
     margin: 10,
     backgroundColor: 'powderblue',
     borderRadius: 5,
+  },
+  gameEnded: {
+    backgroundColor: 'black',
   },
 });
 

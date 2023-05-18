@@ -39,6 +39,8 @@ function LobbyScreen({ navigation }) {
   const [votingTimer, setVotingTimer] = useState([30]);
   const [prevVotingTimer, setPrevVotingTimer] = useState([30]);
 
+  const [impostorLimit, setImpostorLimit] = useState([1]);
+
   const [roomState, setRoomState] = useState({});
   const [roomCode, setRoomCode] = useState('0000');
 
@@ -58,6 +60,12 @@ function LobbyScreen({ navigation }) {
         (p) => p.sessionId === room.sessionId
       ).isHost;
       setIsHost(isHost);
+
+      if (room.state.players.length <= 3) {
+        setImpostorLimit(1);
+      } else {
+        setImpostorLimit(Math.ceil(room.state.players.length / 2) - 1);
+      }
 
       // If not host, update this info
       // (Host has control over this info on their end)
@@ -252,10 +260,7 @@ function LobbyScreen({ navigation }) {
                 <Slider
                   value={impostorNum}
                   minimumValue={1}
-                  maximumValue={
-                    //Math.ceil(getGameRoom().state.players.length / 2) - 1
-                    8
-                  }
+                  maximumValue={impostorLimit}
                   step={1}
                   onValueChange={(impostorNum) => {
                     setImpostorNum(impostorNum);
