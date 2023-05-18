@@ -1,13 +1,13 @@
 import { StyleSheet, View, Image } from 'react-native';
 
-export const TaskIcon = (props) => {
-  const images = {
-    reCaptcha: require('../assets/task-icons/recaptcha.png'),
-    o2: require('../assets/task-icons/passcode.png'),
-    memory: require('../assets/task-icons/memory.png'),
-    electricity: require('../assets/task-icons/electricity.png'),
-  };
+const images = {
+  reCaptcha: require('../assets/task-icons/recaptcha.png'),
+  o2: require('../assets/task-icons/passcode.png'),
+  memory: require('../assets/task-icons/memory.png'),
+  electricity: require('../assets/task-icons/electricity.png'),
+};
 
+export const TaskIcon = (props) => {
   return (
     <Image
       style={[

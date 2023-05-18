@@ -2,15 +2,16 @@ import { StyleSheet, View, Image } from 'react-native';
 
 import { getGameRoom } from '../networking';
 
+const images = {
+  red: require('../assets/profile-icons/red.png'),
+  blue: require('../assets/profile-icons/blue.png'),
+  green: require('../assets/profile-icons/green.png'),
+  white: require('../assets/profile-icons/white.png'),
+};
+
 export const ProfileIcon = ({ player, size, style }) => {
   if (!player) return;
 
-  const images = {
-    red: require('../assets/profile-icons/red.png'),
-    blue: require('../assets/profile-icons/blue.png'),
-    green: require('../assets/profile-icons/green.png'),
-    white: require('../assets/profile-icons/white.png'),
-  };
   const { icon } = player;
 
   return (

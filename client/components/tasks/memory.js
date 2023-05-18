@@ -17,35 +17,36 @@ function MemoryTask(props) {
 
   useEffect(() => {
     if (props.active) {
-      // could change code every time the task is opened, but then there are problems with the state not updating before the green squares are displayed
-      // setCode(Array.from({ length: 4 }, () => Math.floor(Math.random() * 16)));
-      // console.log(code);
+      setCode(Array.from({ length: 4 }, () => Math.floor(Math.random() * 16)));
       setInput([-1, -1, -1, -1]);
       setInd(0);
       setDisable(true);
       setLoading(false);
-      let timer = [];
-      let timerReset = [];
-      code.forEach((item, i) => {
-        timer[i] = setTimeout(() => {
-          setGreen(item);
-        }, (i + 1) * 750);
-        timerReset[i] = setTimeout(() => {
-          setGreen(-1);
-        }, (i + 2) * 750 - 250);
-      });
-      const dis = setTimeout(() => {
-        setDisable(false);
-      }, code.length + 2 * 750 - 250);
-      return () => {
-        clearTimeout(dis);
-        timer.forEach((t) => clearTimeout(t));
-        timerReset.forEach((t) => clearTimeout(t));
-      };
     } else {
       setLoading(true);
     }
   }, [props.active]);
+
+  useEffect(() => {
+    let timer = [];
+    let timerReset = [];
+    code.forEach((item, i) => {
+      timer[i] = setTimeout(() => {
+        setGreen(item);
+      }, (i + 1) * 750);
+      timerReset[i] = setTimeout(() => {
+        setGreen(-1);
+      }, (i + 2) * 750 - 250);
+    });
+    const dis = setTimeout(() => {
+      setDisable(false);
+    }, code.length + 2 * 750 - 250);
+    return () => {
+      clearTimeout(dis);
+      timer.forEach((t) => clearTimeout(t));
+      timerReset.forEach((t) => clearTimeout(t));
+    };
+  }, [code]);
 
   const keypad = [...Array(4).keys()].map((row) => (
     <View style={styles.row} key={`row: ${row}`}>

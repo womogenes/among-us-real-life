@@ -27,7 +27,7 @@ function ElectricityTask(props) {
         Math.floor(Math.random() * 9),
         Math.floor(Math.random() * 9),
       ]);
-      // setCode(Array.from({ length: 3 }, () => Math.floor(Math.random() * 9)));
+      setCode(Array.from({ length: 3 }, () => Math.floor(Math.random() * 9)));
       setLoading(false);
     } else {
       setLoading(true);
