@@ -26,9 +26,9 @@ import {
             <CountdownCircleTimer
                 size={120}
                 isPlaying={props.playing}
-                duration={90}
+                duration={180}
                 colors={["#00e808", "#ffe51f", "#f7f723", "#ff2200", "#6b0000"]}
-                colorsTime={[90, 80, 50, 20, 0]}
+                colorsTime={[180, 80, 50, 20, 0]}
                 onComplete={() => [completion(), {shouldRepeat: false}]}
                 updateInterval={1}
             >

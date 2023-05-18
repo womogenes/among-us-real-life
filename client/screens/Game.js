@@ -5,7 +5,11 @@ import {
   Button,
   Text,
   Platform,
+<<<<<<< HEAD
   ActivityIndicator,
+=======
+  Modal,
+>>>>>>> e05eeb3f9437f09687489abd38449796206989db
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -32,6 +36,11 @@ import CustomText from '../components/text.js';
 import SabotageFlash from '../components/flash.js';
 import VotingModal from '../components/voting.js';
 import { ProfileIcon } from '../components/profile-icon.js';
+<<<<<<< HEAD
+=======
+import { TaskIcon } from '../components/task-icon.js';
+import { EjectModal } from '../components/animation-modals/eject-modal.js';
+>>>>>>> e05eeb3f9437f09687489abd38449796206989db
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
@@ -46,7 +55,7 @@ export default function GameScreen({ navigation }) {
 
   //// HOOKS
 
-  //SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
+  // SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
   const [sabotageActive, setSabotageActive] = useState(false);
   const [sabNotif, setSabNotif] = useState(false);
   const [sabotageOnCooldown, setSabotageOnCooldown] = useState(false);
@@ -56,8 +65,9 @@ export default function GameScreen({ navigation }) {
   });
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
+  const [ejectModalVisible, setEjectModalVisible] = useState(false);
 
-  //BUTTON HOOKS
+  // BUTTON HOOKS
   const [disableActions, setDisableActions] = useState(false);
   const [buttonState, setButtonState] = useState({
     use: true, // These should all be true at the beginning of the game
@@ -67,7 +77,9 @@ export default function GameScreen({ navigation }) {
     sabotage: false,
   });
 
-  //TASK HOOKS
+  // ENDING GAME HOOKS
+
+  // TASK HOOKS
   const [taskCompletion, setTaskCompletion] = useState(0);
   const [activeTask, setActiveTask] = useState({
     name: null,
@@ -76,7 +88,7 @@ export default function GameScreen({ navigation }) {
   const [distTask, setDistTask] = useState([]);
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
-  //PLAYER HOOKS
+  // PLAYER HOOKS
   const [location, setLocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -92,7 +104,7 @@ export default function GameScreen({ navigation }) {
 
   //// FUNCTIONS
 
-  //SABOTAGE, EMERGENCY MEETING AND VOTING FUNCTIONS
+  // SABOTAGE, EMERGENCY MEETING AND VOTING FUNCTIONS
   function sabotage(type) {
     getGameRoom().send(type);
     setSabotageActive(true);
@@ -114,7 +126,7 @@ export default function GameScreen({ navigation }) {
     setSabotageOnCooldown(false);
   }
 
-  //BUTTON FUNCTIONS
+  // BUTTON FUNCTIONS
   function changeButtonState(button, state) {
     setButtonState((prevButtonState) => ({
       ...prevButtonState,
@@ -184,13 +196,13 @@ export default function GameScreen({ navigation }) {
     changeButtonState('report', c);
   }
 
-  //TASK FUNCTIONS
+  // TASK FUNCTIONS
   const taskMarkers = () => taskUtils.taskMarkers(tasks);
   const completeTask = () =>
     taskUtils.completeTask(activeTask, setActiveTask, getGameRoom);
   const closeTask = () => taskUtils.closeTask(setActiveTask);
 
-  //PLAYER AND TASK LOCATION
+  // PLAYER AND TASK LOCATION
   const setLocationHook = (loc) => {
     //for testing only
     if (manualMovementVar) return;
@@ -305,14 +317,14 @@ export default function GameScreen({ navigation }) {
     ),
   ]);
 
-  //SABOTAGE
+  // SABOTAGE
   useEffect(() => {
     if (activeTask.taskId === sabNotif) {
       closeTask();
     }
   }, [sabNotif]);
 
-  //SERVER STUFF
+  // SERVER STUFF
   useEffect(() => {
     // Networking update loop
     const room = getGameRoom();
@@ -334,6 +346,7 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('sabotage', () => {
       setSabotageActive(true);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     });
 
     room.onMessage('sabotageOver', () => {
@@ -343,6 +356,18 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('task complete', (taskId) => {
       setSabNotif(taskId);
+    });
+
+    room.onMessage('endedGame', (message) => {
+      if (message == 'impostor') {
+        console.log('HUH');
+      } else if (message == 'crewmate') {
+        return (
+          <View style="gameEnded">
+            <Text>Crewmates won!</Text>
+          </View>
+        );
+      }
     });
 
     room.onStateChange((state) => {
@@ -510,7 +535,7 @@ export default function GameScreen({ navigation }) {
             disableActions || !player?.isAlive || buttonState.kill
           }
           killButtonPress={killButton}
-          killCooldown={10}
+          cooldown={getGameRoom().state.settings.killCooldown}
           disguiseButtonState={buttonState.disguise}
           sabotageButtonState={disableActions || buttonState.sabotage}
           reportButtonState={disableActions || buttonState.report}
@@ -522,7 +547,7 @@ export default function GameScreen({ navigation }) {
           setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
           sabotageOnCooldown={sabotageOnCooldown}
-          sabotageCooldown={1000}
+          sabotageCooldown={10}
           endSabotageCooldown={() => endSabotageCooldown()}
           o2={() => sabotage('o2')}
         />
@@ -563,9 +588,21 @@ export default function GameScreen({ navigation }) {
         >
           <Text>open electricity task</Text>
         </TouchableOpacity> */}
+
+        <TouchableOpacity
+          onPress={() => setEjectModalVisible(true)}
+          style={styles.testButton}
+        >
+          <Text>open eject modal</Text>
+        </TouchableOpacity>
       </View>
 
-      <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
+      <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
+      <EjectModal
+        isVisible={ejectModalVisible}
+        onClose={() => setEjectModalVisible(false)}
+        player={player}
+      />
 
       {/* TASKS */}
       <CaptchaTask
@@ -609,7 +646,6 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'flex-start',
   },
-
   map: {
     position: 'absolute',
     top: 0,
@@ -617,7 +653,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-
   deathScreen: {
     width: '100%',
     height: '100%',
@@ -628,7 +663,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 300, // To put text slightly above center
   },
-
   emergencyScreen: {
     position: 'absolute',
     width: '100%',
@@ -639,21 +673,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   deathText: {},
-
   debugContainer: {
     alignItems: 'flex-end',
     marginTop: Constants.statusBarHeight,
     borderRadius: 10,
     zIndex: 2,
   },
-
   testButton: {
     padding: 10,
     margin: 10,
     backgroundColor: 'powderblue',
     borderRadius: 5,
+  },
+  gameEnded: {
+    backgroundColor: 'black',
+    flex: 1,
   },
 });
 
