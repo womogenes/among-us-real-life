@@ -5,7 +5,11 @@ import {
   Button,
   Text,
   Platform,
+<<<<<<< HEAD
+  ActivityIndicator,
+=======
   Modal,
+>>>>>>> e05eeb3f9437f09687489abd38449796206989db
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -16,7 +20,8 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { getGameRoom, lobbyRoom } from '../networking.js';
 import { findDistance, distAll, findClosest } from '../utils.js';
-import * as taskUtils from '../tasks-utils.js';
+// import * as taskUtils from '../tasks-utils.js';
+const taskUtils = require('../tasks-utils.js');
 
 import Minimap from '../components/minimap.js';
 import ControlPanel from '../components/controlpanel.js';
@@ -31,8 +36,11 @@ import CustomText from '../components/text.js';
 import SabotageFlash from '../components/flash.js';
 import VotingModal from '../components/voting.js';
 import { ProfileIcon } from '../components/profile-icon.js';
+<<<<<<< HEAD
+=======
 import { TaskIcon } from '../components/task-icon.js';
 import { EjectModal } from '../components/animation-modals/eject-modal.js';
+>>>>>>> e05eeb3f9437f09687489abd38449796206989db
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
@@ -90,8 +98,9 @@ export default function GameScreen({ navigation }) {
   const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
   const [distPlayer, setDistPlayer] = useState([]);
 
-  // REFRESH HOOK
+  //REFRESH + LOADING HOOK
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
+  const [loading, setLoading] = useState(true); // "Refresh" state to force rerenders
 
   //// FUNCTIONS
 
@@ -200,6 +209,7 @@ export default function GameScreen({ navigation }) {
     //
     getGameRoom()?.send('location', loc);
     setLocation(loc);
+    setLoading(false);
   };
   const animate = (loc) => {
     let r = {
@@ -259,7 +269,10 @@ export default function GameScreen({ navigation }) {
       }
 
       // Initial location update
-      let newLocation = await Location.getCurrentPositionAsync({});
+      let newLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Highest,
+        maximumAge: 10000,
+      });
       // Necessary hook to send update to server
       // ("Hook" might be an inaccurate term)
       // See definition at top of this file
@@ -404,7 +417,11 @@ export default function GameScreen({ navigation }) {
     };
   }, []);
 
-  return (
+  return loading ? (
+    <View style={styles.loading}>
+      <ActivityIndicator size="large" />
+    </View>
+  ) : (
     <View style={styles.container}>
       {/* !! HACKY STUFF!! Force rerenders with this state */}
       <View style={{ display: 'none' }}>
@@ -422,7 +439,6 @@ export default function GameScreen({ navigation }) {
         pitchEnabled={false}
         rotateEnabled={false}
         scrollEnabled={false}
-        zoomEnabled={false}
         initialRegion={{
           latitude: 47.7326514,
           longitude: -122.3278194,
@@ -432,6 +448,7 @@ export default function GameScreen({ navigation }) {
         // Changed from satellite for android for performance
         mapType={Platform.OS === 'ios' ? 'standard' : 'standard'}
         moveOnMarkerPress={false}
+        liteMode={true}
       >
         {/* PLAYER MARKERS */}
         {players.map((p) => {
@@ -617,6 +634,12 @@ export default function GameScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#fff',
