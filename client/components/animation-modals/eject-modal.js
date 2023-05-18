@@ -1,4 +1,4 @@
-import { StyleSheet, View, Modal, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Modal, TouchableOpacity, Text } from 'react-native';
 import { ProfileIcon } from '../profile-icon';
 import CustomText from '../text';
 import { useState } from 'react';
@@ -11,10 +11,27 @@ export const EjectModal = (props) => {
   if (!props.player) return;
 
   return (
-    <AnimationModal isVisible={props.isVisible} onClose={props.onClose}>
+    <AnimationModal
+      isVisible={props.isVisible}
+      size={100}
+      onClose={props.onClose}
+    >
       <View style={styles.container}>
-        <CustomText>Hello</CustomText>
-        {/* <ProfileIcon player={props.player} /> */}
+        <ProfileIcon
+          style={{ marginBottom: 20 }}
+          player={props.player}
+          size={200}
+        />
+        <CustomText textSize={40} centerText={true}>
+          <Text style={{ fontSize: 60, color: '#fff' }}>
+            {props.player.username}
+            {'\n'}
+          </Text>
+          <Text style={{ color: '#888' }}>
+            {props.player.isImpostor ? ' was ' : ' was not '}
+            the impostor
+          </Text>
+        </CustomText>
       </View>
     </AnimationModal>
   );
@@ -22,6 +39,11 @@ export const EjectModal = (props) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000',
+    borderRadius: 15,
   },
 });

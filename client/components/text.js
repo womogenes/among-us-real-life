@@ -6,7 +6,6 @@ function CustomText(props) {
   return (
     <View
       style={[
-        styles.button,
         props.top && { top: props.top },
         props.bottom && { bottom: props.bottom },
         props.right && { right: props.right },
