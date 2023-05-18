@@ -39,7 +39,7 @@ export default function votingModal(props) {
   }, []);
 
   return (
-    <Modal isVisible={props.isModalVisible} animationType="slide">
+    <Modal isVisible={props.isVisible} animationType="slide">
       <View style={styles.votingModal}>
         {/* <Button
           onPress={() =>

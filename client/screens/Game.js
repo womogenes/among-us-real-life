@@ -5,6 +5,7 @@ import {
   Button,
   Text,
   Platform,
+  Modal,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -31,6 +32,7 @@ import SabotageFlash from '../components/flash.js';
 import VotingModal from '../components/voting.js';
 import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
+import { AnimationModal } from '../components/animation-modal.js';
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
@@ -65,6 +67,8 @@ export default function GameScreen({ navigation }) {
     disguise: false,
     sabotage: false,
   });
+
+  // ENDING GAME HOOKS
 
   //TASK HOOKS
   const [taskCompletion, setTaskCompletion] = useState(0);
@@ -182,13 +186,13 @@ export default function GameScreen({ navigation }) {
     changeButtonState('report', c);
   }
 
-  //TASK FUNCTIONS
+  // TASK FUNCTIONS
   const taskMarkers = () => taskUtils.taskMarkers(tasks);
   const completeTask = () =>
     taskUtils.completeTask(activeTask, setActiveTask, getGameRoom);
   const closeTask = () => taskUtils.closeTask(setActiveTask);
 
-  //PLAYER AND TASK LOCATION
+  // PLAYER AND TASK LOCATION
   const setLocationHook = (loc) => {
     //for testing only
     if (manualMovementVar) return;
@@ -299,14 +303,14 @@ export default function GameScreen({ navigation }) {
     ),
   ]);
 
-  //SABOTAGE
+  // SABOTAGE
   useEffect(() => {
     if (activeTask.taskId === sabNotif) {
       closeTask();
     }
   }, [sabNotif]);
 
-  //SERVER STUFF
+  // SERVER STUFF
   useEffect(() => {
     // Networking update loop
     const room = getGameRoom();
@@ -338,6 +342,18 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('task complete', (taskId) => {
       setSabNotif(taskId);
+    });
+
+    room.onMessage('endedGame', (message) => {
+      if (message == 'impostor') {
+        console.log('HUH');
+      } else if (message == 'crewmate') {
+        return (
+          <View style="gameEnded">
+            <Text>Crewmates won!</Text>
+          </View>
+        );
+      }
     });
 
     room.onStateChange((state) => {
@@ -501,7 +517,7 @@ export default function GameScreen({ navigation }) {
             disableActions || !player?.isAlive || buttonState.kill
           }
           killButtonPress={killButton}
-          killCooldown={10}
+          cooldown={getGameRoom().state.settings.killCooldown}
           disguiseButtonState={buttonState.disguise}
           sabotageButtonState={disableActions || buttonState.sabotage}
           reportButtonState={disableActions || buttonState.report}
@@ -556,7 +572,8 @@ export default function GameScreen({ navigation }) {
         </TouchableOpacity> */}
       </View>
 
-      <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
+      <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
+      <AnimationModal />
 
       {/* TASKS */}
       <CaptchaTask
@@ -582,9 +599,7 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
-      <Timer
-        playing={sabotageActive}
-      />
+      <Timer playing={sabotageActive} />
     </View>
   );
 }
@@ -596,7 +611,6 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'flex-start',
   },
-
   map: {
     position: 'absolute',
     top: 0,
@@ -604,7 +618,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-
   deathScreen: {
     width: '100%',
     height: '100%',
@@ -615,7 +628,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 300, // To put text slightly above center
   },
-
   emergencyScreen: {
     position: 'absolute',
     width: '100%',
@@ -626,21 +638,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   deathText: {},
-
   debugContainer: {
     alignItems: 'flex-end',
     marginTop: Constants.statusBarHeight,
     borderRadius: 10,
     zIndex: 2,
   },
-
   testButton: {
     padding: 10,
     margin: 10,
     backgroundColor: 'powderblue',
     borderRadius: 5,
+  },
+  gameEnded: {
+    backgroundColor: 'black',
+    flex: 1,
   },
 });
 
