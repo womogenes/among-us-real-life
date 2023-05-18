@@ -68,7 +68,8 @@ export class Player extends Schema {
     // Make a default test task
     this.tasks = new ArraySchema();
     this.tasks.push(
-      new Task('reCaptcha', new Location(47.731475, -122.328036, 0)), // AG
+      new Task('electricity', new Location(47.731475, -122.328036, 0)), // AG
+      new Task('electricity', new Location(47.731475, -122.32804, 0)), // AG
       new Task('reCaptcha', new Location(47.731392, -122.327791, 0)), // East end of AG
       new Task('memory', new Location(47.732346, -122.326806, 0)), // Moore
       new Task('memory', new Location(47.731639, -122.327612, 0)), // Red square
@@ -108,10 +109,10 @@ class Settings extends Schema {
   constructor() {
     super();
 
-    this.killRadius = 5;
-    this.killCooldown = 10;
-    this.imposterNum = 1;
-    this.votingTimer = 10;
+    this.killRadius = 10;
+    this.killCooldown = 20;
+    this.impostorNum = 1;
+    this.votingTimer = 30;
   }
 
   update(newSettings) {
@@ -123,7 +124,7 @@ class Settings extends Schema {
 schema.defineTypes(Settings, {
   killRadius: 'number',
   killCooldown: 'number',
-  imposterNum: 'number',
+  impostorNum: 'number',
   votingTimer: 'number',
 });
 

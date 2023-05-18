@@ -102,6 +102,23 @@ export class GameRoom extends Room {
 
           this.state.gameState = 'normal';
           this.state.emergencyMeetingLocation = new Location();
+
+          let crewCount = 0;
+          let impostorCount = 0;
+          for (let i = 0; i < this.state.players.length; i++) {
+            if (this.state.players[i].isAlive == true) {
+              if (this.state.players[i].isImpostor == false) {
+                crewCount++;
+              } else {
+                impostorCount++;
+              }
+            }
+          }
+          if (crewCount <= impostorCount) {
+            this.broadcast('gameEnded', 'impostor');
+          } else if (imposterCount == 0) {
+            this.broadcast('gameEnded', 'crewmate');
+          }
         }
       }, 1000);
     };
@@ -153,6 +170,7 @@ export class GameRoom extends Room {
 
       if (this.state.sabotageTaskList.length == 0) {
         this.broadcast('sabotageOver');
+        this.state.sabotageCooldown = true;
         this.state.players.forEach((p) => {
           let taskIndex = 0;
           while (taskIndex != -1) {
@@ -174,7 +192,22 @@ export class GameRoom extends Room {
     this.onMessage('playerDeath', (client, sessionId) => {
       let player = this.state.players.find((p) => p.sessionId === sessionId);
       player.isAlive = false;
+
       player.location.update(player.location);
+      let crewCount = 0;
+      let impostorCount = 0;
+      for (let i = 0; i < this.state.players.length; i++) {
+        if (this.state.players[i].isAlive == true) {
+          if (this.state.players[i].isImpostor == false) {
+            crewCount++;
+          } else {
+            impostorCount++;
+          }
+        }
+      }
+      if (crewCount <= impostorCount) {
+        this.broadcast('endedGame', 'impostor');
+      }
     });
 
     this.onMessage('callEmergency', (client, location) => {
@@ -217,8 +250,19 @@ export class GameRoom extends Room {
         return;
       }
 
-      // Assign an impostor (for now, make it the host)
+      let impostorNum = this.state.settings.impostorNum;
       this.state.players.find((p) => p.isHost).isImpostor = true;
+      impostorNum--;
+      console.log(impostorNum);
+      if (impostorNum != 0) {
+        const set = new Set();
+        while (set.size < impostorNum) {
+          set.add(Math.floor(Math.random() * this.state.players.length) + 1);
+        }
+        for (let i of set) {
+          this.state.players[i].isImpostor = true;
+        }
+      }
 
       // Extremely hacky and bad
       // Necessary to make impostor assignment work
@@ -234,17 +278,6 @@ export class GameRoom extends Room {
     this.onMessage('settingsUpdated', (client, settings) => {
       this.state.settings.update(settings);
       this.state.refresh += 1;
-    });
-
-    // Currently not used
-    this.onMessage('endGame', (client) => {
-      const isHost =
-        client.sessionId === this.state.players.find((p) => p.isHost).sessionId;
-      if (!isHost) {
-        return;
-      }
-      this.broadcast('gameEnded');
-      this.disconnect();
     });
 
     this.onMessage('startVoting', () => {

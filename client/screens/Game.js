@@ -19,6 +19,7 @@ import * as taskUtils from '../tasks-utils.js';
 
 import Minimap from '../components/minimap.js';
 import ControlPanel from '../components/controlpanel.js';
+import Timer from '../components/timer.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 import CodeTask from '../components/sabotage/passcode.js';
@@ -48,6 +49,7 @@ export default function GameScreen({ navigation }) {
   //SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
   const [sabotageActive, setSabotageActive] = useState(false);
   const [sabNotif, setSabNotif] = useState(false);
+  const [sabotageOnCooldown, setSabotageOnCooldown] = useState(false);
   const [emergencyMeetingLocation, setEmergencyMeetingLocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -106,6 +108,10 @@ export default function GameScreen({ navigation }) {
     setVotingModalVisible(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
   };
+
+  function endSabotageCooldown() {
+    setSabotageOnCooldown(false);
+  }
 
   //BUTTON FUNCTIONS
   function changeButtonState(button, state) {
@@ -172,10 +178,9 @@ export default function GameScreen({ navigation }) {
     }
   }
   function activateReportButton() {
-    changeButtonState(
-      'report',
-      !(distPlayer.filter((p) => !p.isAlive).length > 0)
-    );
+    let c = !(distPlayer.filter((p) => !p.isAlive).length > 0);
+    if (!c) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    changeButtonState('report', c);
   }
 
   // TASK FUNCTIONS
@@ -328,10 +333,27 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('sabotageOver', () => {
       setSabotageActive(false);
+      setSabotageOnCooldown(true);
     });
 
     room.onMessage('task complete', (taskId) => {
       setSabNotif(taskId);
+    });
+
+    room.onMessage('endedGame', (message) => {
+      if (message == 'impostor') {
+        return (
+          <View style="gameEnded">
+            <Text>Impostors won!</Text>
+          </View>
+        );
+      } else if (message == 'crewmate') {
+        return (
+          <View style="gameEnded">
+            <Text>Crewmates won!</Text>
+          </View>
+        );
+      }
     });
 
     room.onStateChange((state) => {
@@ -495,7 +517,7 @@ export default function GameScreen({ navigation }) {
             disableActions || !player?.isAlive || buttonState.kill
           }
           killButtonPress={killButton}
-          cooldown={10}
+          cooldown={getGameRoom().state.settings.killCooldown}
           disguiseButtonState={buttonState.disguise}
           sabotageButtonState={disableActions || buttonState.sabotage}
           reportButtonState={disableActions || buttonState.report}
@@ -506,6 +528,9 @@ export default function GameScreen({ navigation }) {
           manualMovement={manualMovement}
           setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
+          sabotageOnCooldown={sabotageOnCooldown}
+          sabotageCooldown={1000}
+          endSabotageCooldown={() => endSabotageCooldown()}
           o2={() => sabotage('o2')}
         />
       ) : playerState == 'disguised' ? (
@@ -525,11 +550,7 @@ export default function GameScreen({ navigation }) {
 
       {/* TESTING BUTTONS */}
       <View style={styles.debugContainer}>
-        {/* testing button below */}
-        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
-          <Text>toggle voting modal</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             getGameRoom().send('playerDeath', getGameRoom().sessionId);
           }}
@@ -548,7 +569,7 @@ export default function GameScreen({ navigation }) {
           style={styles.testButton}
         >
           <Text>open electricity task</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
@@ -574,9 +595,11 @@ export default function GameScreen({ navigation }) {
       />
       <ElectricityTask
         active={activeTask.name === 'electricity'}
+        code={Array.from({ length: 3 }, () => Math.floor(Math.random() * 9))}
         complete={completeTask}
         closeTask={closeTask}
       />
+      <Timer playing={sabotageActive} />
     </View>
   );
 }
@@ -588,7 +611,6 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'flex-start',
   },
-
   map: {
     position: 'absolute',
     top: 0,
@@ -596,7 +618,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-
   deathScreen: {
     width: '100%',
     height: '100%',
@@ -607,7 +628,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 300, // To put text slightly above center
   },
-
   emergencyScreen: {
     position: 'absolute',
     width: '100%',
@@ -618,21 +638,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   deathText: {},
-
   debugContainer: {
     alignItems: 'flex-end',
     marginTop: Constants.statusBarHeight,
     borderRadius: 10,
     zIndex: 2,
   },
-
   testButton: {
     padding: 10,
     margin: 10,
     backgroundColor: 'powderblue',
     borderRadius: 5,
+  },
+  gameEnded: {
+    backgroundColor: 'black',
   },
 });
 
