@@ -32,6 +32,7 @@ import SabotageFlash from '../components/flash.js';
 import VotingModal from '../components/voting.js';
 import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
+import { AnimationModal } from '../components/animation-modal.js';
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
@@ -185,13 +186,13 @@ export default function GameScreen({ navigation }) {
     changeButtonState('report', c);
   }
 
-  //TASK FUNCTIONS
+  // TASK FUNCTIONS
   const taskMarkers = () => taskUtils.taskMarkers(tasks);
   const completeTask = () =>
     taskUtils.completeTask(activeTask, setActiveTask, getGameRoom);
   const closeTask = () => taskUtils.closeTask(setActiveTask);
 
-  //PLAYER AND TASK LOCATION
+  // PLAYER AND TASK LOCATION
   const setLocationHook = (loc) => {
     //for testing only
     if (manualMovementVar) return;
@@ -302,14 +303,14 @@ export default function GameScreen({ navigation }) {
     ),
   ]);
 
-  //SABOTAGE
+  // SABOTAGE
   useEffect(() => {
     if (activeTask.taskId === sabNotif) {
       closeTask();
     }
   }, [sabNotif]);
 
-  //SERVER STUFF
+  // SERVER STUFF
   useEffect(() => {
     // Networking update loop
     const room = getGameRoom();
@@ -570,7 +571,8 @@ export default function GameScreen({ navigation }) {
         </TouchableOpacity> */}
       </View>
 
-      <VotingModal isModalVisible={votingModalVisible} timer={votingTimer} />
+      <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
+      <AnimationModal />
 
       {/* TASKS */}
       <CaptchaTask
