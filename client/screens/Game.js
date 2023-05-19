@@ -5,11 +5,8 @@ import {
   Button,
   Text,
   Platform,
-<<<<<<< HEAD
   ActivityIndicator,
-=======
   Modal,
->>>>>>> e05eeb3f9437f09687489abd38449796206989db
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
