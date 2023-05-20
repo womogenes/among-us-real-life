@@ -223,7 +223,7 @@ export class GameRoom extends Room {
       const newId1 = nanoid();
       const newTask1 = new Task(
         'o2',
-        new Location(47.731502, -122.32804, 0), // 47.73731712202693, -122.3394061888169 Felix's Coords
+        new Location(45.6101652274875, -122.50182848621826, 0), //47.731502, -122.32804 Lakeside 47.73731712202693, -122.3394061888169 Felix's Coords 45.6101652274875, -122.50182848621826 Crew Regatta Hotel Coords
         newId1
       );
       const newId2 = nanoid();
