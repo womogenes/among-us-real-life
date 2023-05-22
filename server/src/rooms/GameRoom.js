@@ -301,9 +301,8 @@ export class GameRoom extends Room {
   onJoin(client, options) {
     console.log(`${client.sessionId} joined room ${this.state.code}!`);
 
-    const availIcons = ['blue', 'green', 'red', 'white'];
-    const usedIcons = this.state.players.map((player) => player.icon);
-    const icon = availIcons.find((i) => !usedIcons.includes(i));
+    let availIcons = ['blue', 'green', 'red', 'white'];
+    const icon = availIcons[this.state.players.length % availIcons.length];
 
     const isHost = this.state.players.length === 0;
     this.state.players.push(new Player(client.sessionId, isHost, icon));
