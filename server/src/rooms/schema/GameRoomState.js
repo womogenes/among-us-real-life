@@ -112,6 +112,7 @@ class Settings extends Schema {
     this.killCooldown = 20;
     this.impostorNum = 1;
     this.votingTimer = 30;
+    this.playerSight = 100;
     this.anonVotes = false;
   }
 
@@ -126,6 +127,7 @@ schema.defineTypes(Settings, {
   killCooldown: 'number',
   impostorNum: 'number',
   votingTimer: 'number',
+  playerSight: 'number',
   anonVotes: 'boolean',
 });
 

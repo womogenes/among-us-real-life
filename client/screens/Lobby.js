@@ -10,6 +10,7 @@ import {
   Keyboard,
   FlatList,
   Switch,
+  ScrollView,
 } from 'react-native';
 import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
@@ -40,6 +41,12 @@ function LobbyScreen({ navigation }) {
   const [votingTimer, setVotingTimer] = useState([30]);
   const [prevVotingTimer, setPrevVotingTimer] = useState([30]);
 
+  const [playerSight, setPlayerSight] = useState([100]);
+  const [prevPlayerSight, setPrevPlayerSight] = useState([100]);
+
+  const [anonVotes, setAnonVotes] = useState([false]);
+  const [prevAnonVotes, setPrevAnonVotes] = useState([false]);
+
   const [impostorLimit, setImpostorLimit] = useState([1]);
 
   const [roomState, setRoomState] = useState({});
@@ -47,9 +54,6 @@ function LobbyScreen({ navigation }) {
 
   const [memberList, setMemberList] = useState([]);
   const [isHost, setIsHost] = useState(false);
-
-  const [anonVotes, setAnonVotes] = useState([false]);
-  const [prevAnonVotes, setPrevAnonVotes] = useState([false]);
 
   useEffect(() => {
     // NETWORKING STUFF
@@ -79,6 +83,7 @@ function LobbyScreen({ navigation }) {
         setImpostorNum(state.settings.impostorNum);
         setVotingTimer(state.settings.votingTimer);
         setAnonVotes(state.settings.anonVotes);
+        setPlayerSight(state.settings.playerSight);
       }
     });
 
@@ -104,6 +109,7 @@ function LobbyScreen({ navigation }) {
     setPrevImpostorNum(impostorNum);
     setPrevVotingTimer(votingTimer);
     setPrevAnonVotes(anonVotes);
+    setPrevPlayerSight(playerSight);
   }
 
   function dontSave() {
@@ -112,6 +118,7 @@ function LobbyScreen({ navigation }) {
     setImpostorNum(prevImpostorNum);
     setVotingTimer(prevVotingTimer);
     setAnonVotes(prevAnonVotes);
+    setPlayerSight(prevPlayerSight);
     getGameRoom().send('settingsUpdated', {
       killRadius: prevKillRadius[0],
       killCooldown: prevKillCooldown[0],
@@ -140,6 +147,7 @@ function LobbyScreen({ navigation }) {
       impostorNum: impostorNum[0],
       votingTimer: votingTimer[0],
       anonVotes: anonVotes[0],
+      playerSight: playerSight[0],
     });
   }
 
@@ -149,7 +157,9 @@ function LobbyScreen({ navigation }) {
     console.assert(isHost);
 
     // !! HACK !! for development only
-    if (true || Math.ceil(getGameRoom().state.players.length / 2) > impostorNum
+    if (
+      true ||
+      Math.ceil(getGameRoom().state.players.length / 2) > impostorNum
     ) {
       // Tell server to start game
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
@@ -231,97 +241,117 @@ function LobbyScreen({ navigation }) {
               <CustomText textSize={60} centerText={true} marginVertical={40}>
                 Settings
               </CustomText>
-              <View>
-                <CustomText centerText={true} textSize={40}>
-                  Kill Radius: {killRadius}m
-                </CustomText>
-                <Slider
-                  value={killRadius}
-                  minimumValue={2}
-                  maximumValue={100}
-                  step={1}
-                  onValueChange={(killRadius) => {
-                    setKillRadius(killRadius);
-                    settingsUpdated();
-                  }}
-                  trackClickable={true}
-                  disabled={!isHost}
-                />
-              </View>
-              <View>
-                <CustomText centerText={true} textSize={40}>
-                  Kill Cooldown: {killCooldown}s
-                </CustomText>
-                <Slider
-                  value={killCooldown}
-                  minimumValue={10}
-                  maximumValue={120}
-                  step={5}
-                  onValueChange={(killCooldown) => {
-                    setKillCooldown(killCooldown);
-                    settingsUpdated();
-                  }}
-                  trackClickable={true}
-                  disabled={!isHost}
-                />
-              </View>
-              <View>
-                <CustomText centerText={true} textSize={40}>
-                  Number of Impostors: {impostorNum}
-                </CustomText>
-                <Slider
-                  value={impostorNum}
-                  minimumValue={1}
-                  maximumValue={impostorLimit}
-                  step={1}
-                  onValueChange={(impostorNum) => {
-                    setImpostorNum(impostorNum);
-                    settingsUpdated();
-                  }}
-                  trackClickable={true}
-                  disabled={!isHost}
-                />
-              </View>
-              <View>
-                <CustomText centerText={true} textSize={40}>
-                  Voting Timer: {votingTimer}s
-                </CustomText>
-                <Slider
-                  value={votingTimer}
-                  minimumValue={10}
-                  maximumValue={180}
-                  step={10}
-                  onValueChange={(votingTimer) => {
-                    setVotingTimer(votingTimer);
-                    settingsUpdated();
-                  }}
-                  trackClickable={true}
-                  disabled={!isHost}
-                />
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flex: 1,
-                  justifyContent: 'center',
-                }}
-              >
-                <CustomText centerText={true} textSize={40}>
-                  Anonymous Votes
-                </CustomText>
-                <Switch
+              <ScrollView>
+                <View>
+                  <CustomText centerText={true} textSize={40}>
+                    Kill Radius: {killRadius}m
+                  </CustomText>
+                  <Slider
+                    value={killRadius}
+                    minimumValue={2}
+                    maximumValue={100}
+                    step={1}
+                    onValueChange={(killRadius) => {
+                      setKillRadius(killRadius);
+                      settingsUpdated();
+                    }}
+                    trackClickable={true}
+                    disabled={!isHost}
+                  />
+                </View>
+                <View>
+                  <CustomText centerText={true} textSize={40}>
+                    Kill Cooldown: {killCooldown}s
+                  </CustomText>
+                  <Slider
+                    value={killCooldown}
+                    minimumValue={10}
+                    maximumValue={120}
+                    step={5}
+                    onValueChange={(killCooldown) => {
+                      setKillCooldown(killCooldown);
+                      settingsUpdated();
+                    }}
+                    trackClickable={true}
+                    disabled={!isHost}
+                  />
+                </View>
+                <View>
+                  <CustomText centerText={true} textSize={40}>
+                    Number of Impostors: {impostorNum}
+                  </CustomText>
+                  <Slider
+                    value={impostorNum}
+                    minimumValue={1}
+                    maximumValue={impostorLimit}
+                    step={1}
+                    onValueChange={(impostorNum) => {
+                      setImpostorNum(impostorNum);
+                      settingsUpdated();
+                    }}
+                    trackClickable={true}
+                    disabled={!isHost}
+                  />
+                </View>
+                <View>
+                  <CustomText centerText={true} textSize={40}>
+                    Voting Timer: {votingTimer}s
+                  </CustomText>
+                  <Slider
+                    value={votingTimer}
+                    minimumValue={10}
+                    maximumValue={180}
+                    step={10}
+                    onValueChange={(votingTimer) => {
+                      setVotingTimer(votingTimer);
+                      settingsUpdated();
+                    }}
+                    trackClickable={true}
+                    disabled={!isHost}
+                  />
+                </View>
+                <View>
+                  <CustomText centerText={true} textSize={40}>
+                    Player Sight: {playerSight}m
+                  </CustomText>
+                  <Slider
+                    value={playerSight}
+                    minimumValue={50}
+                    maximumValue={200}
+                    step={10}
+                    onValueChange={(playerSight) => {
+                      setPlayerSight(playerSight);
+                      settingsUpdated();
+                    }}
+                    trackClickable={true}
+                    disabled={!isHost}
+                  />
+                </View>
+                <View
                   style={{
-                    marginTop: 8,
-                    marginLeft: 15,
+                    flexDirection: 'row',
+                    flex: 1,
                     justifyContent: 'center',
-                    alignItems: 'center',
                   }}
-                  trackColor={{ false: '#888', true: '#666' }}
-                  thumbColor={anonVotes ? '#fff' : '#fff'}
-                  onValueChange={() => setAnonVotes(!anonVotes)}
-                  value={anonVotes}
-                />
-              </View>
+                >
+                  <CustomText centerText={true} textSize={40}>
+                    Anonymous Votes
+                  </CustomText>
+                  <Switch
+                    style={{
+                      marginTop: 8,
+                      marginLeft: 15,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginBottom: 60,
+                    }}
+                    trackColor={{ false: '#888', true: '#666' }}
+                    thumbColor={anonVotes ? '#fff' : '#fff'}
+                    onValueChange={() => setAnonVotes(!anonVotes)}
+                    value={anonVotes}
+                  />
+                </View>
+              </ScrollView>
             </View>
 
             {isHost ? (
