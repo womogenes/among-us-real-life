@@ -18,7 +18,7 @@ export const AnimationModal = (props) => {
   */
 
   return (
-    <Modal animationType="fade" transparent={true} visible={props.isVisible}>
+    <Modal animationType="slide" transparent={true} visible={props.isVisible}>
       <View style={styles.modal}>
         <View style={styles.content}>
           <TouchableOpacity
