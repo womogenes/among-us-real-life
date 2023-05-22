@@ -7,6 +7,7 @@ import {
   Platform,
   ActivityIndicator,
   Modal,
+  SafeAreaView,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -451,6 +452,10 @@ export default function GameScreen({ navigation }) {
               ? p.trueLocation
               : p.location;
 
+          if (findDistance(location, displayLoc) > 100) {
+            return;
+          }
+
           return (
             <Marker
               tracksViewChanges={p.isAlive}
@@ -623,6 +628,11 @@ export default function GameScreen({ navigation }) {
         closeTask={closeTask}
       />
       <Timer playing={sabotageActive} />
+
+      {/* dimmer for player sight under construction */}
+      {/* <SafeAreaView style={styles.visionDim}>
+        <View style={styles.visionLight}></View>
+      </SafeAreaView> */}
     </View>
   );
 }
@@ -660,10 +670,19 @@ const styles = StyleSheet.create({
   emergencyScreen: {
     position: 'absolute',
     width: '100%',
-    bottom: 0,
+    height: '100%',
     backgroundColor: '#ff0000e0',
-    padding: 20,
-    paddingBottom: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  visionDim: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#000000',
+    opacity: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
   },

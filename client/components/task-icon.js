@@ -72,6 +72,7 @@ export const TaskIcon = (props) => {
     return (
       <View>
         <Image
+          key={loading}
           style={[
             styles.image,
             {
@@ -81,7 +82,10 @@ export const TaskIcon = (props) => {
               borderWidth: props.size / 20,
             },
           ]}
-          source={images[props.name || 0]}
+          source={images[props.name]}
+          onLoad={() => {
+            setLoading(false);
+          }}
         />
       </View>
     );
