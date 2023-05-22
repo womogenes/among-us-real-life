@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   FlatList,
+  Switch,
 } from 'react-native';
 import Constants from 'expo-constants';
 import Modal from 'react-native-modal';
@@ -47,6 +48,9 @@ function LobbyScreen({ navigation }) {
   const [memberList, setMemberList] = useState([]);
   const [isHost, setIsHost] = useState(false);
 
+  const [anonVotes, setAnonVotes] = useState([false]);
+  const [prevAnonVotes, setPrevAnonVotes] = useState([false]);
+
   useEffect(() => {
     // NETWORKING STUFF
     const room = getGameRoom();
@@ -74,6 +78,7 @@ function LobbyScreen({ navigation }) {
         setKillCooldown(state.settings.killCooldown);
         setImpostorNum(state.settings.impostorNum);
         setVotingTimer(state.settings.votingTimer);
+        setAnonVotes(state.settings.anonVotes);
       }
     });
 
@@ -98,6 +103,7 @@ function LobbyScreen({ navigation }) {
     setPrevKillCooldown(killCooldown);
     setPrevImpostorNum(impostorNum);
     setPrevVotingTimer(votingTimer);
+    setPrevAnonVotes(anonVotes);
   }
 
   function dontSave() {
@@ -105,11 +111,13 @@ function LobbyScreen({ navigation }) {
     setKillCooldown(prevKillCooldown);
     setImpostorNum(prevImpostorNum);
     setVotingTimer(prevVotingTimer);
+    setAnonVotes(prevAnonVotes);
     getGameRoom().send('settingsUpdated', {
       killRadius: prevKillRadius[0],
       killCooldown: prevKillCooldown[0],
       impostorNum: prevImpostorNum[0],
       votingTimer: prevVotingTimer[0],
+      anonVotes: prevAnonVotes[0],
     });
   }
 
@@ -131,6 +139,7 @@ function LobbyScreen({ navigation }) {
       killCooldown: killCooldown[0],
       impostorNum: impostorNum[0],
       votingTimer: votingTimer[0],
+      anonVotes: anonVotes[0],
     });
   }
 
@@ -285,6 +294,29 @@ function LobbyScreen({ navigation }) {
                   }}
                   trackClickable={true}
                   disabled={!isHost}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flex: 1,
+                  justifyContent: 'center',
+                }}
+              >
+                <CustomText centerText={true} textSize={40}>
+                  Anonymous Votes
+                </CustomText>
+                <Switch
+                  style={{
+                    marginTop: 8,
+                    marginLeft: 15,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                  trackColor={{ false: '#888', true: '#666' }}
+                  thumbColor={anonVotes ? '#fff' : '#fff'}
+                  onValueChange={() => setAnonVotes(!anonVotes)}
+                  value={anonVotes}
                 />
               </View>
             </View>

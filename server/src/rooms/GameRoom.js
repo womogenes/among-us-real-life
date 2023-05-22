@@ -115,9 +115,9 @@ export class GameRoom extends Room {
             }
           }
           if (crewCount <= impostorCount) {
-            this.broadcast('gameEnded', 'impostor');
+            this.broadcast('endedGame', 'impostor');
           } else if (imposterCount == 0) {
-            this.broadcast('gameEnded', 'crewmate');
+            this.broadcast('endedGame', 'crewmate');
           }
         }
       }, 1000);
