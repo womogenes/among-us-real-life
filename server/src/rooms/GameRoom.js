@@ -115,11 +115,11 @@ export class GameRoom extends Room {
               }
             }
           }
-          /* if (crewCount <= impostorCount) {
-            this.broadcast('gameEnded', 'impostor');
-          } else if (impostorCount == 0) {
-            this.broadcast('gameEnded', 'crewmate');
-          } */
+          if (crewCount <= impostorCount) {
+            this.broadcast('endedGame', 'impostor');
+          } else if (imposterCount == 0) {
+            this.broadcast('endedGame', 'crewmate');
+          }
         }
       }, 1000);
     };

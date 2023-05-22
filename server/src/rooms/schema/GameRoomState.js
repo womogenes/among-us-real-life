@@ -111,7 +111,8 @@ class Settings extends Schema {
     this.killRadius = 10;
     this.killCooldown = 20;
     this.impostorNum = 1;
-    this.votingTimer = 10;
+    this.votingTimer = 30;
+    this.anonVotes = false;
   }
 
   update(newSettings) {
@@ -125,6 +126,7 @@ schema.defineTypes(Settings, {
   killCooldown: 'number',
   impostorNum: 'number',
   votingTimer: 'number',
+  anonVotes: 'boolean',
 });
 
 // Big game room schema
