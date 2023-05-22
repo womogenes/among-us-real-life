@@ -147,7 +147,10 @@ function LobbyScreen({ navigation }) {
     // In theory, only the host can click the "start game" button
     // But let's do this check anyway
     console.assert(isHost);
-    if (Math.ceil(getGameRoom().state.players.length / 2) > impostorNum) {
+
+    // !! HACK !! for development only
+    if (true || Math.ceil(getGameRoom().state.players.length / 2) > impostorNum
+    ) {
       // Tell server to start game
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       getGameRoom().send('startGame');

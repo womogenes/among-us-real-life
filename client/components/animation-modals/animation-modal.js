@@ -6,26 +6,25 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Constants from 'expo-constants';
-import { ProfileIcon } from './profile-icon';
-import CustomText from './text';
+import CustomText from '../text';
 import { useState } from 'react';
 
 export const AnimationModal = (props) => {
   /*
     props:
-      children (React thing for content)
+      children:  content (React thing for content)
+      onClose:   function (gets called when x button is pressed)
+      isVisible: boolean  (React state for whether modal is visible)
   */
-  const [isVisible, setIsVisible] = useState(true);
 
   return (
-    <Modal animationType="fade" transparent={true} visible={isVisible}>
+    <Modal animationType="fade" transparent={true} visible={props.isVisible}>
       <View style={styles.modal}>
         <View style={styles.content}>
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => {
-              setIsVisible(false);
-              props.onClose();
+              if (props.onClose) props.onClose();
             }}
           >
             <CustomText textSize={30}>&#10006;</CustomText>
@@ -50,12 +49,11 @@ const styles = StyleSheet.create({
     right: 5,
     top: 0,
     margin: 10,
+    zIndex: 1,
   },
 
   content: {
     width: '80%',
     height: '50%',
-    backgroundColor: '#fff',
-    borderRadius: 10,
   },
 });

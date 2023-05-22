@@ -1,4 +1,5 @@
 import { TaskIcon } from './components/task-icon';
+
 import { Marker } from 'react-native-maps';
 
 export function taskMarkers(tasks) {

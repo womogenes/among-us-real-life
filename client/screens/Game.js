@@ -5,6 +5,7 @@ import {
   Button,
   Text,
   Platform,
+  ActivityIndicator,
   Modal,
 } from 'react-native';
 import Constants from 'expo-constants';
@@ -16,7 +17,8 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { getGameRoom, lobbyRoom } from '../networking.js';
 import { findDistance, distAll, findClosest } from '../utils.js';
-import * as taskUtils from '../tasks-utils.js';
+// import * as taskUtils from '../tasks-utils.js';
+const taskUtils = require('../tasks-utils.js');
 
 import Minimap from '../components/minimap.js';
 import ControlPanel from '../components/controlpanel.js';
@@ -32,7 +34,7 @@ import SabotageFlash from '../components/flash.js';
 import VotingModal from '../components/voting.js';
 import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
-import { AnimationModal } from '../components/animation-modal.js';
+import { EjectModal } from '../components/animation-modals/eject-modal.js';
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
@@ -47,7 +49,7 @@ export default function GameScreen({ navigation }) {
 
   //// HOOKS
 
-  //SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
+  // SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
   const [sabotageActive, setSabotageActive] = useState(false);
   const [sabNotif, setSabNotif] = useState(false);
   const [sabotageOnCooldown, setSabotageOnCooldown] = useState(false);
@@ -57,8 +59,9 @@ export default function GameScreen({ navigation }) {
   });
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
+  const [ejectedPlayer, setEjectedPlayer] = useState({});
 
-  //BUTTON HOOKS
+  // BUTTON HOOKS
   const [disableActions, setDisableActions] = useState(false);
   const [buttonState, setButtonState] = useState({
     use: true, // These should all be true at the beginning of the game
@@ -70,7 +73,7 @@ export default function GameScreen({ navigation }) {
 
   // ENDING GAME HOOKS
 
-  //TASK HOOKS
+  // TASK HOOKS
   const [taskCompletion, setTaskCompletion] = useState(0);
   const [activeTask, setActiveTask] = useState({
     name: null,
@@ -79,7 +82,7 @@ export default function GameScreen({ navigation }) {
   const [distTask, setDistTask] = useState([]);
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
 
-  //PLAYER HOOKS
+  // PLAYER HOOKS
   const [location, setLocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -89,12 +92,13 @@ export default function GameScreen({ navigation }) {
   const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
   const [distPlayer, setDistPlayer] = useState([]);
 
-  //REFRESH HOOK
+  //REFRESH + LOADING HOOK
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
+  const [loading, setLoading] = useState(true); // "Refresh" state to force rerenders
 
   //// FUNCTIONS
 
-  //SABOTAGE, EMERGENCY MEETING AND VOTING FUNCTIONS
+  // SABOTAGE, EMERGENCY MEETING AND VOTING FUNCTIONS
   function sabotage(type) {
     getGameRoom().send(type);
     setSabotageActive(true);
@@ -116,7 +120,7 @@ export default function GameScreen({ navigation }) {
     setSabotageOnCooldown(false);
   }
 
-  //BUTTON FUNCTIONS
+  // BUTTON FUNCTIONS
   function changeButtonState(button, state) {
     setButtonState((prevButtonState) => ({
       ...prevButtonState,
@@ -199,6 +203,7 @@ export default function GameScreen({ navigation }) {
     //
     getGameRoom()?.send('location', loc);
     setLocation(loc);
+    setLoading(false);
   };
   const animate = (loc) => {
     let r = {
@@ -258,7 +263,10 @@ export default function GameScreen({ navigation }) {
       }
 
       // Initial location update
-      let newLocation = await Location.getCurrentPositionAsync({});
+      let newLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Highest,
+        maximumAge: 10000,
+      });
       // Necessary hook to send update to server
       // ("Hook" might be an inaccurate term)
       // See definition at top of this file
@@ -326,12 +334,13 @@ export default function GameScreen({ navigation }) {
       openVotingModal();
     });
 
-    room.onMessage('playerKilled', (playerId) => {
+    room.onMessage('playerEjected', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
     });
 
     room.onMessage('sabotage', () => {
       setSabotageActive(true);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     });
 
     room.onMessage('sabotageOver', () => {
@@ -402,7 +411,11 @@ export default function GameScreen({ navigation }) {
     };
   }, []);
 
-  return (
+  return loading ? (
+    <View style={styles.loading}>
+      <ActivityIndicator size="large" />
+    </View>
+  ) : (
     <View style={styles.container}>
       {/* !! HACKY STUFF!! Force rerenders with this state */}
       <View style={{ display: 'none' }}>
@@ -420,7 +433,6 @@ export default function GameScreen({ navigation }) {
         pitchEnabled={false}
         rotateEnabled={false}
         scrollEnabled={false}
-        zoomEnabled={false}
         initialRegion={{
           latitude: 47.7326514,
           longitude: -122.3278194,
@@ -430,6 +442,7 @@ export default function GameScreen({ navigation }) {
         // Changed from satellite for android for performance
         mapType={Platform.OS === 'ios' ? 'standard' : 'standard'}
         moveOnMarkerPress={false}
+        liteMode={true}
       >
         {/* PLAYER MARKERS */}
         {players.map((p) => {
@@ -528,7 +541,7 @@ export default function GameScreen({ navigation }) {
           setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
           sabotageOnCooldown={sabotageOnCooldown}
-          sabotageCooldown={1000}
+          sabotageCooldown={10}
           endSabotageCooldown={() => endSabotageCooldown()}
           o2={() => sabotage('o2')}
         />
@@ -569,10 +582,17 @@ export default function GameScreen({ navigation }) {
         >
           <Text>open electricity task</Text>
         </TouchableOpacity> */}
+
+        <TouchableOpacity
+          onPress={() => setEjectedPlayer(player)}
+          style={styles.testButton}
+        >
+          <Text>open eject modal</Text>
+        </TouchableOpacity>
       </View>
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
-      <AnimationModal />
+      <EjectModal onClose={() => setEjectedPlayer({})} player={ejectedPlayer} />
 
       {/* TASKS */}
       <CaptchaTask
@@ -604,6 +624,12 @@ export default function GameScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#fff',
