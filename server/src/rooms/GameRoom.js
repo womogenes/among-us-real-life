@@ -78,7 +78,7 @@ export class GameRoom extends Room {
             countsObj[vote] = countsObj[vote] ? countsObj[vote] + 1 : 1;
           }
           let counts = Object.entries(countsObj);
-          counts.sort((a, b) => a[1] < b[1]);
+          counts.sort((a, b) => b[1] - a[1]);
 
           // Is there a tie?
           const isTie =
@@ -86,7 +86,7 @@ export class GameRoom extends Room {
             (counts.length >= 2 && counts[0][1] === counts[1][1]);
 
           if (isTie) {
-            this.broadcast('playerKilled', null);
+            this.broadcast('playerEjected', null);
           } else {
             const killed = counts[0][0];
 
@@ -97,7 +97,7 @@ export class GameRoom extends Room {
               ).isAlive = false;
             }
 
-            this.broadcast('playerKilled', killed);
+            this.broadcast('playerEjected', killed);
           }
 
           this.state.gameState = 'normal';
@@ -115,9 +115,9 @@ export class GameRoom extends Room {
             }
           }
           if (crewCount <= impostorCount) {
-            this.broadcast('gameEnded', 'impostor');
+            this.broadcast('endedGame', 'impostor');
           } else if (imposterCount == 0) {
-            this.broadcast('gameEnded', 'crewmate');
+            this.broadcast('endedGame', 'crewmate');
           }
         }
       }, 1000);

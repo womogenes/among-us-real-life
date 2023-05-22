@@ -60,7 +60,7 @@ export default function GameScreen({ navigation }) {
   });
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
-  const [ejectModalVisible, setEjectModalVisible] = useState(false);
+  const [ejectedPlayer, setEjectedPlayer] = useState({});
 
   // BUTTON HOOKS
   const [disableActions, setDisableActions] = useState(false);
@@ -335,8 +335,15 @@ export default function GameScreen({ navigation }) {
       openVotingModal();
     });
 
-    room.onMessage('playerKilled', (playerId) => {
+    room.onMessage('playerEjected', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
+
+      // ! HACK ! prevent conflicting display with the voting modal
+      setTimeout(() => {
+        setEjectedPlayer(
+          getGameRoom().state.players.find((p) => p.sessionId === playerId)
+        );
+      }, 1000);
     });
 
     room.onMessage('sabotage', () => {
@@ -567,41 +574,19 @@ export default function GameScreen({ navigation }) {
 
       {/* TESTING BUTTONS */}
       <View style={styles.debugContainer}>
-        {/* <TouchableOpacity
-          onPress={() => {
-            getGameRoom().send('playerDeath', getGameRoom().sessionId);
-          }}
-          style={styles.testButton}
-        >
-          <Text>unalive self</Text>
-        </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {
-            setActiveTask((prevArrState) => ({
-              ...prevArrState,
-              name: 'electricity',
-              taskId: null,
-            }));
-          }}
-          style={styles.testButton}
-        >
-          <Text>open electricity task</Text>
-        </TouchableOpacity> */}
-
-        <TouchableOpacity
-          onPress={() => setEjectModalVisible(true)}
+          onPress={() => setEjectedPlayer(player)}
           style={styles.testButton}
         >
           <Text>open eject modal</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
+          <Text>open voting modal</Text>
+        </TouchableOpacity>
       </View>
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
-      <EjectModal
-        isVisible={ejectModalVisible}
-        onClose={() => setEjectModalVisible(false)}
-        player={player}
-      />
+      <EjectModal onClose={() => setEjectedPlayer({})} player={ejectedPlayer} />
 
       {/* TASKS */}
       <CaptchaTask
