@@ -89,7 +89,6 @@ export class GameRoom extends Room {
             this.broadcast('playerEjected', null);
           } else {
             const killed = counts[0][0];
-            console.log(`counts: ${JSON.stringify(counts)}`);
 
             if (killed != 'skip') {
               // If most players vote to skip, don't update state
