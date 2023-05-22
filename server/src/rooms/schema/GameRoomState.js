@@ -111,7 +111,7 @@ class Settings extends Schema {
     this.killRadius = 10;
     this.killCooldown = 20;
     this.impostorNum = 1;
-    this.votingTimer = 30;
+    this.votingTimer = 10;
   }
 
   update(newSettings) {

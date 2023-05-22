@@ -78,7 +78,7 @@ export class GameRoom extends Room {
             countsObj[vote] = countsObj[vote] ? countsObj[vote] + 1 : 1;
           }
           let counts = Object.entries(countsObj);
-          counts.sort((a, b) => a[1] < b[1]);
+          counts.sort((a, b) => b[1] - a[1]);
 
           // Is there a tie?
           const isTie =
@@ -89,6 +89,7 @@ export class GameRoom extends Room {
             this.broadcast('playerEjected', null);
           } else {
             const killed = counts[0][0];
+            console.log(`counts: ${JSON.stringify(counts)}`);
 
             if (killed != 'skip') {
               // If most players vote to skip, don't update state
@@ -114,11 +115,11 @@ export class GameRoom extends Room {
               }
             }
           }
-          if (crewCount <= impostorCount) {
+          /* if (crewCount <= impostorCount) {
             this.broadcast('gameEnded', 'impostor');
-          } else if (imposterCount == 0) {
+          } else if (impostorCount == 0) {
             this.broadcast('gameEnded', 'crewmate');
-          }
+          } */
         }
       }, 1000);
     };
