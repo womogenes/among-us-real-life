@@ -86,7 +86,7 @@ export class GameRoom extends Room {
             (counts.length >= 2 && counts[0][1] === counts[1][1]);
 
           if (isTie) {
-            this.broadcast('playerKilled', null);
+            this.broadcast('playerEjected', null);
           } else {
             const killed = counts[0][0];
 
@@ -97,7 +97,7 @@ export class GameRoom extends Room {
               ).isAlive = false;
             }
 
-            this.broadcast('playerKilled', killed);
+            this.broadcast('playerEjected', killed);
           }
 
           this.state.gameState = 'normal';

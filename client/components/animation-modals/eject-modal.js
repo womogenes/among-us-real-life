@@ -1,7 +1,7 @@
 import { StyleSheet, View, Modal, TouchableOpacity, Text } from 'react-native';
 import { ProfileIcon } from '../profile-icon';
 import CustomText from '../text';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimationModal } from './animation-modal.js';
 
 export const EjectModal = (props) => {
@@ -10,12 +10,14 @@ export const EjectModal = (props) => {
   */
   if (!props.player) return;
 
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(Object.keys(props.player).length > 0);
+  }, [props.player]);
+
   return (
-    <AnimationModal
-      isVisible={props.isVisible}
-      size={100}
-      onClose={props.onClose}
-    >
+    <AnimationModal isVisible={isVisible} size={100} onClose={props.onClose}>
       <View style={styles.container}>
         <ProfileIcon
           style={{ marginBottom: 20 }}

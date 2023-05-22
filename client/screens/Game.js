@@ -59,7 +59,7 @@ export default function GameScreen({ navigation }) {
   });
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
-  const [ejectModalVisible, setEjectModalVisible] = useState(false);
+  const [ejectedPlayer, setEjectedPlayer] = useState({});
 
   // BUTTON HOOKS
   const [disableActions, setDisableActions] = useState(false);
@@ -334,7 +334,7 @@ export default function GameScreen({ navigation }) {
       openVotingModal();
     });
 
-    room.onMessage('playerKilled', (playerId) => {
+    room.onMessage('playerEjected', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
     });
 
@@ -584,7 +584,7 @@ export default function GameScreen({ navigation }) {
         </TouchableOpacity> */}
 
         <TouchableOpacity
-          onPress={() => setEjectModalVisible(true)}
+          onPress={() => setEjectedPlayer(player)}
           style={styles.testButton}
         >
           <Text>open eject modal</Text>
@@ -592,11 +592,7 @@ export default function GameScreen({ navigation }) {
       </View>
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
-      <EjectModal
-        isVisible={ejectModalVisible}
-        onClose={() => setEjectModalVisible(false)}
-        player={player}
-      />
+      <EjectModal onClose={() => setEjectedPlayer({})} player={ejectedPlayer} />
 
       {/* TASKS */}
       <CaptchaTask
