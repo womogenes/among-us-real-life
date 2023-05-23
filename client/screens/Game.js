@@ -60,7 +60,7 @@ export default function GameScreen({ navigation }) {
   });
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
-  const [ejectedPlayer, setEjectedPlayer] = useState({});
+  const [ejectModalVisible, setEjectModalVisible] = useState(false);
 
   // BUTTON HOOKS
   const [disableActions, setDisableActions] = useState(false);
@@ -299,7 +299,6 @@ export default function GameScreen({ navigation }) {
   useEffect(() => {
     // Detects when distTask is updated and reevaluates USE button activation
     activateUseButton();
-    // console.log(closestTask);
   }, [distTask]);
   useEffect(() => {
     // Detects when distPlayer is updated and reevaluates KILL button activation
@@ -343,15 +342,8 @@ export default function GameScreen({ navigation }) {
       openVotingModal();
     });
 
-    room.onMessage('playerEjected', (playerId) => {
+    room.onMessage('playerKilled', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
-
-      // ! HACK ! prevent conflicting display with the voting modal
-      setTimeout(() => {
-        setEjectedPlayer(
-          getGameRoom().state.players.find((p) => p.sessionId === playerId)
-        );
-      }, 1000);
     });
 
     room.onMessage('sabotage', () => {
@@ -467,10 +459,6 @@ export default function GameScreen({ navigation }) {
               ? p.trueLocation
               : p.location;
 
-          if (findDistance(location, displayLoc) > 100) {
-            return;
-          }
-
           return (
             <Marker
               tracksViewChanges={p.isAlive}
@@ -583,19 +571,41 @@ export default function GameScreen({ navigation }) {
 
       {/* TESTING BUTTONS */}
       <View style={styles.debugContainer}>
+        {/* <TouchableOpacity
+          onPress={() => {
+            getGameRoom().send('playerDeath', getGameRoom().sessionId);
+          }}
+          style={styles.testButton}
+        >
+          <Text>unalive self</Text>
+        </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setEjectedPlayer(player)}
+          onPress={() => {
+            setActiveTask((prevArrState) => ({
+              ...prevArrState,
+              name: 'electricity',
+              taskId: null,
+            }));
+          }}
+          style={styles.testButton}
+        >
+          <Text>open electricity task</Text>
+        </TouchableOpacity> */}
+
+        <TouchableOpacity
+          onPress={() => setEjectModalVisible(true)}
           style={styles.testButton}
         >
           <Text>open eject modal</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
-          <Text>open voting modal</Text>
-        </TouchableOpacity>
       </View>
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
-      <EjectModal onClose={() => setEjectedPlayer({})} player={ejectedPlayer} />
+      <EjectModal
+        isVisible={ejectModalVisible}
+        onClose={() => setEjectModalVisible(false)}
+        player={player}
+      />
 
       {/* TASKS */}
       <CaptchaTask
@@ -622,11 +632,6 @@ export default function GameScreen({ navigation }) {
         closeTask={closeTask}
       />
       <Timer playing={sabotageActive} />
-
-      {/* dimmer for player sight under construction */}
-      {/* <SafeAreaView style={styles.visionDim}>
-        <View style={styles.visionLight}></View>
-      </SafeAreaView> */}
     </View>
   );
 }
@@ -664,19 +669,10 @@ const styles = StyleSheet.create({
   emergencyScreen: {
     position: 'absolute',
     width: '100%',
-    height: '100%',
-    backgroundColor: '#ff0000e0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  visionDim: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
     bottom: 0,
-    backgroundColor: '#000000',
-    opacity: 0.5,
+    backgroundColor: '#ff0000e0',
+    padding: 20,
+    paddingBottom: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },

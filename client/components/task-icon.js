@@ -46,15 +46,6 @@ export const TaskIcon = (props) => {
     }).start()
   }
 
-  function clearBeacon() {
-    Animated.timing(opacity.opacity, {
-      toValue: 0,
-      duration: 10,
-      useNativeDriver: false,
-      easing: Easing.inOut(Easing.sin),
-    }).start()
-  }
-
   if(props.name === 'o2') {
     if(props.complete === false) {
       toggleBeacon.start();
