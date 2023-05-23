@@ -79,8 +79,10 @@ export default function GameScreen({ navigation }) {
     name: null,
     taskId: null,
   });
-  const [distTask, setDistTask] = useState([]);
+  const [distTask, setDistTask] = useState([]); // array of all tasks with distance/direction within a certain radius
+  const [distAllTask, setDistAllTask] = useState([]); // array of all tasks with distance/direction from anywhere (aka very large radius)
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+  const [closestTask, setClosestTask] = useState();
 
   // PLAYER HOOKS
   const [location, setLocation] = useState({
@@ -216,6 +218,7 @@ export default function GameScreen({ navigation }) {
   };
   function findAllDist(loc) {
     let taskDist = distAll('task', loc, tasks, 20);
+    let taskAllDist = distAll('task', loc, tasks, 1000000);
     let playerArr = players.filter(
       (p) => p.sessionId !== getGameRoom().sessionId
     );
@@ -226,6 +229,7 @@ export default function GameScreen({ navigation }) {
       getGameRoom().state.settings.killRadius
     );
     setDistTask(taskDist);
+    setDistAllTask(taskAllDist);
     setDistPlayer(playerDist);
   }
 
@@ -294,12 +298,16 @@ export default function GameScreen({ navigation }) {
   useEffect(() => {
     // Detects when distTask is updated and reevaluates USE button activation
     activateUseButton();
+    // console.log(closestTask);
   }, [distTask]);
   useEffect(() => {
     // Detects when distPlayer is updated and reevaluates KILL button activation
     activateKillButton();
     activateReportButton();
   }, [distPlayer]);
+  useEffect(() => { // detects closest task in any range
+    setClosestTask(findClosest(distAllTask));
+  }, [distAllTask])
   useEffect(() => {
     findAllDist(location);
   }, [location]);
@@ -461,6 +469,7 @@ export default function GameScreen({ navigation }) {
               <ProfileIcon
                 player={p} // Pass the whole player object
                 size={40}
+                direction={closestTask.direction}
               />
             </Marker>
           );
