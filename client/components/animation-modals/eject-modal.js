@@ -1,22 +1,24 @@
 import { StyleSheet, View, Modal, TouchableOpacity, Text } from 'react-native';
 import { ProfileIcon } from '../profile-icon';
 import CustomText from '../text';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimationModal } from './animation-modal.js';
 
 export const EjectModal = (props) => {
   /*
     props: playerId (Colyseus state object of dead player)
   */
-  if (!props.player) return;
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    console.log(`player set to ${props.player}`);
+    setIsVisible(props.player && Object.keys(props.player).length > 0);
+  }, [props.player]);
 
   return (
-    <AnimationModal
-      isVisible={props.isVisible}
-      size={100}
-      onClose={props.onClose}
-    >
+    <AnimationModal isVisible={isVisible} size={100} onClose={props.onClose}>
       <View style={styles.container}>
+        <Text>{isVisible}</Text>
         <ProfileIcon
           style={{ marginBottom: 20 }}
           player={props.player}
@@ -24,11 +26,11 @@ export const EjectModal = (props) => {
         />
         <CustomText textSize={40} centerText={true}>
           <Text style={{ fontSize: 60, color: '#fff' }}>
-            {props.player.username}
+            {props.player?.username}
             {'\n'}
           </Text>
           <Text style={{ color: '#888' }}>
-            {props.player.isImpostor ? ' was ' : ' was not '}
+            {props.player?.isImpostor ? ' was ' : ' was not '}
             the impostor
           </Text>
         </CustomText>
