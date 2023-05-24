@@ -470,6 +470,10 @@ export default function GameScreen({ navigation }) {
               ? p.trueLocation
               : p.location;
 
+          if (findDistance(location, displayLoc) > 100) {
+            return;
+          }
+
           return (
             <Marker
               tracksViewChanges={p.isAlive}
