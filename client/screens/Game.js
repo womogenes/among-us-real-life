@@ -211,6 +211,7 @@ export default function GameScreen({ navigation }) {
     getGameRoom()?.send('location', loc);
     setLocation(loc);
     setLoading(false);
+    setArrowActive(true);
   };
   const animate = (loc) => {
     let r = {
@@ -350,12 +351,12 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('playerEjected', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
-
       // ! HACK ! prevent conflicting display with the voting modal
       setTimeout(() => {
         setEjectedPlayer(
           getGameRoom().state.players.find((p) => p.sessionId === playerId)
         );
+        setArrowActive(false);
       }, 1000);
     });
 
@@ -391,13 +392,6 @@ export default function GameScreen({ navigation }) {
       );
       setPlayer(player);
       setTasks(player.tasks);
-
-      if(room.state.gameState !== 'voting') {
-        setArrowActive(true);
-      }
-      else {
-        setArrowActive(false);
-      }
 
       // Animate to new given location and update local state
       setLocation({ ...player.trueLocation }); // VERY IMPORTANT to make new object here, or useEffect will not fire
@@ -611,7 +605,7 @@ export default function GameScreen({ navigation }) {
         </TouchableOpacity> */}
 
         <TouchableOpacity
-          onPress={() => setEjectedPlayer(player)}
+          onPress={() => [setEjectedPlayer(player), setArrowActive(false)]}
           style={styles.testButton}
         >
           <Text>open eject modal</Text>
@@ -628,7 +622,7 @@ export default function GameScreen({ navigation }) {
       </View>
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
-      <EjectModal onClose={() => setEjectedPlayer({})} player={ejectedPlayer} />
+      <EjectModal onClose={() => [setEjectedPlayer({}), setArrowActive(true)]} player={ejectedPlayer} />
       <EndGame
         size={100}
         player={winningTeam}
