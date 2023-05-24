@@ -16,7 +16,7 @@ import * as Haptics from 'expo-haptics';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
-import { getGameRoom, lobbyRoom } from '../networking.js';
+import { getGameRoom, lobbyRoom, leaveGameRoom } from '../networking.js';
 import { findDistance, distAll, findClosest } from '../utils.js';
 // import * as taskUtils from '../tasks-utils.js';
 const taskUtils = require('../tasks-utils.js');
@@ -36,6 +36,8 @@ import VotingModal from '../components/voting.js';
 import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
 import { EjectModal } from '../components/animation-modals/eject-modal.js';
+import { AnimationModal } from '../components/animation-modals/animation-modal.js';
+import { EndGame } from '../components/animation-modals/end-game.js';
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
@@ -60,7 +62,8 @@ export default function GameScreen({ navigation }) {
   });
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
-  const [ejectModalVisible, setEjectModalVisible] = useState(false);
+  const [ejectedPlayer, setEjectedPlayer] = useState({});
+  const [winningTeam, setWinningTeam] = useState({});
 
   // BUTTON HOOKS
   const [disableActions, setDisableActions] = useState(false);
@@ -343,8 +346,15 @@ export default function GameScreen({ navigation }) {
       openVotingModal();
     });
 
-    room.onMessage('playerKilled', (playerId) => {
+    room.onMessage('playerEjected', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
+
+      // ! HACK ! prevent conflicting display with the voting modal
+      setTimeout(() => {
+        setEjectedPlayer(
+          getGameRoom().state.players.find((p) => p.sessionId === playerId)
+        );
+      }, 1000);
     });
 
     room.onMessage('sabotage', () => {
@@ -364,12 +374,8 @@ export default function GameScreen({ navigation }) {
     room.onMessage('endedGame', (message) => {
       if (message == 'impostor') {
         console.log('HUH');
+        setWinningTeam(['Imposter']);
       } else if (message == 'crewmate') {
-        return (
-          <View style="gameEnded">
-            <Text>Crewmates won!</Text>
-          </View>
-        );
       }
     });
 
@@ -594,7 +600,16 @@ export default function GameScreen({ navigation }) {
         </TouchableOpacity> */}
 
         <TouchableOpacity
-          onPress={() => setEjectModalVisible(true)}
+          onPress={() => setEjectedPlayer(player)}
+          style={styles.testButton}
+        >
+          <Text>open eject modal</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
+          <Text>open voting modal</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setWinningTeam(['Imposter'])}
           style={styles.testButton}
         >
           <Text>open eject modal</Text>
@@ -602,10 +617,11 @@ export default function GameScreen({ navigation }) {
       </View>
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
-      <EjectModal
-        isVisible={ejectModalVisible}
-        onClose={() => setEjectModalVisible(false)}
-        player={player}
+      <EjectModal onClose={() => setEjectedPlayer({})} player={ejectedPlayer} />
+      <EndGame
+        size={100}
+        player={winningTeam}
+        onClose={() => leaveGameRoom()}
       />
 
       {/* TASKS */}
