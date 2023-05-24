@@ -17,10 +17,6 @@ export const ProfileIcon = ({ player, size, style, direction, active }) => {
 
   const { icon } = player;
 
-  useEffect(() => {
-    console.log(direction);
-  }, [direction])
-
   return (
     <View style={styles.container}>
       <Image
@@ -36,7 +32,6 @@ export const ProfileIcon = ({ player, size, style, direction, active }) => {
       {active &&
         <View style={[styles.arrow, {transform: [{rotateZ: parseFloat(direction + Math.PI) + 'rad'}]}]}>
           <View style={styles.triangle}>
-
           </View>
         </View>
       }
