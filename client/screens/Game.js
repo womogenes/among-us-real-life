@@ -305,9 +305,10 @@ export default function GameScreen({ navigation }) {
     activateKillButton();
     activateReportButton();
   }, [distPlayer]);
-  useEffect(() => { // detects closest task in any range
+  useEffect(() => {
+    // detects closest task in any range
     setClosestTask(findClosest(distAllTask));
-  }, [distAllTask])
+  }, [distAllTask]);
   useEffect(() => {
     findAllDist(location);
   }, [location]);
