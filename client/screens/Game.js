@@ -97,6 +97,7 @@ export default function GameScreen({ navigation }) {
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
   const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
   const [distPlayer, setDistPlayer] = useState([]);
+  const [arrowActive, setArrowActive] = useState(false);
 
   //REFRESH + LOADING HOOK
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
@@ -343,6 +344,7 @@ export default function GameScreen({ navigation }) {
     setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
 
     room.onMessage('startVoting', () => {
+      setArrowActive(false);
       openVotingModal();
     });
 
@@ -372,6 +374,7 @@ export default function GameScreen({ navigation }) {
     });
 
     room.onMessage('endedGame', (message) => {
+      setArrowActive(false);
       if (message == 'impostor') {
         console.log('HUH');
         setWinningTeam(['Imposter']);
@@ -388,6 +391,13 @@ export default function GameScreen({ navigation }) {
       );
       setPlayer(player);
       setTasks(player.tasks);
+
+      if(room.state.gameState !== 'voting') {
+        setArrowActive(true);
+      }
+      else {
+        setArrowActive(false);
+      }
 
       // Animate to new given location and update local state
       setLocation({ ...player.trueLocation }); // VERY IMPORTANT to make new object here, or useEffect will not fire
@@ -481,6 +491,7 @@ export default function GameScreen({ navigation }) {
                 player={p} // Pass the whole player object
                 size={40}
                 direction={closestTask.direction}
+                active={arrowActive}
               />
             </Marker>
           );
