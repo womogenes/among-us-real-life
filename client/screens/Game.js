@@ -585,48 +585,11 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      {/* TESTING BUTTONS */}
-      <View style={styles.debugContainer}>
-        {/* <TouchableOpacity
-          onPress={() => {
-            getGameRoom().send('playerDeath', getGameRoom().sessionId);
-          }}
-          style={styles.testButton}
-        >
-          <Text>unalive self</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveTask((prevArrState) => ({
-              ...prevArrState,
-              name: 'electricity',
-              taskId: null,
-            }));
-          }}
-          style={styles.testButton}
-        >
-          <Text>open electricity task</Text>
-        </TouchableOpacity> */}
-
-        <TouchableOpacity
-          onPress={() => [setEjectedPlayer(player), setArrowActive(false)]}
-          style={styles.testButton}
-        >
-          <Text>open eject modal</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
-          <Text>open voting modal</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setWinningTeam(['Impostor'])}
-          style={styles.testButton}
-        >
-          <Text>open end game modal</Text>
-        </TouchableOpacity>
-      </View>
-
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
-      <EjectModal onClose={() => [setEjectedPlayer({}), setArrowActive(true)]} player={ejectedPlayer} />
+      <EjectModal
+        onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
+        player={ejectedPlayer}
+      />
       <EndGame
         size={100}
         team={winningTeam}
