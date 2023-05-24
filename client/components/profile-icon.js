@@ -12,7 +12,7 @@ const images = {
   white: require('../assets/profile-icons/white.png'),
 };
 
-export const ProfileIcon = ({ player, size, style, direction }) => {
+export const ProfileIcon = ({ player, size, style, direction, active }) => {
   if (!player) return;
 
   const { icon } = player;
@@ -33,11 +33,13 @@ export const ProfileIcon = ({ player, size, style, direction }) => {
         ]}
         source={images[icon]}
       />
-      <View style={[styles.arrow, {transform: [{rotateZ: parseFloat(direction - Math.PI/2) + 'rad'}]}]}>
-        <View style={styles.triangle}>
+      {active &&
+        <View style={[styles.arrow, {transform: [{rotateZ: parseFloat(direction + Math.PI) + 'rad'}]}]}>
+          <View style={styles.triangle}>
 
+          </View>
         </View>
-      </View>
+      }
     </View>
   );
 };
@@ -60,7 +62,6 @@ const styles = StyleSheet.create({
   },
   arrow: {
     alignItems: 'center',
-    backgroundColor: 'red',
     borderRadius: 100,
     width: 100,
     height: 100,
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 15,
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
-    borderBottomColor: "white",
+    borderBottomColor: "#fcfa65",
     position: 'absolute',
   }
 });
