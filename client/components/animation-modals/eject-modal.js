@@ -11,7 +11,6 @@ export const EjectModal = (props) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    console.log(`player set to ${props.player}`);
     setIsVisible(props.player && Object.keys(props.player).length > 0);
   }, [props.player]);
 

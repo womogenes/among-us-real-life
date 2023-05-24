@@ -350,6 +350,7 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('playerEjected', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
+      if (!playerId) return;
 
       // ! HACK ! prevent conflicting display with the voting modal
       setTimeout(() => {
@@ -392,10 +393,9 @@ export default function GameScreen({ navigation }) {
       setPlayer(player);
       setTasks(player.tasks);
 
-      if(room.state.gameState !== 'voting') {
+      if (room.state.gameState !== 'voting') {
         setArrowActive(true);
-      }
-      else {
+      } else {
         setArrowActive(false);
       }
 
@@ -589,27 +589,6 @@ export default function GameScreen({ navigation }) {
 
       {/* TESTING BUTTONS */}
       <View style={styles.debugContainer}>
-        {/* <TouchableOpacity
-          onPress={() => {
-            getGameRoom().send('playerDeath', getGameRoom().sessionId);
-          }}
-          style={styles.testButton}
-        >
-          <Text>unalive self</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveTask((prevArrState) => ({
-              ...prevArrState,
-              name: 'electricity',
-              taskId: null,
-            }));
-          }}
-          style={styles.testButton}
-        >
-          <Text>open electricity task</Text>
-        </TouchableOpacity> */}
-
         <TouchableOpacity
           onPress={() => setEjectedPlayer(player)}
           style={styles.testButton}
@@ -706,6 +685,7 @@ const styles = StyleSheet.create({
   },
   deathText: {},
   debugContainer: {
+    display: 'none',
     alignItems: 'flex-end',
     marginTop: Constants.statusBarHeight,
     borderRadius: 10,
