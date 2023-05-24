@@ -374,7 +374,7 @@ export default function GameScreen({ navigation }) {
     room.onMessage('endedGame', (message) => {
       if (message == 'impostor') {
         console.log('HUH');
-        setWinningTeam(['Imposter']);
+        setWinningTeam(['Impostor']);
       } else if (message == 'crewmate') {
       }
     });
@@ -609,10 +609,10 @@ export default function GameScreen({ navigation }) {
           <Text>open voting modal</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setWinningTeam(['Imposter'])}
+          onPress={() => setWinningTeam(['Impostor'])}
           style={styles.testButton}
         >
-          <Text>open eject modal</Text>
+          <Text>open end game modal</Text>
         </TouchableOpacity>
       </View>
 
@@ -620,8 +620,11 @@ export default function GameScreen({ navigation }) {
       <EjectModal onClose={() => setEjectedPlayer({})} player={ejectedPlayer} />
       <EndGame
         size={100}
-        player={winningTeam}
-        onClose={() => leaveGameRoom()}
+        team={winningTeam}
+        onClose={() => {
+          leaveGameRoom();
+          navigation.navigate('Menu');
+        }}
       />
 
       {/* TASKS */}
