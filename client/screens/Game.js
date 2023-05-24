@@ -62,7 +62,7 @@ export default function GameScreen({ navigation }) {
   });
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
-  const [ejectModalVisible, setEjectModalVisible] = useState(false);
+  const [ejectedPlayer, setEjectedPlayer] = useState({});
   const [winningTeam, setWinningTeam] = useState({});
 
   // BUTTON HOOKS
