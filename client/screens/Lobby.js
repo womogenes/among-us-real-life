@@ -223,7 +223,7 @@ function LobbyScreen({ navigation }) {
           >
             <CustomText textSize={45}>
               {isHost
-                ? getGameRoom().state.players.length > 1
+                ? getGameRoom().state.players.length > 2
                   ? 'Start Game'
                   : 'Not enough players...'
                 : 'Waiting on host...'}
