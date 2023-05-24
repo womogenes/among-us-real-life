@@ -379,9 +379,9 @@ export default function GameScreen({ navigation }) {
     room.onMessage('endedGame', (message) => {
       setArrowActive(false);
       if (message == 'impostor') {
-        console.log('HUH');
         setWinningTeam(['Impostor']);
       } else if (message == 'crewmate') {
+        setWinningTeam(['Crewmate']);
       }
     });
 
@@ -625,7 +625,10 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
-      <Timer playing={sabotageActive} />
+      <Timer
+        playing={sabotageActive}
+        completion={() => getGameRoom().send('sabotageOver')}
+      />
     </View>
   );
 }

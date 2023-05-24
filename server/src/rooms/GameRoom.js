@@ -284,6 +284,10 @@ export class GameRoom extends Room {
       startVoting();
     });
 
+    this.onMessage('sabotageOver', () => {
+      this.broadcast('endedGame', 'impostor');
+    });
+
     // Notify the lobby that this room has been created
     onCreateGameRoom(this);
   }

@@ -17,6 +17,7 @@ import Easing from 'react-native/Libraries/Animated/Easing';
 function Timer(props) {
   function completion() {
     console.log('sabotage successful, end game');
+    props.completion();
   }
 
   return (
