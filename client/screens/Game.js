@@ -685,7 +685,6 @@ const styles = StyleSheet.create({
   },
   deathText: {},
   debugContainer: {
-    display: 'none',
     alignItems: 'flex-end',
     marginTop: Constants.statusBarHeight,
     borderRadius: 10,

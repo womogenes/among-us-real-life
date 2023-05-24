@@ -18,11 +18,7 @@ export const EjectModal = (props) => {
     <AnimationModal isVisible={isVisible} size={100} onClose={props.onClose}>
       <View style={styles.container}>
         <Text>{isVisible}</Text>
-        <ProfileIcon
-          style={{ marginBottom: 20 }}
-          player={props.player}
-          size={200}
-        />
+        <ProfileIcon player={props.player} size={200} />
         <CustomText textSize={40} centerText={true}>
           <Text style={{ fontSize: 60, color: '#fff' }}>
             {props.player?.username}
