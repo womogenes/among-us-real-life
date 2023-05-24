@@ -212,6 +212,7 @@ export default function GameScreen({ navigation }) {
     getGameRoom()?.send('location', loc);
     setLocation(loc);
     setLoading(false);
+    setArrowActive(true);
   };
   const animate = (loc) => {
     let r = {
@@ -351,12 +352,14 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('playerEjected', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
+      if (!playerId) return;
 
       // ! HACK ! prevent conflicting display with the voting modal
       setTimeout(() => {
         setEjectedPlayer(
           getGameRoom().state.players.find((p) => p.sessionId === playerId)
         );
+        setArrowActive(false);
       }, 1000);
     });
 
@@ -378,7 +381,7 @@ export default function GameScreen({ navigation }) {
       setArrowActive(false);
       if (message == 'impostor') {
         console.log('HUH');
-        setWinningTeam(['Imposter']);
+        setWinningTeam(['Impostor']);
       } else if (message == 'crewmate') {
       }
     });
@@ -392,12 +395,6 @@ export default function GameScreen({ navigation }) {
       );
       setPlayer(player);
       setTasks(player.tasks);
-
-      if (room.state.gameState !== 'voting') {
-        setArrowActive(true);
-      } else {
-        setArrowActive(false);
-      }
 
       // Animate to new given location and update local state
       setLocation({ ...player.trueLocation }); // VERY IMPORTANT to make new object here, or useEffect will not fire
@@ -594,31 +591,18 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      {/* TESTING BUTTONS */}
-      <View style={styles.debugContainer}>
-        <TouchableOpacity
-          onPress={() => setEjectedPlayer(player)}
-          style={styles.testButton}
-        >
-          <Text>open eject modal</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
-          <Text>open voting modal</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setWinningTeam(['Imposter'])}
-          style={styles.testButton}
-        >
-          <Text>open eject modal</Text>
-        </TouchableOpacity>
-      </View>
-
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
-      <EjectModal onClose={() => setEjectedPlayer({})} player={ejectedPlayer} />
+      <EjectModal
+        onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
+        player={ejectedPlayer}
+      />
       <EndGame
         size={100}
-        player={winningTeam}
-        onClose={() => leaveGameRoom()}
+        team={winningTeam}
+        onClose={() => {
+          leaveGameRoom();
+          navigation.navigate('Menu');
+        }}
       />
 
       {/* TASKS */}
