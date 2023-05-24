@@ -351,6 +351,8 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('playerEjected', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
+      if (!playerId) return;
+
       // ! HACK ! prevent conflicting display with the voting modal
       setTimeout(() => {
         setEjectedPlayer(
