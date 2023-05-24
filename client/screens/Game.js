@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Modal,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -472,7 +473,10 @@ export default function GameScreen({ navigation }) {
               ? p.trueLocation
               : p.location;
 
-          if (findDistance(location, displayLoc) > 100) {
+          if (
+            findDistance(location, displayLoc) >
+            getGameRoom().state.settings.playerSight
+          ) {
             return;
           }
 
@@ -629,6 +633,7 @@ export default function GameScreen({ navigation }) {
         playing={sabotageActive}
         completion={() => getGameRoom().send('sabotageOver')}
       />
+      <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
     </View>
   );
 }
@@ -639,7 +644,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
+  dimmer: {
+    position: 'absolute',
+    alignSelf: 'center',
+    opacity: 0.5,
+    verticalAlign: 'center',
+    transform: [{ scale: 2.0 }],
+    zIndex: -1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -652,6 +664,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    zIndex: -2,
   },
   deathScreen: {
     width: '100%',
