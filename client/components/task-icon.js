@@ -37,11 +37,21 @@ export const TaskIcon = (props) => {
     )
   ).current;
 
-  if (props.name === 'o2') {
-    if (props.complete === false) {
+  function clearBeacon() {
+    Animated.timing(opacity.opacity, {
+      toValue: 0,
+      duration: 10,
+      useNativeDriver: false,
+      easing: Easing.inOut(Easing.sin),
+    }).start()
+  }
+
+  if(props.name === 'o2') {
+    if(props.complete === false) {
       toggleBeacon.start();
     } else {
       toggleBeacon.stop();
+      clearBeacon();
     }
     return (
       <View style={styles.container}>
@@ -72,6 +82,7 @@ export const TaskIcon = (props) => {
     return (
       <View>
         <Image
+          key={loading}
           style={[
             styles.image,
             {
@@ -81,7 +92,10 @@ export const TaskIcon = (props) => {
               borderWidth: props.size / 20,
             },
           ]}
-          source={images[props.name || 0]}
+          source={images[props.name]}
+          onLoad={() => {
+            setLoading(false);
+          }}
         />
       </View>
     );

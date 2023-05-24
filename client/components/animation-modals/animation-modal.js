@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import Constants from 'expo-constants';
 import CustomText from '../text';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const AnimationModal = (props) => {
   /*
@@ -16,6 +16,10 @@ export const AnimationModal = (props) => {
       onClose:   function (gets called when x button is pressed)
       isVisible: boolean  (React state for whether modal is visible)
   */
+
+  useEffect(() => {
+    console.log(`modal visible: ${props.isVisible}`);
+  }, [props.isVisible]);
 
   return (
     <Modal animationType="slide" transparent={true} visible={props.isVisible}>

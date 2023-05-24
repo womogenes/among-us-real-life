@@ -7,6 +7,7 @@ import {
   Platform,
   ActivityIndicator,
   Modal,
+  SafeAreaView,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -61,7 +62,7 @@ export default function GameScreen({ navigation }) {
   });
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
-  const [ejectedPlayer, setEjectedPlayer] = useState({});
+  const [ejectModalVisible, setEjectModalVisible] = useState(false);
   const [winningTeam, setWinningTeam] = useState({});
 
   // BUTTON HOOKS
@@ -82,8 +83,10 @@ export default function GameScreen({ navigation }) {
     name: null,
     taskId: null,
   });
-  const [distTask, setDistTask] = useState([]);
+  const [distTask, setDistTask] = useState([]); // array of all tasks with distance/direction within a certain radius
+  const [distAllTask, setDistAllTask] = useState([]); // array of all tasks with distance/direction from anywhere (aka very large radius)
   const [tasks, setTasks] = useState([]); // array of the locations of all tasks applicable to the user, will also be marked on the minimap
+  const [closestTask, setClosestTask] = useState();
 
   // PLAYER HOOKS
   const [location, setLocation] = useState({
@@ -219,6 +222,7 @@ export default function GameScreen({ navigation }) {
   };
   function findAllDist(loc) {
     let taskDist = distAll('task', loc, tasks, 20);
+    let taskAllDist = distAll('task', loc, tasks, 1000000);
     let playerArr = players.filter(
       (p) => p.sessionId !== getGameRoom().sessionId
     );
@@ -229,6 +233,7 @@ export default function GameScreen({ navigation }) {
       getGameRoom().state.settings.killRadius
     );
     setDistTask(taskDist);
+    setDistAllTask(taskAllDist);
     setDistPlayer(playerDist);
   }
 
@@ -304,6 +309,10 @@ export default function GameScreen({ navigation }) {
     activateReportButton();
   }, [distPlayer]);
   useEffect(() => {
+    // detects closest task in any range
+    setClosestTask(findClosest(distAllTask));
+  }, [distAllTask]);
+  useEffect(() => {
     findAllDist(location);
   }, [location]);
   useEffect(() => {
@@ -337,12 +346,8 @@ export default function GameScreen({ navigation }) {
       openVotingModal();
     });
 
-    room.onMessage('playerEjected', (playerId) => {
+    room.onMessage('playerKilled', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
-      setEjectedPlayer(
-        // Open voting modal
-        getGameRoom().state.players.find((p) => p.sessionId === playerId)
-      );
     });
 
     room.onMessage('sabotage', () => {
@@ -464,6 +469,7 @@ export default function GameScreen({ navigation }) {
               <ProfileIcon
                 player={p} // Pass the whole player object
                 size={40}
+                direction={closestTask.direction}
               />
             </Marker>
           );
@@ -565,8 +571,29 @@ export default function GameScreen({ navigation }) {
 
       {/* TESTING BUTTONS */}
       <View style={styles.debugContainer}>
+        {/* <TouchableOpacity
+          onPress={() => {
+            getGameRoom().send('playerDeath', getGameRoom().sessionId);
+          }}
+          style={styles.testButton}
+        >
+          <Text>unalive self</Text>
+        </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setEjectedPlayer(player)}
+          onPress={() => {
+            setActiveTask((prevArrState) => ({
+              ...prevArrState,
+              name: 'electricity',
+              taskId: null,
+            }));
+          }}
+          style={styles.testButton}
+        >
+          <Text>open electricity task</Text>
+        </TouchableOpacity> */}
+
+        <TouchableOpacity
+          onPress={() => setEjectModalVisible(true)}
           style={styles.testButton}
         >
           <Text>open eject modal</Text>
