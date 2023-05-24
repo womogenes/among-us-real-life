@@ -13,41 +13,8 @@ export function findDistance(myCoords, yourCoords) {
 export function findDirection(myCoords, yourCoords) {
   const x = myCoords.latitude - yourCoords.latitude;
   const y = myCoords.longitude - yourCoords.longitude;
-  const dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
   let rad = 0;
-  if(x == 0 || y == 0) {
-    if(x == 0) {
-      if (y > 0) { // Pointing Up
-        rad = Math.PI/2;
-      }
-      else if(y < 0) { // Pointing Down
-        rad = 3*Math.PI/2;
-      }
-      else { // Right On
-        rad = 0;
-      }
-    }
-    else if (y == 0) {
-      if (x > 0) { // Pointing Right
-        rad = 0;
-      }
-      else if(x < 0) { // Pointing Left
-        rad = Math.PI;
-      }
-    }
-  }
-  else if(x > 0 && y > 0) { // Quadrant 1
-    rad = Math.asin(Math.abs(y/dist));
-  }
-  else if(x < 0 && y > 0) { // Quadrant 2
-    rad = Math.asin(Math.abs(x/dist)) + Math.PI/2;
-  }
-  else if(x < 0 && y < 0) { // Quadrant 3
-    rad = Math.asin(Math.abs(y/dist)) + Math.PI;
-  }
-  else if(x < 0 && y < 0) { // Quadrant 4
-    rad = Math.asin(Math.abs(x/dist)) + 3*Math.PI/2;
-  }
+  rad = Math.atan2(y, x);
   return rad;
 }
 
@@ -96,6 +63,6 @@ export function findClosest(distArr) {
       minItem = item;
     }
   });
-  console.log(minItem.direction*57.2958);
+  // console.log(minItem.direction*57.2958);
   return minItem;
 }

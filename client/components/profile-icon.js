@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { getGameRoom } from '../networking';
 
+
 const images = {
   red: require('../assets/profile-icons/red.png'),
   blue: require('../assets/profile-icons/blue.png'),
@@ -11,14 +12,10 @@ const images = {
   white: require('../assets/profile-icons/white.png'),
 };
 
-export const ProfileIcon = ({ player, size, style, direction }) => {
+export const ProfileIcon = ({ player, size, style, direction, active }) => {
   if (!player) return;
 
   const { icon } = player;
-
-  useEffect(() => {
-    console.log(direction);
-  }, [direction]);
 
   return (
     <View style={styles.container}>
@@ -32,18 +29,12 @@ export const ProfileIcon = ({ player, size, style, direction }) => {
         ]}
         source={images[icon]}
       />
-      <View
-        style={[
-          styles.arrow,
-          {
-            transform: [
-              { rotateZ: parseFloat(direction - Math.PI / 2) + 'rad' },
-            ],
-          },
-        ]}
-      >
-        <View style={styles.triangle}></View>
-      </View>
+      {active &&
+        <View style={[styles.arrow, {transform: [{rotateZ: parseFloat(direction + Math.PI) + 'rad'}]}]}>
+          <View style={styles.triangle}>
+          </View>
+        </View>
+      }
     </View>
   );
 };
@@ -66,23 +57,22 @@ const styles = StyleSheet.create({
   },
   arrow: {
     alignItems: 'center',
-    backgroundColor: 'red',
     borderRadius: 100,
     width: 100,
     height: 100,
-    position: 'absolute',
+    position:'absolute',
   },
   triangle: {
     width: 0,
     height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
+    backgroundColor: "transparent",
+    borderStyle: "solid",
     borderLeftWidth: 10,
     borderRightWidth: 10,
     borderBottomWidth: 15,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'white',
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "#fcfa65",
     position: 'absolute',
-  },
+  }
 });

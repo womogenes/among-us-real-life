@@ -97,6 +97,7 @@ export default function GameScreen({ navigation }) {
   const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
   const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
   const [distPlayer, setDistPlayer] = useState([]);
+  const [arrowActive, setArrowActive] = useState(false);
 
   //REFRESH + LOADING HOOK
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
@@ -210,6 +211,7 @@ export default function GameScreen({ navigation }) {
     getGameRoom()?.send('location', loc);
     setLocation(loc);
     setLoading(false);
+    setArrowActive(true);
   };
   const animate = (loc) => {
     let r = {
@@ -343,17 +345,18 @@ export default function GameScreen({ navigation }) {
     setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
 
     room.onMessage('startVoting', () => {
+      setArrowActive(false);
       openVotingModal();
     });
 
     room.onMessage('playerEjected', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
-
       // ! HACK ! prevent conflicting display with the voting modal
       setTimeout(() => {
         setEjectedPlayer(
           getGameRoom().state.players.find((p) => p.sessionId === playerId)
         );
+        setArrowActive(false);
       }, 1000);
     });
 
@@ -372,6 +375,7 @@ export default function GameScreen({ navigation }) {
     });
 
     room.onMessage('endedGame', (message) => {
+      setArrowActive(false);
       if (message == 'impostor') {
         console.log('HUH');
         setWinningTeam(['Impostor']);
@@ -466,6 +470,10 @@ export default function GameScreen({ navigation }) {
               ? p.trueLocation
               : p.location;
 
+          if (findDistance(location, displayLoc) > 100) {
+            return;
+          }
+
           return (
             <Marker
               tracksViewChanges={p.isAlive}
@@ -477,6 +485,7 @@ export default function GameScreen({ navigation }) {
                 player={p} // Pass the whole player object
                 size={40}
                 direction={closestTask.direction}
+                active={arrowActive}
               />
             </Marker>
           );
@@ -600,7 +609,7 @@ export default function GameScreen({ navigation }) {
         </TouchableOpacity> */}
 
         <TouchableOpacity
-          onPress={() => setEjectedPlayer(player)}
+          onPress={() => [setEjectedPlayer(player), setArrowActive(false)]}
           style={styles.testButton}
         >
           <Text>open eject modal</Text>
@@ -617,7 +626,7 @@ export default function GameScreen({ navigation }) {
       </View>
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
-      <EjectModal onClose={() => setEjectedPlayer({})} player={ejectedPlayer} />
+      <EjectModal onClose={() => [setEjectedPlayer({}), setArrowActive(true)]} player={ejectedPlayer} />
       <EndGame
         size={100}
         team={winningTeam}
