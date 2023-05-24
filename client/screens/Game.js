@@ -644,8 +644,8 @@ const styles = StyleSheet.create({
   dimmer: {
     position: 'absolute',
     alignSelf: 'center',
-    opacity: 0.5,
     verticalAlign: 'center',
+    opacity: 0.5,
     transform: [{ scale: 2.0 }],
     zIndex: -1,
   },
