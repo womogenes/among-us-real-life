@@ -346,8 +346,15 @@ export default function GameScreen({ navigation }) {
       openVotingModal();
     });
 
-    room.onMessage('playerKilled', (playerId) => {
+    room.onMessage('playerEjected', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
+
+      // ! HACK ! prevent conflicting display with the voting modal
+      setTimeout(() => {
+        setEjectedPlayer(
+          getGameRoom().state.players.find((p) => p.sessionId === playerId)
+        );
+      }, 1000);
     });
 
     room.onMessage('sabotage', () => {
@@ -593,7 +600,7 @@ export default function GameScreen({ navigation }) {
         </TouchableOpacity> */}
 
         <TouchableOpacity
-          onPress={() => setEjectModalVisible(true)}
+          onPress={() => setEjectedPlayer(player)}
           style={styles.testButton}
         >
           <Text>open eject modal</Text>

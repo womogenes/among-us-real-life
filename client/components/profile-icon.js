@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 
 import { getGameRoom } from '../networking';
 
-
 const images = {
   red: require('../assets/profile-icons/red.png'),
   blue: require('../assets/profile-icons/blue.png'),
@@ -19,7 +18,7 @@ export const ProfileIcon = ({ player, size, style, direction }) => {
 
   useEffect(() => {
     console.log(direction);
-  }, [direction])
+  }, [direction]);
 
   return (
     <View style={styles.container}>
@@ -33,10 +32,17 @@ export const ProfileIcon = ({ player, size, style, direction }) => {
         ]}
         source={images[icon]}
       />
-      <View style={[styles.arrow, {transform: [{rotateZ: parseFloat(direction - Math.PI/2) + 'rad'}]}]}>
-        <View style={styles.triangle}>
-
-        </View>
+      <View
+        style={[
+          styles.arrow,
+          {
+            transform: [
+              { rotateZ: parseFloat(direction - Math.PI / 2) + 'rad' },
+            ],
+          },
+        ]}
+      >
+        <View style={styles.triangle}></View>
       </View>
     </View>
   );
@@ -64,19 +70,19 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     width: 100,
     height: 100,
-    position:'absolute',
+    position: 'absolute',
   },
   triangle: {
     width: 0,
     height: 0,
-    backgroundColor: "transparent",
-    borderStyle: "solid",
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
     borderLeftWidth: 10,
     borderRightWidth: 10,
     borderBottomWidth: 15,
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent",
-    borderBottomColor: "white",
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: 'white',
     position: 'absolute',
-  }
+  },
 });
