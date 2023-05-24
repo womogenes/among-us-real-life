@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Modal,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -392,10 +393,9 @@ export default function GameScreen({ navigation }) {
       setPlayer(player);
       setTasks(player.tasks);
 
-      if(room.state.gameState !== 'voting') {
+      if (room.state.gameState !== 'voting') {
         setArrowActive(true);
-      }
-      else {
+      } else {
         setArrowActive(false);
       }
 
@@ -476,7 +476,10 @@ export default function GameScreen({ navigation }) {
               ? p.trueLocation
               : p.location;
 
-          if (findDistance(location, displayLoc) > 100) {
+          if (
+            findDistance(location, displayLoc) >
+            getGameRoom().state.settings.playerSight
+          ) {
             return;
           }
 
@@ -593,27 +596,6 @@ export default function GameScreen({ navigation }) {
 
       {/* TESTING BUTTONS */}
       <View style={styles.debugContainer}>
-        {/* <TouchableOpacity
-          onPress={() => {
-            getGameRoom().send('playerDeath', getGameRoom().sessionId);
-          }}
-          style={styles.testButton}
-        >
-          <Text>unalive self</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveTask((prevArrState) => ({
-              ...prevArrState,
-              name: 'electricity',
-              taskId: null,
-            }));
-          }}
-          style={styles.testButton}
-        >
-          <Text>open electricity task</Text>
-        </TouchableOpacity> */}
-
         <TouchableOpacity
           onPress={() => setEjectedPlayer(player)}
           style={styles.testButton}
@@ -664,6 +646,7 @@ export default function GameScreen({ navigation }) {
         closeTask={closeTask}
       />
       <Timer playing={sabotageActive} />
+      <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
     </View>
   );
 }
@@ -674,7 +657,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
+  dimmer: {
+    position: 'absolute',
+    alignSelf: 'center',
+    opacity: 0.5,
+    verticalAlign: 'center',
+    transform: [{ scale: 2.0 }],
+    zIndex: -1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -687,6 +677,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    zIndex: -2,
   },
   deathScreen: {
     width: '100%',
