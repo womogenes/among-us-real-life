@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     borderRadius: 100,
-    backgroundColor: '#f00',
   },
   image: {
     borderRadius: 9999,
