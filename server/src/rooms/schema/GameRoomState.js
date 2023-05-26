@@ -74,7 +74,8 @@ export class Player extends Schema {
       new Task('memory', new Location(47.731779, -122.32705, 0)), // Bliss
       new Task('reCaptcha', new Location(47.733402, -122.327814, 0)), // AAC
       new Task('reCaptcha', new Location(47.73264, -122.327554, 0)), // Quad
-      new Task('electricity', new Location(47.732325, -122.326288, 0)) // Behind St. Nick's
+      new Task('electricity', new Location(47.732325, -122.326288, 0)), // Behind St. Nick's
+      new Task('memory', new Location(47.733534, -122.326878, 0)) // East side of AAC
     );
   }
 }
