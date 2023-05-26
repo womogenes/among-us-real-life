@@ -34,19 +34,17 @@ export default function App() {
             }}
           >
             <Stack.Screen name="Menu" component={MenuScreen} />
-            <Stack.Screen name="Lobby" component={LobbyScreen} />
+            <Stack.Screen
+              name="Lobby"
+              component={LobbyScreen}
+              options={{ gestureEnabled: false }}
+            />
             <Stack.Screen
               name="Game"
               component={GameScreen}
-              // options={{ gestureEnabled: false }}
+              options={{ gestureEnabled: false }}
             />
             <Stack.Screen name="Join" component={JoinScreen} />
-            <Stack.Screen
-              name="TestScreen"
-              component={TestScreen}
-              options={{ title: 'Dev things' }}
-              initialParams={{ msg: 'You came from nowhere!' }}
-            />
 
             {/* William's server ping stuff */}
             {/* <View style={styles.container}>
