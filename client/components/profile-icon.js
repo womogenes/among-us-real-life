@@ -11,7 +11,7 @@ const images = {
   white: require('../assets/profile-icons/white.png'),
 };
 
-export const ProfileIcon = ({ player, size, style, direction, active }) => {
+export const ProfileIcon = ({ player, size, style, direction, active, sabotage }) => {
   if (!player) return;
 
   const { icon } = player;
@@ -37,7 +37,7 @@ export const ProfileIcon = ({ player, size, style, direction, active }) => {
             },
           ]}
         >
-          <View style={styles.triangle}></View>
+          <View style={[styles.triangle, (sabotage? {borderBottomColor: '#f70000'} : {borderBottomColor: '#fcfa65'})]}></View>
         </View>
       )}
     </View>
@@ -77,7 +77,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 15,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: '#fcfa65',
     position: 'absolute',
   },
 });

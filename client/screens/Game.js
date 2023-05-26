@@ -309,6 +309,7 @@ export default function GameScreen({ navigation }) {
       await locationWatcher?.remove();
     };
   }, []);
+
   useEffect(() => {
     // Detects when distTask is updated and reevaluates USE button activation
     activateUseButton();
@@ -324,16 +325,7 @@ export default function GameScreen({ navigation }) {
   }, [distAllTask]);
   useEffect(() => {
     findAllDist(location);
-  }, [location]);
-  useEffect(() => {
-    findAllDist(location);
-  }, [
-    JSON.stringify(
-      players.filter((p) => p.sessionId !== getGameRoom().sessionId)
-    ),
-  ]);
-  useEffect(() => {
-    if(sabotageActive) {
+    if(sabotageActive) { // Replaces the task array with only sabotage tasks for the arrow pointer
       let arr = []
       tasks.forEach((task) => {
         if(task.name === 'o2') {
@@ -345,7 +337,14 @@ export default function GameScreen({ navigation }) {
     else {
       setSabotageTasks([]);
     }
-  },[sabotageActive])
+  }, [location]);
+  useEffect(() => {
+    findAllDist(location);
+  }, [
+    JSON.stringify(
+      players.filter((p) => p.sessionId !== getGameRoom().sessionId)
+    ),
+  ]);
 
   // SABOTAGE
   useEffect(() => {
@@ -515,6 +514,7 @@ export default function GameScreen({ navigation }) {
                 size={40}
                 direction={closestTask.direction}
                 active={arrowActive}
+                sabotage={sabotageActive}
               />
             </Marker>
           );
