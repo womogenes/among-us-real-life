@@ -651,7 +651,7 @@ export default function GameScreen({ navigation }) {
       />
       <Timer
         playing={sabotageActive}
-        completion={() => getGameRoom().send('sabotageOver')}
+        completion={() => getGameRoom().send('sabotageDeath')}
       />
       <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
     </View>
