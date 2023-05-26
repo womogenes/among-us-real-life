@@ -285,7 +285,7 @@ export class GameRoom extends Room {
       startVoting();
     });
 
-    this.onMessage('sabotageOver', () => {
+    this.onMessage('sabotageDeath', () => {
       this.broadcast('endedGame', 'impostor');
     });
 
