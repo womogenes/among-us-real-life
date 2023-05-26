@@ -251,10 +251,11 @@ export class GameRoom extends Room {
       }
 
       let impostorNum = this.state.settings.impostorNum;
+
       if (impostorNum != 0) {
         const set = new Set();
         while (set.size < impostorNum) {
-          set.add(Math.floor(Math.random() * this.state.players.length) + 1);
+          set.add(Math.floor(Math.random() * this.state.players.length));
         }
         for (let i of set) {
           this.state.players[i].isImpostor = true;
