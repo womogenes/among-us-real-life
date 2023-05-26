@@ -68,26 +68,14 @@ export class Player extends Schema {
     // Make a default test task
     this.tasks = new ArraySchema();
     this.tasks.push(
-      new Task('electricity', new Location(47.731475, -122.328036, 0)), // AG
-      new Task('reCaptcha', new Location(47.731392, -122.327791, 0)), // East end of AG
-      new Task('memory', new Location(47.732346, -122.326806, 0)), // Moore
-      new Task('memory', new Location(47.731639, -122.327612, 0)), // Red square
+      new Task('electricity', new Location(47.731017, -122.327879, 0)), // Behind AG
+      new Task('memory', new Location(47.732253, -122.326931, 0)), // Moore
+      new Task('reCaptcha', new Location(47.731639, -122.327612, 0)), // Red square
       new Task('memory', new Location(47.731779, -122.32705, 0)), // Bliss
-
-      new Task('reCaptcha', new Location(47.73206, -122.326362, 0)), // St. Nicks
-
-      new Task('reCaptcha', new Location(47.63754, -122.169789, 0)), // William's house
-
-      //new Task('reCaptcha', new Location(47.737305, -122.33942, 0)), // Felix's house
-
-      new Task(
-        'memory',
-        new Location(47.64096865628356, -122.24140723628969, 0)
-      ), // Brandon's house
-      new Task('o2', new Location(47.6407, -122.24140723628969, 0)), // Brandon's house
-      new Task('reCaptcha', new Location(47.641, -122.242, 0)), // Brandon's house
-
-      new Task('reCaptcha', new Location(47.731317, -122.327169, 0)) // LS Library
+      new Task('reCaptcha', new Location(47.733402, -122.327814, 0)), // AAC
+      new Task('reCaptcha', new Location(47.73264, -122.327554, 0)), // Quad
+      new Task('electricity', new Location(47.732325, -122.326288, 0)), // Behind St. Nick's
+      new Task('memory', new Location(47.733534, -122.326878, 0)) // East side of AAC
     );
   }
 }

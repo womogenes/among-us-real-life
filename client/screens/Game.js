@@ -55,7 +55,7 @@ export default function GameScreen({ navigation }) {
 
   // SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
   const [sabotageActive, setSabotageActive] = useState(false);
-  const [sabotageTasks,setSabotageTasks] = useState([]);
+  const [sabotageTasks, setSabotageTasks] = useState([]);
   const [sabNotif, setSabNotif] = useState(false);
   const [sabotageOnCooldown, setSabotageOnCooldown] = useState(false);
   const [emergencyMeetingLocation, setEmergencyMeetingLocation] = useState({
@@ -226,11 +226,10 @@ export default function GameScreen({ navigation }) {
   };
   function findAllDist(loc) {
     let taskDist = distAll('task', loc, tasks, 20);
-    let taskAllDist
-    if(sabotageActive == true){
+    let taskAllDist;
+    if (sabotageActive == true) {
       taskAllDist = distAll('task', loc, sabotageTasks, 1000000);
-    }
-    else{
+    } else {
       taskAllDist = distAll('task', loc, tasks, 1000000);
     }
     let playerArr = players.filter(
@@ -325,16 +324,16 @@ export default function GameScreen({ navigation }) {
   }, [distAllTask]);
   useEffect(() => {
     findAllDist(location);
-    if(sabotageActive) { // Replaces the task array with only sabotage tasks for the arrow pointer
-      let arr = []
+    if (sabotageActive) {
+      // Replaces the task array with only sabotage tasks for the arrow pointer
+      let arr = [];
       tasks.forEach((task) => {
-        if(task.name === 'o2') {
+        if (task.name === 'o2') {
           arr.push(task);
         }
-      })
+      });
       setSabotageTasks(arr);
-    }
-    else {
+    } else {
       setSabotageTasks([]);
     }
   }, [location]);
@@ -619,11 +618,7 @@ export default function GameScreen({ navigation }) {
         onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
         player={ejectedPlayer}
       />
-      <EndGame
-        size={100}
-        player={winningTeam}
-        onClose={() => leaveGameRoom()}
-      />
+      <EndGame size={100} team={winningTeam} onClose={() => leaveGameRoom()} />
 
       {/* TASKS */}
       <CaptchaTask
@@ -651,7 +646,7 @@ export default function GameScreen({ navigation }) {
       />
       <Timer
         playing={sabotageActive}
-        completion={() => getGameRoom().send('sabotageOver')}
+        completion={() => getGameRoom().send('sabotageDeath')}
       />
       <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
     </View>
