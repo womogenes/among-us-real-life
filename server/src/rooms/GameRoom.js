@@ -223,13 +223,13 @@ export class GameRoom extends Room {
       const newId1 = nanoid();
       const newTask1 = new Task(
         'o2',
-        new Location(47.73731712202693, -122.3394061888169, 0), //47.731502, -122.32804 Lakeside 47.73731712202693, -122.3394061888169 Felix's Coords
+        new Location(47.732916, -122.328263, 0),
         newId1
       );
       const newId2 = nanoid();
       const newTask2 = new Task(
         'o2',
-        new Location(47.737305, -122.33942, 0), // 47.731518, -122.327982 Lakeside 47.737305, -122.33942 Felix's Coords
+        new Location(47.732511, -122.328258, 0),
         newId2
       );
       this.state.sabotageTaskList.push(newTask1);
