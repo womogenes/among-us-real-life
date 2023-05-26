@@ -28,6 +28,7 @@ import Timer from '../components/timer.js';
 
 import CaptchaTask from '../components/tasks/recaptcha.js';
 import CodeTask from '../components/sabotage/passcode.js';
+import ScanTask from '../components/sabotage/scanner.js';
 import MemoryTask from '../components/tasks/memory.js';
 import ElectricityTask from '../components/tasks/electricity.js';
 
@@ -549,6 +550,7 @@ export default function GameScreen({ navigation }) {
 
         {taskMarkers()}
       </MapView>
+
       <Minimap
         player={getGameRoom().state.players.find(
           (p) => p.sessionId === getGameRoom().sessionId
@@ -559,6 +561,7 @@ export default function GameScreen({ navigation }) {
 
       {deathScreen()}
       <SabotageFlash sabotageActive={sabotageActive} />
+      
 
       {/* CONTROL PANEL (BUTTONS) */}
       {playerState == 'crewmate' ? (
@@ -612,6 +615,18 @@ export default function GameScreen({ navigation }) {
       ) : (
         <ControlPanel />
       )}
+      
+      <TouchableOpacity
+        onPress={() => {
+          setActiveTask((prevArrState) => ({
+          ...prevArrState,
+          name: 'scanner',
+          taskId: 1234,
+        }));}}
+        style={styles.testButton}
+      >
+          <Text>Open Scanner Task</Text>
+      </TouchableOpacity>
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
       <EjectModal
@@ -629,6 +644,11 @@ export default function GameScreen({ navigation }) {
       <CodeTask
         active={activeTask.name === 'o2'}
         code={Array.from({ length: 4 }, () => Math.floor(Math.random() * 10))}
+        complete={completeTask}
+        closeTask={closeTask}
+      />
+      <ScanTask
+        active={activeTask.name === 'scanner'}
         complete={completeTask}
         closeTask={closeTask}
       />
@@ -711,6 +731,8 @@ const styles = StyleSheet.create({
   testButton: {
     padding: 10,
     margin: 10,
+    position: 'absolute',
+    top: 500,
     backgroundColor: 'powderblue',
     borderRadius: 5,
   },
