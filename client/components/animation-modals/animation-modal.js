@@ -17,10 +17,6 @@ export const AnimationModal = (props) => {
       isVisible: boolean  (React state for whether modal is visible)
   */
 
-  useEffect(() => {
-    console.log(`modal visible: ${props.isVisible}`);
-  }, [props.isVisible]);
-
   return (
     <Modal animationType="slide" transparent={true} visible={props.isVisible}>
       <View style={styles.modal}>

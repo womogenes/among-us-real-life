@@ -251,9 +251,6 @@ export class GameRoom extends Room {
       }
 
       let impostorNum = this.state.settings.impostorNum;
-      this.state.players.find((p) => p.isHost).isImpostor = true;
-      impostorNum--;
-      console.log(impostorNum);
       if (impostorNum != 0) {
         const set = new Set();
         while (set.size < impostorNum) {
@@ -285,6 +282,10 @@ export class GameRoom extends Room {
 
       this.state.votes = new Map();
       startVoting();
+    });
+
+    this.onMessage('sabotageOver', () => {
+      this.broadcast('endedGame', 'impostor');
     });
 
     // Notify the lobby that this room has been created

@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Modal,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
@@ -372,6 +373,8 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('playerEjected', (playerId) => {
       console.log(`Player ${playerId} was voted out`);
+      if (!playerId) return;
+
       // ! HACK ! prevent conflicting display with the voting modal
       setTimeout(() => {
         setEjectedPlayer(
@@ -398,9 +401,9 @@ export default function GameScreen({ navigation }) {
     room.onMessage('endedGame', (message) => {
       setArrowActive(false);
       if (message == 'impostor') {
-        console.log('HUH');
-        setWinningTeam(['Imposter']);
+        setWinningTeam(['Impostor']);
       } else if (message == 'crewmate') {
+        setWinningTeam(['Crewmate']);
       }
     });
 
@@ -490,6 +493,13 @@ export default function GameScreen({ navigation }) {
             p?.isAlive || p.sessionId === getGameRoom().sessionId
               ? p.trueLocation
               : p.location;
+
+          if (
+            findDistance(location, displayLoc) >
+            getGameRoom().state.settings.playerSight
+          ) {
+            return;
+          }
 
           return (
             <Marker
@@ -602,48 +612,11 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      {/* TESTING BUTTONS */}
-      <View style={styles.debugContainer}>
-        {/* <TouchableOpacity
-          onPress={() => {
-            getGameRoom().send('playerDeath', getGameRoom().sessionId);
-          }}
-          style={styles.testButton}
-        >
-          <Text>unalive self</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveTask((prevArrState) => ({
-              ...prevArrState,
-              name: 'electricity',
-              taskId: null,
-            }));
-          }}
-          style={styles.testButton}
-        >
-          <Text>open electricity task</Text>
-        </TouchableOpacity> */}
-
-        <TouchableOpacity
-          onPress={() => setEjectedPlayer(player)}
-          style={styles.testButton}
-        >
-          <Text>open eject modal</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
-          <Text>open voting modal</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setWinningTeam(['Imposter'])}
-          style={styles.testButton}
-        >
-          <Text>open eject modal</Text>
-        </TouchableOpacity>
-      </View>
-
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
-      <EjectModal onClose={() => [setEjectedPlayer({}), setArrowActive(true)]} player={ejectedPlayer} />
+      <EjectModal
+        onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
+        player={ejectedPlayer}
+      />
       <EndGame
         size={100}
         player={winningTeam}
@@ -674,7 +647,11 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
-      <Timer playing={sabotageActive} />
+      <Timer
+        playing={sabotageActive}
+        completion={() => getGameRoom().send('sabotageOver')}
+      />
+      <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
     </View>
   );
 }
@@ -685,7 +662,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
+  dimmer: {
+    position: 'absolute',
+    alignSelf: 'center',
+    verticalAlign: 'center',
+    opacity: 0.5,
+    transform: [{ scale: 2.0 }],
+    zIndex: -1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -698,6 +682,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    zIndex: -2,
   },
   deathScreen: {
     width: '100%',
