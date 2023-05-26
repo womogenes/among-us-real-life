@@ -54,6 +54,7 @@ export default function GameScreen({ navigation }) {
 
   // SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
   const [sabotageActive, setSabotageActive] = useState(false);
+  const [sabotageTasks,setSabotageTasks] = useState([]);
   const [sabNotif, setSabNotif] = useState(false);
   const [sabotageOnCooldown, setSabotageOnCooldown] = useState(false);
   const [emergencyMeetingLocation, setEmergencyMeetingLocation] = useState({
@@ -224,7 +225,13 @@ export default function GameScreen({ navigation }) {
   };
   function findAllDist(loc) {
     let taskDist = distAll('task', loc, tasks, 20);
-    let taskAllDist = distAll('task', loc, tasks, 1000000);
+    let taskAllDist
+    if(sabotageActive == true){
+      taskAllDist = distAll('task', loc, sabotageTasks, 1000000);
+    }
+    else{
+      taskAllDist = distAll('task', loc, tasks, 1000000);
+    }
     let playerArr = players.filter(
       (p) => p.sessionId !== getGameRoom().sessionId
     );
@@ -324,6 +331,20 @@ export default function GameScreen({ navigation }) {
       players.filter((p) => p.sessionId !== getGameRoom().sessionId)
     ),
   ]);
+  useEffect(() => {
+    if(sabotageActive) {
+      let arr = []
+      tasks.forEach((task) => {
+        if(task.name === 'o2') {
+          arr.push(task);
+        }
+      })
+      setSabotageTasks(arr);
+    }
+    else {
+      setSabotageTasks([]);
+    }
+  },[sabotageActive])
 
   // SABOTAGE
   useEffect(() => {
@@ -378,7 +399,7 @@ export default function GameScreen({ navigation }) {
       setArrowActive(false);
       if (message == 'impostor') {
         console.log('HUH');
-        setWinningTeam(['Impostor']);
+        setWinningTeam(['Imposter']);
       } else if (message == 'crewmate') {
       }
     });
@@ -469,10 +490,6 @@ export default function GameScreen({ navigation }) {
             p?.isAlive || p.sessionId === getGameRoom().sessionId
               ? p.trueLocation
               : p.location;
-
-          if (findDistance(location, displayLoc) > 100) {
-            return;
-          }
 
           return (
             <Marker
@@ -609,7 +626,7 @@ export default function GameScreen({ navigation }) {
         </TouchableOpacity> */}
 
         <TouchableOpacity
-          onPress={() => [setEjectedPlayer(player), setArrowActive(false)]}
+          onPress={() => setEjectedPlayer(player)}
           style={styles.testButton}
         >
           <Text>open eject modal</Text>
@@ -618,10 +635,10 @@ export default function GameScreen({ navigation }) {
           <Text>open voting modal</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setWinningTeam(['Impostor'])}
+          onPress={() => setWinningTeam(['Imposter'])}
           style={styles.testButton}
         >
-          <Text>open end game modal</Text>
+          <Text>open eject modal</Text>
         </TouchableOpacity>
       </View>
 
@@ -629,11 +646,8 @@ export default function GameScreen({ navigation }) {
       <EjectModal onClose={() => [setEjectedPlayer({}), setArrowActive(true)]} player={ejectedPlayer} />
       <EndGame
         size={100}
-        team={winningTeam}
-        onClose={() => {
-          leaveGameRoom();
-          navigation.navigate('Menu');
-        }}
+        player={winningTeam}
+        onClose={() => leaveGameRoom()}
       />
 
       {/* TASKS */}
