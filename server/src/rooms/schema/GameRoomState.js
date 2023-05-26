@@ -110,6 +110,7 @@ class Settings extends Schema {
 
     this.killRadius = 10;
     this.killCooldown = 20;
+    this.saboCooldown = 120;
     this.impostorNum = 1;
     this.votingTimer = 30;
     this.playerSight = 100;
@@ -125,6 +126,7 @@ class Settings extends Schema {
 schema.defineTypes(Settings, {
   killRadius: 'number',
   killCooldown: 'number',
+  saboCooldown: 'number',
   impostorNum: 'number',
   votingTimer: 'number',
   playerSight: 'number',

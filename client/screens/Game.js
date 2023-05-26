@@ -364,7 +364,7 @@ export default function GameScreen({ navigation }) {
     const thisPlayer = room.state.players.find(
       (p) => p.sessionId === room.sessionId
     );
-    setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
+    setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'impostor');
 
     room.onMessage('startVoting', () => {
       setArrowActive(false);
@@ -382,6 +382,8 @@ export default function GameScreen({ navigation }) {
         );
         setArrowActive(false);
       }, 1000);
+
+      setSabotageOnCooldown(true);
     });
 
     room.onMessage('sabotage', () => {
@@ -593,7 +595,7 @@ export default function GameScreen({ navigation }) {
           setManualMovement={setManualMovementHook}
           sabotageActive={sabotageActive}
           sabotageOnCooldown={sabotageOnCooldown}
-          sabotageCooldown={10}
+          sabotageCooldown={getGameRoom().state.settings.saboCooldown}
           endSabotageCooldown={() => endSabotageCooldown()}
           o2={() => sabotage('o2')}
         />

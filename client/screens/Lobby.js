@@ -35,6 +35,9 @@ function LobbyScreen({ navigation }) {
   const [killCooldown, setKillCooldown] = useState([20]);
   const [prevKillCooldown, setPrevKillCooldown] = useState([20]);
 
+  const [saboCooldown, setSaboCooldown] = useState([120]);
+  const [prevSaboCooldown, setPrevSaboCooldown] = useState([20]);
+
   const [impostorNum, setImpostorNum] = useState([1]);
   const [prevImpostorNum, setPrevImpostorNum] = useState([1]);
 
@@ -80,6 +83,7 @@ function LobbyScreen({ navigation }) {
       if (!isHost) {
         setKillRadius(state.settings.killRadius);
         setKillCooldown(state.settings.killCooldown);
+        setSaboCooldown(state.settings.saboCooldown);
         setImpostorNum(state.settings.impostorNum);
         setVotingTimer(state.settings.votingTimer);
         setAnonVotes(state.settings.anonVotes);
@@ -106,6 +110,7 @@ function LobbyScreen({ navigation }) {
   function storePrev() {
     setPrevKillRadius(killRadius);
     setPrevKillCooldown(killCooldown);
+    setPrevSaboCooldown(saboCooldown);
     setPrevImpostorNum(impostorNum);
     setPrevVotingTimer(votingTimer);
     setPrevAnonVotes(anonVotes);
@@ -115,6 +120,7 @@ function LobbyScreen({ navigation }) {
   function dontSave() {
     setKillRadius(prevKillRadius);
     setKillCooldown(prevKillCooldown);
+    setSaboCooldown(prevSaboCooldown);
     setImpostorNum(prevImpostorNum);
     setVotingTimer(prevVotingTimer);
     setAnonVotes(prevAnonVotes);
@@ -122,6 +128,7 @@ function LobbyScreen({ navigation }) {
     getGameRoom().send('settingsUpdated', {
       killRadius: prevKillRadius[0],
       killCooldown: prevKillCooldown[0],
+      saboCooldown: prevSaboCooldown[0],
       impostorNum: prevImpostorNum[0],
       votingTimer: prevVotingTimer[0],
       anonVotes: prevAnonVotes[0],
@@ -144,6 +151,7 @@ function LobbyScreen({ navigation }) {
     getGameRoom().send('settingsUpdated', {
       killRadius: killRadius[0],
       killCooldown: killCooldown[0],
+      saboCooldown: saboCooldown[0],
       impostorNum: impostorNum[0],
       votingTimer: votingTimer[0],
       anonVotes: anonVotes[0],
@@ -270,6 +278,23 @@ function LobbyScreen({ navigation }) {
                     step={5}
                     onValueChange={(killCooldown) => {
                       setKillCooldown(killCooldown);
+                      settingsUpdated();
+                    }}
+                    trackClickable={true}
+                    disabled={!isHost}
+                  />
+                </View>
+                <View>
+                  <CustomText centerText={true} textSize={40}>
+                    Sabotage Cooldown: {saboCooldown}s
+                  </CustomText>
+                  <Slider
+                    value={saboCooldown}
+                    minimumValue={120}
+                    maximumValue={300}
+                    step={5}
+                    onValueChange={(saboCooldown) => {
+                      setSaboCooldown(saboCooldown);
                       settingsUpdated();
                     }}
                     trackClickable={true}
