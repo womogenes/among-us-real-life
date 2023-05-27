@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RNHoleView } from 'react-native-hole-view';
+import MaskedView from '@react-native-masked-view/masked-view';
 import { StyleSheet, View, TouchableOpacity, Animated, Text, Image } from 'react-native';
 import Easing from 'react-native/Libraries/Animated/Easing';
 import Modal from 'react-native-modal';
@@ -18,23 +18,26 @@ function ScanTask({ active, complete, closeTask }) {
         <TouchableOpacity
             style={styles.closeButton}
             onPress={() => closeTask('passcode')}
-          >
+        >
             <CustomText textSize={30}>&#10006;</CustomText>
         </TouchableOpacity>
         <View style={styles.container}>
-          <RNHoleView
-            style={styles.transparentWindow}
-            holes={[{x: 100, y: 100, width: 90, height: 90, borderRadius: 100}]}
-          >
-
-          </RNHoleView>
-          <TouchableOpacity style={styles.button}>
-            <Animated.View style={[styles.blueLine]}>
-              
-            </Animated.View>
-            <Image style={styles.image} source={require('../../assets/fingerprint.png')}/>
-          </TouchableOpacity> 
-        </View>    
+          <TouchableOpacity style={styles.button} onPress={() => console.log('sup')}>
+            <MaskedView
+              style={styles.container2}
+              maskElement={
+                <View style={styles.container3}>
+                  <Image style={styles.image} source={require('../../assets/fingerprint.png')}/>
+                </View>
+              }
+            >
+              <Animated.View style={[styles.blueLine]}>
+                  
+              </Animated.View>
+              <View style={{ flex: 1, height: '100%', backgroundColor: '#324376' }} />
+            </MaskedView>
+          </TouchableOpacity>
+        </View>
       </View>
     </Modal>
   );
@@ -69,14 +72,22 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   container: {
+    height: '100%',
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'red',
-  },
-  transparentWindow: {
+    alignItems: 'center',
     position: 'absolute',
+  },
+  container2: {
+    height: '100%',
     flex: 1,
-    backgroundColor: 'white',
+    flexDirection: 'row',
+  },
+  container3: {
+    height: '100%',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   image: {
     width: 75,
@@ -86,7 +97,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: '#03fcdf',
     height: 20,
-    width: '100%',
+    width: 90,
     opacity: 0.8,
     bottom: 0,
   },
