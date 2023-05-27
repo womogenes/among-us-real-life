@@ -197,6 +197,12 @@ function ControlPanel(props) {
                 >
                   <Text style={styles.sabotageListButtonText}>o2</Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.sabotageListButton}
+                  onPress={props.reactor}
+                >
+                  <Text style={styles.sabotageListButtonText}>reactor</Text>
+                </TouchableOpacity>
               </View>
             </Modal>
           </>
@@ -274,7 +280,7 @@ const styles = StyleSheet.create({
     height: '13%',
     borderWidth: 2,
     borderRadius: 10,
-    margin: 25,
+    margin: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },

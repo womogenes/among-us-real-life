@@ -145,7 +145,7 @@ export default function GameScreen({ navigation }) {
       (playerState == 'crewmate' ||
         (playerState == 'impostor' &&
           sabotageActive &&
-          closestTask.name === 'o2'))
+          (closestTask.name === 'o2' || closestTask.name === 'reactor')))
     ) {
       setActiveTask((prevArrState) => ({
         ...prevArrState,
@@ -178,7 +178,7 @@ export default function GameScreen({ navigation }) {
         }
       } else if (
         playerState == 'impostor' &&
-        findClosest(distTask).name == 'o2'
+        (findClosest(distTask).name == 'o2' || findClosest(distTask).name == 'reactor')
       ) {
         changeButtonState('use', false);
       }
@@ -329,7 +329,7 @@ export default function GameScreen({ navigation }) {
       // Replaces the task array with only sabotage tasks for the arrow pointer
       let arr = [];
       tasks.forEach((task) => {
-        if (task.name === 'o2') {
+        if (task.name === 'o2' || task.name === 'reactor') {
           arr.push(task);
         }
       });
@@ -600,6 +600,7 @@ export default function GameScreen({ navigation }) {
           sabotageCooldown={getGameRoom().state.settings.saboCooldown}
           endSabotageCooldown={() => endSabotageCooldown()}
           o2={() => sabotage('o2')}
+          reactor={() => sabotage('reactor')}
         />
       ) : playerState == 'disguised' ? (
         <ControlPanel
@@ -616,17 +617,17 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
       
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => {
           setActiveTask((prevArrState) => ({
           ...prevArrState,
-          name: 'scanner',
+          name: 'reactor',
           taskId: 1234,
         }));}}
         style={styles.testButton}
       >
           <Text>Open Scanner Task</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
       <EjectModal
@@ -648,7 +649,7 @@ export default function GameScreen({ navigation }) {
         closeTask={closeTask}
       />
       <ScanTask
-        active={activeTask.name === 'scanner'}
+        active={activeTask.name === 'reactor'}
         complete={completeTask}
         closeTask={closeTask}
       />

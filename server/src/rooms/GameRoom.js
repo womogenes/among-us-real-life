@@ -174,7 +174,7 @@ export class GameRoom extends Room {
         this.state.players.forEach((p) => {
           let taskIndex = 0;
           while (taskIndex != -1) {
-            taskIndex = p.tasks.findIndex((task) => task.name === 'o2');
+            taskIndex = p.tasks.findIndex((task) => (task.name === 'o2' || task.name === 'reactor'));
             if (taskIndex != -1) {
               p.tasks.splice(taskIndex, 1);
             }
@@ -219,7 +219,6 @@ export class GameRoom extends Room {
 
     this.onMessage('o2', () => {
       this.broadcast('sabotage');
-      console.log('sabotage!!!!');
       const newId1 = nanoid();
       const newTask1 = new Task(
         'o2',
@@ -230,6 +229,28 @@ export class GameRoom extends Room {
       const newTask2 = new Task(
         'o2',
         new Location(47.732511, -122.328258, 0),
+        newId2
+      );
+      this.state.sabotageTaskList.push(newTask1);
+      this.state.sabotageTaskList.push(newTask2);
+      this.state.players.forEach((p) => {
+        p.tasks.push(newTask1);
+        p.tasks.push(newTask2);
+      });
+    });
+
+    this.onMessage('reactor', () => {
+      this.broadcast('sabotage');
+      const newId1 = nanoid();
+      const newTask1 = new Task(
+        'reactor',
+        new Location(47.73731941803852, -122.33940977513485, 0), // 47.73731941803852, -122.33940977513485 Felix
+        newId1
+      );
+      const newId2 = nanoid();
+      const newTask2 = new Task(
+        'reactor',
+        new Location(47.737304536128356, -122.33942251562718, 0), // 47.737304536128356, -122.33942251562718 Felix
         newId2
       );
       this.state.sabotageTaskList.push(newTask1);
