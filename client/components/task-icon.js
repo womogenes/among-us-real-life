@@ -9,6 +9,7 @@ const images = {
   o2: require('../assets/task-icons/passcode.png'),
   memory: require('../assets/task-icons/memory.png'),
   electricity: require('../assets/task-icons/electricity.png'),
+  reactor: require('../assets/task-icons/scanner.png')
 };
 
 export const TaskIcon = (props) => {
