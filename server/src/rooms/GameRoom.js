@@ -160,7 +160,7 @@ export class GameRoom extends Room {
         (task) => task.taskId === taskId
       );
 
-      if (this.state.players[playerIdx].tasks[taskIdx].name === 'o2') {
+      if (this.state.players[playerIdx].tasks[taskIdx].name === 'o2'|| this.state.players[playerIdx].tasks[taskIdx].name === 'reactor') {
         this.broadcast('task complete', taskId);
       }
 

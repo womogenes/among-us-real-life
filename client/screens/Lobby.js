@@ -35,7 +35,7 @@ function LobbyScreen({ navigation }) {
   const [killCooldown, setKillCooldown] = useState([20]);
   const [prevKillCooldown, setPrevKillCooldown] = useState([20]);
 
-  const [saboCooldown, setSaboCooldown] = useState([120]);
+  const [saboCooldown, setSaboCooldown] = useState([180]);
   const [prevSaboCooldown, setPrevSaboCooldown] = useState([20]);
 
   const [impostorNum, setImpostorNum] = useState([1]);
@@ -106,6 +106,16 @@ function LobbyScreen({ navigation }) {
       // leaveGameRoom();
     };
   }, []);
+
+  function reset() {
+    setKillRadius(10);
+    setKillCooldown(20);
+    setSaboCooldown(180);
+    setImpostorNum(1);
+    setVotingTimer(30);
+    setAnonVotes(false);
+    setPlayerSight(100);
+  }
 
   function storePrev() {
     setPrevKillRadius(killRadius);
@@ -376,6 +386,16 @@ function LobbyScreen({ navigation }) {
                     value={anonVotes}
                   />
                 </View>
+                <View style={styles.reset}>
+                  <TouchableOpacity
+                    onPress={() => reset()}
+                    disabled={!isHost}
+                  >
+                    <CustomText centerText={true} textSize={40} textColor={'red'}>Reset</CustomText>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.endSpace}>
+                </View>
               </ScrollView>
             </View>
 
@@ -492,6 +512,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flex: 0.2,
     marginBottom: 12,
+  },
+  reset: {
+    margin: -30,
+  },
+  endSpace: {
+    margin: 50,
   },
   playerContainer: {
     backgroundColor: '#FFFFFF',
