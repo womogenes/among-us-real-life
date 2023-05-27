@@ -56,6 +56,7 @@ export default function GameScreen({ navigation }) {
 
   // SABOTAGE, EMERGENCY MEETING AND VOTING HOOKS
   const [sabotageActive, setSabotageActive] = useState(false);
+  const [sabotageType, setSabotageType] = useState();
   const [sabotageTasks, setSabotageTasks] = useState([]);
   const [sabNotif, setSabNotif] = useState(false);
   const [sabotageOnCooldown, setSabotageOnCooldown] = useState(false);
@@ -112,6 +113,7 @@ export default function GameScreen({ navigation }) {
   function sabotage(type) {
     getGameRoom().send(type);
     setSabotageActive(true);
+    setSabotageType(type);
   }
   const openVotingModal = () => {
     const room = getGameRoom();
@@ -560,7 +562,7 @@ export default function GameScreen({ navigation }) {
       />
 
       {deathScreen()}
-      <SabotageFlash sabotageActive={sabotageActive} />
+      <SabotageFlash sabotageActive={sabotageActive} sabotageType={sabotageType} />
       
 
       {/* CONTROL PANEL (BUTTONS) */}
