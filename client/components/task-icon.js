@@ -47,7 +47,7 @@ export const TaskIcon = (props) => {
     }).start()
   }
 
-  if(props.name === 'o2') {
+  if(props.name === 'o2' || props.name === 'reactor') {
     if(props.complete === false) {
       toggleBeacon.start();
     } else {
