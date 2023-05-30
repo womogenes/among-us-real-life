@@ -145,7 +145,7 @@ export class GameRoom extends Room {
       }
     });
 
-    this.onMessage('completeTask', (client, taskId) => {
+    this.onMessage('completeTask', (client, taskId, sabotageActive) => {
       const playerIdx = this.state.players.findIndex(
         (p) => p.sessionId === client.sessionId
       );
@@ -168,7 +168,7 @@ export class GameRoom extends Room {
         this.state.sabotageTaskList.splice(sabotageTaskIndex, 1);
       }
 
-      if (this.state.sabotageTaskList.length == 0) {
+      if (this.state.sabotageTaskList.length == 0 && sabotageActive) {
         this.broadcast('sabotageOver');
         this.state.sabotageCooldown = true;
         this.state.players.forEach((p) => {

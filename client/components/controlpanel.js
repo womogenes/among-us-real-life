@@ -65,11 +65,17 @@ function ControlPanel(props) {
   }, [props.sabotageActive]);
 
   useEffect(() => {
-    if (props.sabotageOnCooldown && sabotageTimer == null) {
+    if (props.sabotageOnCooldown) {
       sabotageCooldown();
       props.endSabotageCooldown();
     }
   }, [props.sabotageOnCooldown]);
+
+  useEffect(() => {
+    if (props.killOnCooldown) {
+      killCooldown();
+    }
+  }, [props.killOnCooldown]);
 
   return (
     <View style={styles.bottom}>
@@ -144,6 +150,7 @@ function ControlPanel(props) {
                 props.killButtonPress();
                 killCooldown();
               }}
+              killOnCooldown={props.killOnCooldown}
               cooldownTimer={killTimer}
               text={killTimer}
               image={require('client/assets/killbutton.png')}

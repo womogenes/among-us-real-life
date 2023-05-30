@@ -103,12 +103,23 @@ export default function GameScreen({ navigation }) {
   const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
   const [distPlayer, setDistPlayer] = useState([]);
   const [arrowActive, setArrowActive] = useState(false);
+  const [taskNum, setTaskNum] = useState(0); // Used for impostor random complete tasks
+  const [killOnCooldown, setKillOnCooldown] = useState(false);
 
   //REFRESH + LOADING HOOK
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
   const [loading, setLoading] = useState(true); // "Refresh" state to force rerenders
 
   //// FUNCTIONS
+  function randomComplete(minDelay, maxDelay){ // Completes closest fake task after a random interval of time, works in conjunction with a useEffect
+    let delay = Math.random()*(maxDelay - minDelay + 1) + minDelay; // generates a number between minDelay and maxDelay in miliseconds  
+      setTimeout(() => {
+        if(closestTask != undefined && closestTask.name !== 'o2' && closestTask.name !== 'reactor' && !sabotageActive && getGameRoom().state.gameState !== 'voting'){
+          taskUtils.autoCompleteTask(closestTask, getGameRoom);
+        }
+        setTaskNum(taskNum + 1);
+      }, delay*1000)
+  }
 
   // SABOTAGE, EMERGENCY MEETING AND VOTING FUNCTIONS
   function sabotage(type) {
@@ -206,7 +217,7 @@ export default function GameScreen({ navigation }) {
   // TASK FUNCTIONS
   const taskMarkers = () => taskUtils.taskMarkers(tasks);
   const completeTask = () =>
-    taskUtils.completeTask(activeTask, setActiveTask, getGameRoom);
+    taskUtils.completeTask(activeTask, setActiveTask, getGameRoom, sabotageActive);
   const closeTask = () => taskUtils.closeTask(setActiveTask);
 
   // PLAYER AND TASK LOCATION
@@ -313,6 +324,10 @@ export default function GameScreen({ navigation }) {
     };
   }, []);
 
+  useEffect(() => { // Part of impostor random task completion loop
+    randomComplete(45, 120); // auto completes closest task with random time interval between 45 and 120 seconds
+  }, [taskNum])
+
   useEffect(() => {
     // Detects when distTask is updated and reevaluates USE button activation
     activateUseButton();
@@ -367,6 +382,11 @@ export default function GameScreen({ navigation }) {
       (p) => p.sessionId === room.sessionId
     );
     setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
+    if(playerState === 'impostor'){
+      setTaskNum(1); // Starts impostor autocomplete chain
+      setSabotageOnCooldown(true);
+      setKillOnCooldown(true);
+    }
 
     room.onMessage('startVoting', () => {
       setArrowActive(false);
@@ -386,6 +406,7 @@ export default function GameScreen({ navigation }) {
       }, 1000);
 
       setSabotageOnCooldown(true);
+      setKillOnCooldown(true);
     });
 
     room.onMessage('sabotage', () => {
@@ -588,7 +609,8 @@ export default function GameScreen({ navigation }) {
             disableActions || !player?.isAlive || buttonState.kill
           }
           killButtonPress={killButton}
-          cooldown={getGameRoom().state.settings.killCooldown}
+          killCooldown={getGameRoom().state.settings.killCooldown}
+          killOnCooldown={killOnCooldown}
           disguiseButtonState={buttonState.disguise}
           sabotageButtonState={disableActions || buttonState.sabotage}
           reportButtonState={disableActions || buttonState.report}

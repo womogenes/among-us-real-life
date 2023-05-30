@@ -32,8 +32,8 @@ function LobbyScreen({ navigation }) {
   const [killRadius, setKillRadius] = useState([10]);
   const [prevKillRadius, setPrevKillRadius] = useState([10]);
 
-  const [killCooldown, setKillCooldown] = useState([20]);
-  const [prevKillCooldown, setPrevKillCooldown] = useState([20]);
+  const [killCooldown, setKillCooldown] = useState([30]);
+  const [prevKillCooldown, setPrevKillCooldown] = useState([30]);
 
   const [saboCooldown, setSaboCooldown] = useState([180]);
   const [prevSaboCooldown, setPrevSaboCooldown] = useState([20]);
@@ -109,7 +109,7 @@ function LobbyScreen({ navigation }) {
 
   function reset() {
     setKillRadius(10);
-    setKillCooldown(20);
+    setKillCooldown(30);
     setSaboCooldown(180);
     setImpostorNum(1);
     setVotingTimer(30);

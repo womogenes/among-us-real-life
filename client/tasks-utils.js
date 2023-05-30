@@ -36,6 +36,11 @@ export function completeTask(activeTask, setActiveTask, getGameRoom) {
   getGameRoom().send('completeTask', taskId);
 }
 
+export function autoCompleteTask(task, getGameRoom) {
+  getGameRoom().send('completeTask', task.taskId);
+}
+
+
 export function closeTask(setActiveTask) {
   setActiveTask((prevArrState) => ({
     ...prevArrState,
