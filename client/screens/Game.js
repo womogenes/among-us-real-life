@@ -31,6 +31,7 @@ import CodeTask from '../components/sabotage/passcode.js';
 import ScanTask from '../components/sabotage/scanner.js';
 import MemoryTask from '../components/tasks/memory.js';
 import ElectricityTask from '../components/tasks/electricity.js';
+import CalibrateTask from '../components/tasks/calibrate.js';
 
 import CustomText from '../components/text.js';
 import SabotageFlash from '../components/flash.js';
@@ -618,18 +619,6 @@ export default function GameScreen({ navigation }) {
       ) : (
         <ControlPanel />
       )}
-      
-      {/* <TouchableOpacity
-        onPress={() => {
-          setActiveTask((prevArrState) => ({
-          ...prevArrState,
-          name: 'reactor',
-          taskId: 1234,
-        }));}}
-        style={styles.testButton}
-      >
-          <Text>Open Scanner Task</Text>
-      </TouchableOpacity> */}
 
       <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
       <EjectModal
@@ -664,6 +653,11 @@ export default function GameScreen({ navigation }) {
       <ElectricityTask
         active={activeTask.name === 'electricity'}
         code={Array.from({ length: 3 }, () => Math.floor(Math.random() * 9))}
+        complete={completeTask}
+        closeTask={closeTask}
+      />
+      <CalibrateTask
+        active={activeTask.name === 'calibrate'}
         complete={completeTask}
         closeTask={closeTask}
       />

@@ -32,6 +32,11 @@ function ScanTask({ active, complete, closeTask }) {
     setTimer(null);
   }
 
+  const heightPercent = loading.height.interpolate({
+    inputRange: [0, 100],
+    outputRange: ['0%', '100%']
+  })
+
   const toggleScan = useRef(
       Animated.loop(
         Animated.parallel([
@@ -76,59 +81,59 @@ function ScanTask({ active, complete, closeTask }) {
     }),
   ).current;
 
-const resetAnimations = useRef(
-  Animated.parallel([
-    Animated.timing(rectangle.height, {
-      toValue: 200,
-      duration: 0,
-      useNativeDriver: false,
-      easing: Easing.inOut(Easing.sin),
-    }),
-    Animated.timing(rectangle.bottom, {
-      toValue: -10,
-      duration: 0,
-      useNativeDriver: false,
-      easing: Easing.inOut(Easing.sin),
-    }),
-    Animated.timing(loading.height, {
-      toValue: 0,
-      duration: 0,
-      useNativeDriver: false,
-      easing: Easing.inOut(Easing.sin),
-    }),
-  ])
-).current;
+  const resetAnimations = useRef(
+    Animated.parallel([
+      Animated.timing(rectangle.height, {
+        toValue: 200,
+        duration: 0,
+        useNativeDriver: false,
+        easing: Easing.inOut(Easing.sin),
+      }),
+      Animated.timing(rectangle.bottom, {
+        toValue: -10,
+        duration: 0,
+        useNativeDriver: false,
+        easing: Easing.inOut(Easing.sin),
+      }),
+      Animated.timing(loading.height, {
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: false,
+        easing: Easing.inOut(Easing.sin),
+      }),
+    ])
+  ).current;
 
-useEffect(() => {
-  if(active){
-    rectangle.height.setValue(200);
-    rectangle.bottom.setValue(-10);
-    loading.height.setValue(0);
-    clearTimer();
-  }
-},[active]);
-
-useEffect(() => {
-  if (timer <= 0 && timer != null) {
-    clearTimer();
-    setTimeout(() => {
+  useEffect(() => {
+    if(active){
       rectangle.height.setValue(200);
       rectangle.bottom.setValue(-10);
       loading.height.setValue(0);
-      complete('reactor');
-      closeTask();
-    }, 1000);
-  }
-}, [timer]);
+      clearTimer();
+    }
+  },[active]);
+
+  useEffect(() => {
+    if (timer <= 0 && timer != null) {
+      clearTimer();
+      setTimeout(() => {
+        complete('reactor');
+        closeTask();
+        rectangle.height.setValue(200);
+        rectangle.bottom.setValue(-10);
+        loading.height.setValue(0);
+      }, 1000);
+    }
+  }, [timer]);
 
   return (
     <Modal isVisible={active}>
       <View style={styles.modal}>
-        <Animated.View style={[styles.loading, {height: parseFloat(JSON.stringify(loading.height)) + '%'}]}>
+        <Animated.View style={[styles.loading, {height: heightPercent}]}>
         </Animated.View>
         <View style={styles.textBox}>
           <CustomText textSize={30}>
-            {timer? 'scanning... ' + Math.round(JSON.stringify(loading.height)) + '%': JSON.stringify(loading.height) >= 100? 'scan complete!': 'waiting for scan...'}
+            {timer? 'scanning... ' + Math.round(loading.height.__getValue()) + '%': loading.height.__getValue() >= 100? 'scan complete!': 'waiting for scan...'}
           </CustomText>
         </View>
         <TouchableOpacity

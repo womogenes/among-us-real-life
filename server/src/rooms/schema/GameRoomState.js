@@ -69,7 +69,7 @@ export class Player extends Schema {
     this.tasks = new ArraySchema();
     this.tasks.push(
       new Task('electricity', new Location(47.731017, -122.327879, 0)), // Behind AG
-      new Task('memory', new Location(47.732253, -122.326931, 0)), // Moore
+      new Task('calibrate', new Location(47.732253, -122.326931, 0)), // Moore
       new Task('reCaptcha', new Location(47.731639, -122.327612, 0)), // Red square
       new Task('memory', new Location(47.731779, -122.32705, 0)), // Bliss
       new Task('reCaptcha', new Location(47.733402, -122.327814, 0)), // AAC
