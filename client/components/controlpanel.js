@@ -74,6 +74,7 @@ function ControlPanel(props) {
   useEffect(() => {
     if (props.killOnCooldown) {
       killCooldown();
+      props.endKillCooldown();
     }
   }, [props.killOnCooldown]);
 

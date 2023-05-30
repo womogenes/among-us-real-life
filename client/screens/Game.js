@@ -144,6 +144,10 @@ export default function GameScreen({ navigation }) {
     setSabotageOnCooldown(false);
   }
 
+  function endKillCooldown() {
+    setKillOnCooldown(false);
+  }
+
   // BUTTON FUNCTIONS
   function changeButtonState(button, state) {
     setButtonState((prevButtonState) => ({
@@ -611,6 +615,7 @@ export default function GameScreen({ navigation }) {
           killButtonPress={killButton}
           killCooldown={getGameRoom().state.settings.killCooldown}
           killOnCooldown={killOnCooldown}
+          endKillCooldown={() => endKillCooldown()}
           disguiseButtonState={buttonState.disguise}
           sabotageButtonState={disableActions || buttonState.sabotage}
           reportButtonState={disableActions || buttonState.report}
