@@ -258,7 +258,10 @@ export default function GameScreen({ navigation }) {
   function findAllDist(loc) {
     let taskDist = distAll('task', loc, tasks, 20);
     let taskAllDist;
-    let emergencyButtonDist = distAll('task', loc, emergencyButton, 20);
+    let emergencyButtonDist;
+    if(emergencyButton){
+      emergencyButtonDist = distAll('task', loc, emergencyButton, 20);
+    }
     if (sabotageActive == true) {
       taskAllDist = distAll('task', loc, sabotageTasks, 1000000);
     } else {
