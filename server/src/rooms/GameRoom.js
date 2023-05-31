@@ -261,13 +261,13 @@ export class GameRoom extends Room {
       const newId1 = nanoid();
       const newTask1 = new Task(
         'reactor',
-        new Location(47.73731941803852, -122.33940977513485, 0), // 47.73731941803852, -122.33940977513485 Felix
+        new Location(47.73376422882705, -122.3279082321323, 0), // 47.73731941803852, -122.33940977513485 Felix 47.73376422882705, -122.3279082321323 AAC
         newId1
       );
       const newId2 = nanoid();
       const newTask2 = new Task(
         'reactor',
-        new Location(47.737304536128356, -122.33942251562718, 0), // 47.737304536128356, -122.33942251562718 Felix
+        new Location(47.73365688882325, -122.32840790712194, 0), // 47.737304536128356, -122.33942251562718 Felix 47.73365688882325, -122.32840790712194 AAC
         newId2
       );
       this.state.sabotageTaskList.push(newTask1);
