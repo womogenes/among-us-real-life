@@ -10,7 +10,8 @@ const images = {
   memory: require('../assets/task-icons/memory.png'),
   calibrate: require('../assets/task-icons/calibrate.png'),
   electricity: require('../assets/task-icons/electricity.png'),
-  reactor: require('../assets/task-icons/scanner.png')
+  reactor: require('../assets/task-icons/scanner.png'),
+  emergency: require('../assets/task-icons/emergency.png'),
 };
 
 export const TaskIcon = (props) => {
@@ -70,6 +71,33 @@ export const TaskIcon = (props) => {
               styles.image,
               {
                 backgroundColor: props.complete ? '#ffdb12' : '#c71e08',
+                width: props.size,
+                height: props.size,
+                borderWidth: props.size / 20,
+              },
+            ]}
+            source={images[props.name || 0]}
+          />
+        </View>
+      </View>
+    );
+  }
+  else if(props.name === 'emergency'){
+    return (
+      <View style={styles.container}>
+        <Animated.View
+          style={[
+            styles.light,
+            { width: diameter.width },
+            { opacity: opacity.opacity },
+          ]}
+        ></Animated.View>
+        <View>
+          <Image
+            style={[
+              styles.image,
+              {
+                backgroundColor: '#402928',
                 width: props.size,
                 height: props.size,
                 borderWidth: props.size / 20,

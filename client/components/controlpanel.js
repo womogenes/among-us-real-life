@@ -82,7 +82,7 @@ function ControlPanel(props) {
     <View style={styles.bottom}>
       <View style={styles.buttonContainer}>
         {/* Universal views */}
-        {/* <View style={{ flex: 1, alignItems: 'center' }}>
+        <View style={{ flex: 1, alignItems: 'center' }}>
           {(Platform.OS == 'android' || manualMovement) && (
             <AxisPad
               size={100}
@@ -111,7 +111,7 @@ function ControlPanel(props) {
               value={manualMovement}
             />
           </View>
-        </View> */}
+        </View>
 
         {/* Role-specific buttons */}
         {props.userType == 'crewmate' && (
@@ -157,15 +157,13 @@ function ControlPanel(props) {
               image={require('client/assets/killbutton.png')}
               backgroundColor={'#00000000'}
             />
-            {props.sabotageActive ? (
+            {props.sabotageActive || props.emergencyButton? (
               <CustomButton
-                type={'cooldown'}
+                type={'image'}
                 disabled={props.useButtonState}
                 onPress={props.useButtonPress}
                 image={require('client/assets/usebutton.png')}
                 roundness={50}
-                cooldownTimer={sabotageTimer}
-                text={sabotageTimer}
                 backgroundColor={'#00000000'}
               />
             ) : (
@@ -188,7 +186,7 @@ function ControlPanel(props) {
               image={require('client/assets/reportbutton.png')}
               backgroundColor={'#00000000'}
             />
-            <Modal isVisible={isModalVisible} style={styles.modal}>
+            <Modal isVisible={isModalVisible && !props.emergencyActive} style={styles.modal}>
               <View style={styles.modalBackground}>
                 <View style={styles.closeButtonContainer}>
                   <TouchableOpacity

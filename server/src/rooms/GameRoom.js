@@ -6,6 +6,7 @@ import {
   GameRoomState,
   Player,
   Task,
+  EmergencyButton,
   Location,
 } from './schema/GameRoomState.js';
 import {
@@ -213,8 +214,7 @@ export class GameRoom extends Room {
     this.onMessage('callEmergency', (client, location) => {
       this.state.gameState = 'emergency';
       this.state.emergencyMeetingLocation.update(location);
-
-      console.log('emergency meeting called');
+      this.broadcast('emergency called');
     });
 
     this.onMessage('o2', () => {

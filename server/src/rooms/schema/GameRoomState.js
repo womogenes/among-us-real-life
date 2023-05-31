@@ -51,6 +51,25 @@ schema.defineTypes(Task, {
   complete: 'boolean',
 });
 
+export class EmergencyButton extends Schema {
+  constructor(location, uses) {
+    super();
+
+    this.name = 'emergency';
+    this.taskId = nanoid()
+    this.location = location;
+    this.uses = uses;
+    
+  }
+
+}
+schema.defineTypes(EmergencyButton, {
+  name: 'string',
+  taskId: 'string',
+  location: Location,
+  uses: 'number',
+});
+
 // Player schema
 export class Player extends Schema {
   constructor(sessionId, isHost, icon) {
@@ -77,6 +96,12 @@ export class Player extends Schema {
       new Task('electricity', new Location(47.732325, -122.326288, 0)), // Behind St. Nick's
       new Task('memory', new Location(47.733534, -122.326878, 0)) // East side of AAC
     );
+
+    // Set emergency button location
+    this.emergency = new ArraySchema();
+    this.emergency.push(
+      new EmergencyButton(new Location(47.737302938766845, -122.33941788971003, 0), 1), //47.737302938766845, -122.33941788971003 Felix
+    );
   }
 }
 schema.defineTypes(Player, {
@@ -89,6 +114,7 @@ schema.defineTypes(Player, {
   isImpostor: 'boolean',
   isAlive: 'boolean',
   tasks: [Task],
+  emergency: [EmergencyButton]
 });
 
 // Settings schema
