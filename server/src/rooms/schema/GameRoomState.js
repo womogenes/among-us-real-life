@@ -100,7 +100,7 @@ export class Player extends Schema {
     // Set emergency button location
     this.emergency = new ArraySchema();
     this.emergency.push(
-      new EmergencyButton(new Location(47.737302938766845, -122.33941788971003, 0), 1), //47.737302938766845, -122.33941788971003 Felix 47.73259494636459, -122.32835682174914 Field
+      new EmergencyButton(new Location(47.73259494636459, -122.32835682174914, 0), 1), //47.737302938766845, -122.33941788971003 Felix 47.73259494636459, -122.32835682174914 Field
     );
   }
 }
