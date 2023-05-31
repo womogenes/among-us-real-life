@@ -32,17 +32,17 @@ function LobbyScreen({ navigation }) {
   const [killRadius, setKillRadius] = useState([10]);
   const [prevKillRadius, setPrevKillRadius] = useState([10]);
 
-  const [killCooldown, setKillCooldown] = useState([20]);
-  const [prevKillCooldown, setPrevKillCooldown] = useState([20]);
+  const [killCooldown, setKillCooldown] = useState([30]);
+  const [prevKillCooldown, setPrevKillCooldown] = useState([30]);
 
-  const [saboCooldown, setSaboCooldown] = useState([120]);
+  const [saboCooldown, setSaboCooldown] = useState([180]);
   const [prevSaboCooldown, setPrevSaboCooldown] = useState([20]);
 
   const [impostorNum, setImpostorNum] = useState([1]);
   const [prevImpostorNum, setPrevImpostorNum] = useState([1]);
 
-  const [votingTimer, setVotingTimer] = useState([30]);
-  const [prevVotingTimer, setPrevVotingTimer] = useState([30]);
+  const [votingTimer, setVotingTimer] = useState([50]);
+  const [prevVotingTimer, setPrevVotingTimer] = useState([50]);
 
   const [playerSight, setPlayerSight] = useState([100]);
   const [prevPlayerSight, setPrevPlayerSight] = useState([100]);
@@ -106,6 +106,16 @@ function LobbyScreen({ navigation }) {
       // leaveGameRoom();
     };
   }, []);
+
+  function reset() {
+    setKillRadius(10);
+    setKillCooldown(30);
+    setSaboCooldown(180);
+    setImpostorNum(1);
+    setVotingTimer(50);
+    setAnonVotes(false);
+    setPlayerSight(100);
+  }
 
   function storePrev() {
     setPrevKillRadius(killRadius);
@@ -207,16 +217,17 @@ function LobbyScreen({ navigation }) {
             data={memberList}
             renderItem={({ item }) => (
               <TouchableWithoutFeedback>
-                <View style={styles.playerItem}>
+                <View style={[styles.playerItem, getGameRoom().state.players.find((player) => player.sessionId === getGameRoom().sessionId).sessionId === item.sessionId && {backgroundColor: '#ffd666'}]}>
                   <ProfileIcon
                     player={item}
                     size={50}
-                    style={{ marginRight: 10 }}
                   />
-                  <CustomText textSize={50}>
-                    {item.username || 'Anonymous'}
-                    {item.isHost && ' (Host)'}
-                  </CustomText>
+                  <View style={{marginLeft: 10}}>
+                    <CustomText textSize={50}>
+                      {item.username? item.username : 'Anonymous'}
+                      {item.isHost && ' [Host]'}
+                    </CustomText>
+                  </View>
                 </View>
               </TouchableWithoutFeedback>
             )}
@@ -377,6 +388,16 @@ function LobbyScreen({ navigation }) {
                     disabled={!isHost}
                   />
                 </View>
+                <View style={styles.reset}>
+                  <TouchableOpacity
+                    onPress={() => reset()}
+                    disabled={!isHost}
+                  >
+                    <CustomText centerText={true} textSize={40} textColor={'red'}>Reset</CustomText>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.endSpace}>
+                </View>
               </ScrollView>
             </View>
 
@@ -493,6 +514,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flex: 0.2,
     marginBottom: 12,
+  },
+  reset: {
+    margin: -30,
+  },
+  endSpace: {
+    margin: 50,
   },
   playerContainer: {
     backgroundColor: '#FFFFFF',

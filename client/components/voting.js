@@ -77,8 +77,15 @@ export default function votingModal(props) {
                     opacity: item.isAlive ? 1 : 0.5,
                     borderColor: item.isAlive ? '#000' : '#f00',
                   },
+                  props.yourId === item.sessionId && {backgroundColor: '#ffd666'},
                 ]}
               >
+                <ProfileIcon
+                  style={{ marginLeft: 5 }}
+                  player={item}
+                  size={50}
+                  key={item.sessionId}
+                />
                 <CustomText
                   textColor={'black'}
                   centerText={false}

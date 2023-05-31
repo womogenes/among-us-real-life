@@ -6,6 +6,7 @@ import {
   GameRoomState,
   Player,
   Task,
+  EmergencyButton,
   Location,
 } from './schema/GameRoomState.js';
 import {
@@ -145,7 +146,7 @@ export class GameRoom extends Room {
       }
     });
 
-    this.onMessage('completeTask', (client, taskId) => {
+    this.onMessage('completeTask', (client, taskId, sabotageActive) => {
       const playerIdx = this.state.players.findIndex(
         (p) => p.sessionId === client.sessionId
       );
@@ -160,7 +161,7 @@ export class GameRoom extends Room {
         (task) => task.taskId === taskId
       );
 
-      if (this.state.players[playerIdx].tasks[taskIdx].name === 'o2') {
+      if (this.state.players[playerIdx].tasks[taskIdx].name === 'o2'|| this.state.players[playerIdx].tasks[taskIdx].name === 'reactor') {
         this.broadcast('task complete', taskId);
       }
 
@@ -168,19 +169,32 @@ export class GameRoom extends Room {
         this.state.sabotageTaskList.splice(sabotageTaskIndex, 1);
       }
 
-      if (this.state.sabotageTaskList.length == 0) {
+      if (this.state.sabotageTaskList.length == 0 && sabotageActive) {
         this.broadcast('sabotageOver');
         this.state.sabotageCooldown = true;
         this.state.players.forEach((p) => {
           let taskIndex = 0;
           while (taskIndex != -1) {
-            taskIndex = p.tasks.findIndex((task) => task.name === 'o2');
+            taskIndex = p.tasks.findIndex((task) => (task.name === 'o2' || task.name === 'reactor'));
             if (taskIndex != -1) {
               p.tasks.splice(taskIndex, 1);
             }
           }
         });
       }
+    });
+
+    this.onMessage('completeFakeTask', (client, taskId) => {
+      const playerIdx = this.state.players.findIndex(
+        (p) => p.sessionId === client.sessionId
+      );
+      const taskIdx = this.state.players[playerIdx].tasks.findIndex(
+        (task) => task.taskId === taskId
+      );
+
+      if (taskIdx === -1) return; // Probably a dev task
+
+      this.state.players[playerIdx].tasks[taskIdx].complete = null;
     });
 
     this.onMessage('setUsername', (client, username) => {
@@ -213,13 +227,15 @@ export class GameRoom extends Room {
     this.onMessage('callEmergency', (client, location) => {
       this.state.gameState = 'emergency';
       this.state.emergencyMeetingLocation.update(location);
-
-      console.log('emergency meeting called');
+      let player = this.state.players.find(
+        (p) => p.sessionId === client.sessionId
+      );
+      player.emergency[0].uses = player.emergency[0].uses - 1;
+      this.broadcast('emergency called');
     });
 
     this.onMessage('o2', () => {
       this.broadcast('sabotage');
-      console.log('sabotage!!!!');
       const newId1 = nanoid();
       const newTask1 = new Task(
         'o2',
@@ -230,6 +246,28 @@ export class GameRoom extends Room {
       const newTask2 = new Task(
         'o2',
         new Location(47.732511, -122.328258, 0),
+        newId2
+      );
+      this.state.sabotageTaskList.push(newTask1);
+      this.state.sabotageTaskList.push(newTask2);
+      this.state.players.forEach((p) => {
+        p.tasks.push(newTask1);
+        p.tasks.push(newTask2);
+      });
+    });
+
+    this.onMessage('reactor', () => {
+      this.broadcast('sabotage');
+      const newId1 = nanoid();
+      const newTask1 = new Task(
+        'reactor',
+        new Location(47.73731941803852, -122.33940977513485, 0), // 47.73731941803852, -122.33940977513485 Felix
+        newId1
+      );
+      const newId2 = nanoid();
+      const newTask2 = new Task(
+        'reactor',
+        new Location(47.737304536128356, -122.33942251562718, 0), // 47.737304536128356, -122.33942251562718 Felix
         newId2
       );
       this.state.sabotageTaskList.push(newTask1);

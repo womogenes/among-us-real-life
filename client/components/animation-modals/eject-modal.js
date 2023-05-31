@@ -25,8 +25,7 @@ export const EjectModal = (props) => {
             {'\n'}
           </Text>
           <Text style={{ color: '#888' }}>
-            {props.player?.isImpostor ? ' was ' : ' was not '}
-            the impostor
+            {!props.player? 'no players were ejected': props.player?.isImpostor ? ' was the impostor' : ' was not the impostor'}
           </Text>
         </CustomText>
       </View>

@@ -65,11 +65,18 @@ function ControlPanel(props) {
   }, [props.sabotageActive]);
 
   useEffect(() => {
-    if (props.sabotageOnCooldown && sabotageTimer == null) {
+    if (props.sabotageOnCooldown) {
       sabotageCooldown();
       props.endSabotageCooldown();
     }
   }, [props.sabotageOnCooldown]);
+
+  useEffect(() => {
+    if (props.killOnCooldown) {
+      killCooldown();
+      props.endKillCooldown();
+    }
+  }, [props.killOnCooldown]);
 
   return (
     <View style={styles.bottom}>
@@ -144,20 +151,19 @@ function ControlPanel(props) {
                 props.killButtonPress();
                 killCooldown();
               }}
+              killOnCooldown={props.killOnCooldown}
               cooldownTimer={killTimer}
               text={killTimer}
               image={require('client/assets/killbutton.png')}
               backgroundColor={'#00000000'}
             />
-            {props.sabotageActive ? (
+            {props.sabotageActive || props.emergencyButton? (
               <CustomButton
-                type={'cooldown'}
+                type={'image'}
                 disabled={props.useButtonState}
                 onPress={props.useButtonPress}
                 image={require('client/assets/usebutton.png')}
                 roundness={50}
-                cooldownTimer={sabotageTimer}
-                text={sabotageTimer}
                 backgroundColor={'#00000000'}
               />
             ) : (
@@ -180,7 +186,7 @@ function ControlPanel(props) {
               image={require('client/assets/reportbutton.png')}
               backgroundColor={'#00000000'}
             />
-            <Modal isVisible={isModalVisible} style={styles.modal}>
+            <Modal isVisible={isModalVisible && !props.emergencyActive} style={styles.modal}>
               <View style={styles.modalBackground}>
                 <View style={styles.closeButtonContainer}>
                   <TouchableOpacity
@@ -196,6 +202,12 @@ function ControlPanel(props) {
                   onPress={props.o2}
                 >
                   <Text style={styles.sabotageListButtonText}>o2</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.sabotageListButton}
+                  onPress={props.reactor}
+                >
+                  <Text style={styles.sabotageListButtonText}>reactor</Text>
                 </TouchableOpacity>
               </View>
             </Modal>
@@ -274,7 +286,7 @@ const styles = StyleSheet.create({
     height: '13%',
     borderWidth: 2,
     borderRadius: 10,
-    margin: 25,
+    margin: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },

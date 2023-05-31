@@ -7,7 +7,7 @@ import { ProfileIcon } from './profile-icon';
 
 function Minimap(props) {
   function taskMarkers() {
-    return props.tasks.map((item) => {
+    return [props.tasks.map((item) => {
       return (
         <Marker
           tracksViewChanges={item.complete}
@@ -26,7 +26,26 @@ function Minimap(props) {
           ></TaskIcon>
         </Marker>
       );
-    });
+    }),
+    props.emergencyButton&& props.emergencyButton.map((item) => {
+      return (
+        <Marker
+          key={item.taskId}
+          coordinate={{
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+          }}
+          title={item.name}
+          zIndex={item.name == 'o2' ? 9 : -1}
+        >
+          <TaskIcon
+            name={item.name}
+            size={20}
+          ></TaskIcon>
+        </Marker>
+      );
+    }),
+  ]
   }
 
   return (

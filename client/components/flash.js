@@ -94,7 +94,7 @@ function SabotageFlash(props) {
           shadowRadius={3}
           centerText={'center'}
         >
-          O2 has been Sabotaged!
+          {props.sabotageType === 'o2'? <Text>O2 has been Sabotaged!</Text> : props.sabotageType === 'reactor'? <Text>Reactor has been Sabotaged!</Text> : <Text>Sabotage in progress</Text>}
         </CustomText>
       </Animated.View>
     </View>

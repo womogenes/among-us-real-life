@@ -28,6 +28,11 @@ function JoinScreen({ navigation }) {
     navigation.navigate('Lobby');
   };
 
+  const backPressed = async () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    navigation.navigate('Menu');
+  };
+
   useEffect(() => {
     const lobby = getLobbyRoom();
     // Constantly updates roomList
@@ -85,6 +90,16 @@ function JoinScreen({ navigation }) {
             >
               <CustomText color={'black'} textSize={40}>
                 Join
+              </CustomText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                backPressed(code);
+              }}
+            >
+              <CustomText color={'black'} textSize={40}>
+                ←
               </CustomText>
             </TouchableOpacity>
           </View>
