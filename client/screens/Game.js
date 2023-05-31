@@ -291,7 +291,11 @@ export default function GameScreen({ navigation }) {
       playerArr,
       getGameRoom().state.settings.killRadius
     );
-    if (emergencyButtonDist.length > 0 && !sabotageActive) {
+    if (
+      emergencyButtonDist &&
+      emergencyButtonDist.length > 0 &&
+      !sabotageActive
+    ) {
       // Emergency meetings can't be called during a sabotage
       setDistTask(taskDist.concat(emergencyButtonDist));
     } else {
