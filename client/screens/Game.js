@@ -107,7 +107,7 @@ export default function GameScreen({ navigation }) {
   const [arrowActive, setArrowActive] = useState(false);
   const [taskNum, setTaskNum] = useState(0); // Used for impostor random complete tasks
   const [killOnCooldown, setKillOnCooldown] = useState(false);
-  const [emergencyButton, setEmergencyButton] = useState([]) // array of the locations of the emergency button, will also be marked on the minimap
+  const [emergencyButton, setEmergencyButton] = useState([]); // array of the locations of the emergency button, will also be marked on the minimap
   const [impostorEmergency, setImpostorEmergency] = useState(false);
 
   //REFRESH + LOADING HOOK
@@ -115,14 +115,21 @@ export default function GameScreen({ navigation }) {
   const [loading, setLoading] = useState(true); // "Refresh" state to force rerenders
 
   //// FUNCTIONS
-  function randomComplete(minDelay, maxDelay){ // Completes closest fake task after a random interval of time, works in conjunction with a useEffect
-    let delay = Math.random()*(maxDelay - minDelay + 1) + minDelay; // generates a number between minDelay and maxDelay in miliseconds  
-      setTimeout(() => {
-        if(closestTask != undefined && closestTask.name !== 'o2' && closestTask.name !== 'reactor' && !sabotageActive && getGameRoom().state.gameState !== 'voting'){
-          taskUtils.autoCompleteTask(closestTask, getGameRoom);
-        }
-        setTaskNum(taskNum + 1);
-      }, delay*1000)
+  function randomComplete(minDelay, maxDelay) {
+    // Completes closest fake task after a random interval of time, works in conjunction with a useEffect
+    let delay = Math.random() * (maxDelay - minDelay + 1) + minDelay; // generates a number between minDelay and maxDelay in miliseconds
+    setTimeout(() => {
+      if (
+        closestTask != undefined &&
+        closestTask.name !== 'o2' &&
+        closestTask.name !== 'reactor' &&
+        !sabotageActive &&
+        getGameRoom().state.gameState !== 'voting'
+      ) {
+        taskUtils.autoCompleteTask(closestTask, getGameRoom);
+      }
+      setTaskNum(taskNum + 1);
+    }, delay * 1000);
   }
 
   // SABOTAGE, EMERGENCY MEETING AND VOTING FUNCTIONS
@@ -168,7 +175,8 @@ export default function GameScreen({ navigation }) {
       (playerState == 'crewmate' ||
         (playerState == 'impostor' &&
           sabotageActive &&
-          (closestTask.name === 'o2' || closestTask.name === 'reactor')) || (playerState == 'impostor' && closestTask.name === 'emergency'))
+          (closestTask.name === 'o2' || closestTask.name === 'reactor')) ||
+        (playerState == 'impostor' && closestTask.name === 'emergency'))
     ) {
       setActiveTask((prevArrState) => ({
         ...prevArrState,
@@ -199,16 +207,18 @@ export default function GameScreen({ navigation }) {
         if (buttonState.use === true) {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
         }
-      }
-      else if (
+      } else if (
         playerState == 'impostor' &&
-        (findClosest(distTask).name === 'o2' || findClosest(distTask).name === 'reactor')
-      )
-      {
+        (findClosest(distTask).name === 'o2' ||
+          findClosest(distTask).name === 'reactor')
+      ) {
         changeButtonState('use', false);
-      }
-      else if(playerState == 'impostor' && findClosest(distTask).name === 'emergency'){ // Impostor use button appears when near emergency meeting button
-        setImpostorEmergency(true)
+      } else if (
+        playerState == 'impostor' &&
+        findClosest(distTask).name === 'emergency'
+      ) {
+        // Impostor use button appears when near emergency meeting button
+        setImpostorEmergency(true);
         changeButtonState('use', false);
       }
     } else {
@@ -233,7 +243,12 @@ export default function GameScreen({ navigation }) {
   // TASK FUNCTIONS
   const taskMarkers = () => taskUtils.taskMarkers(tasks, emergencyButton);
   const completeTask = () =>
-    taskUtils.completeTask(activeTask, setActiveTask, getGameRoom, sabotageActive);
+    taskUtils.completeTask(
+      activeTask,
+      setActiveTask,
+      getGameRoom,
+      sabotageActive
+    );
   const closeTask = () => taskUtils.closeTask(setActiveTask);
 
   // PLAYER AND TASK LOCATION
@@ -259,7 +274,7 @@ export default function GameScreen({ navigation }) {
     let taskDist = distAll('task', loc, tasks, 20);
     let taskAllDist;
     let emergencyButtonDist;
-    if(emergencyButton){
+    if (emergencyButton) {
       emergencyButtonDist = distAll('task', loc, emergencyButton, 20);
     }
     if (sabotageActive == true) {
@@ -276,10 +291,10 @@ export default function GameScreen({ navigation }) {
       playerArr,
       getGameRoom().state.settings.killRadius
     );
-    if(emergencyButtonDist.length > 0 && !sabotageActive) { // Emergency meetings can't be called during a sabotage
+    if (emergencyButtonDist.length > 0 && !sabotageActive) {
+      // Emergency meetings can't be called during a sabotage
       setDistTask(taskDist.concat(emergencyButtonDist));
-    }
-    else{
+    } else {
       setDistTask(taskDist);
     }
     setDistAllTask(taskAllDist);
@@ -349,9 +364,10 @@ export default function GameScreen({ navigation }) {
     };
   }, []);
 
-  useEffect(() => { // Part of impostor random task completion loop
+  useEffect(() => {
+    // Part of impostor random task completion loop
     randomComplete(45, 120); // auto completes closest task with random time interval between 45 and 120 seconds
-  }, [taskNum])
+  }, [taskNum]);
 
   useEffect(() => {
     // Detects when distTask is updated and reevaluates USE button activation
@@ -407,7 +423,7 @@ export default function GameScreen({ navigation }) {
       (p) => p.sessionId === room.sessionId
     );
     setPlayerState(thisPlayer.isImpostor ? 'impostor' : 'crewmate');
-    if(playerState === 'impostor'){
+    if (playerState === 'impostor') {
       setTaskNum(1); // Starts impostor autocomplete chain
       setSabotageOnCooldown(true);
       setKillOnCooldown(true);
@@ -478,7 +494,7 @@ export default function GameScreen({ navigation }) {
 
       // Set emergency meeting location, if applicable
       setEmergencyMeetingLocation({ ...state.emergencyMeetingLocation });
-      setDisableActions(state.gameState === 'emergency');
+      setDisableActions(room.state.gameState === 'emergency');
 
       // Voting stuff
       setVotingTimer(state.votingTimer);
@@ -597,9 +613,16 @@ export default function GameScreen({ navigation }) {
       />
 
       {deathScreen()}
-      <SabotageFlash sabotageActive={sabotageActive} sabotageType={sabotageType} />
-      <EmergencyScreen emergencyActive={getGameRoom().state.gameState === 'emergency'} playerAlive={player?.isAlive} playerLocation={location} meetingLocation={emergencyMeetingLocation}/>
-      
+      <SabotageFlash
+        sabotageActive={sabotageActive}
+        sabotageType={sabotageType}
+      />
+      <EmergencyScreen
+        emergencyActive={getGameRoom().state.gameState === 'emergency'}
+        playerAlive={player?.isAlive}
+        playerLocation={location}
+        meetingLocation={emergencyMeetingLocation}
+      />
 
       {/* CONTROL PANEL (BUTTONS) */}
       {playerState == 'crewmate' ? (
@@ -659,8 +682,15 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      <VotingModal isVisible={votingModalVisible} timer={votingTimer} yourId={getGameRoom().state.players.find(
-        (player) => player.sessionId === getGameRoom().sessionId).sessionId} />
+      <VotingModal
+        isVisible={votingModalVisible}
+        timer={votingTimer}
+        yourId={
+          getGameRoom().state.players.find(
+            (player) => player.sessionId === getGameRoom().sessionId
+          ).sessionId
+        }
+      />
       <EjectModal
         onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
         player={ejectedPlayer}
