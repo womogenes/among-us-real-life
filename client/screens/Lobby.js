@@ -385,6 +385,7 @@ function LobbyScreen({ navigation }) {
                     thumbColor={anonVotes ? '#fff' : '#fff'}
                     onValueChange={() => setAnonVotes(!anonVotes)}
                     value={anonVotes}
+                    disabled={!isHost}
                   />
                 </View>
                 <View style={styles.reset}>
