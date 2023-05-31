@@ -78,10 +78,10 @@ export default function votingModal(props) {
                     borderColor: item.isAlive ? '#000' : '#f00',
                   },
                   props.yourId === item.sessionId && {backgroundColor: '#ffd666'},
+                  { marginLeft: 5 },
                 ]}
               >
                 <ProfileIcon
-                  style={{ marginLeft: 5 }}
                   player={item}
                   size={50}
                   key={item.sessionId}
@@ -102,12 +102,13 @@ export default function votingModal(props) {
                         (p) => p.sessionId === key
                       );
                       return (
-                        <ProfileIcon
-                          style={{ marginLeft: 5 }}
-                          player={player}
-                          size={20}
-                          key={key}
-                        />
+                        <View style={{ marginLeft: 5 }}>
+                          <ProfileIcon
+                            player={player}
+                            size={20}
+                            key={key}
+                          />
+                        </View>
                       );
                     })}
                 </View>
