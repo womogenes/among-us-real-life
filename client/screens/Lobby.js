@@ -41,8 +41,8 @@ function LobbyScreen({ navigation }) {
   const [impostorNum, setImpostorNum] = useState([1]);
   const [prevImpostorNum, setPrevImpostorNum] = useState([1]);
 
-  const [votingTimer, setVotingTimer] = useState([30]);
-  const [prevVotingTimer, setPrevVotingTimer] = useState([30]);
+  const [votingTimer, setVotingTimer] = useState([50]);
+  const [prevVotingTimer, setPrevVotingTimer] = useState([50]);
 
   const [playerSight, setPlayerSight] = useState([100]);
   const [prevPlayerSight, setPrevPlayerSight] = useState([100]);
@@ -112,7 +112,7 @@ function LobbyScreen({ navigation }) {
     setKillCooldown(30);
     setSaboCooldown(180);
     setImpostorNum(1);
-    setVotingTimer(30);
+    setVotingTimer(50);
     setAnonVotes(false);
     setPlayerSight(100);
   }
@@ -224,8 +224,8 @@ function LobbyScreen({ navigation }) {
                     style={{ marginRight: 10 }}
                   />
                   <CustomText textSize={50}>
-                    {item.username || 'Anonymous'}
-                    {item.isHost && ' (Host)'}
+                    {getGameRoom().state.players.find((player) => player.sessionId === getGameRoom().sessionId).sessionId === item.sessionId? item.username? item.username + ' (you)' : 'Anonymous (you)' :  item.username? item.username : 'Anonymous'}
+                    {item.isHost && ' [Host]'}
                   </CustomText>
                 </View>
               </TouchableWithoutFeedback>

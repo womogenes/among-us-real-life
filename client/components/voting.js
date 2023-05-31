@@ -79,12 +79,18 @@ export default function votingModal(props) {
                   },
                 ]}
               >
+                <ProfileIcon
+                  style={{ marginLeft: 5 }}
+                  player={item}
+                  size={50}
+                  key={item.sessionId}
+                />
                 <CustomText
                   textColor={'black'}
                   centerText={false}
                   textSize={40}
                 >
-                  {item.username}
+                  {props.yourId === item.sessionId? item.username + ' (you)': item.username}
                 </CustomText>
 
                 <View style={styles.votes}>

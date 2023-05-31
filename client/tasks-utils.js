@@ -39,7 +39,6 @@ export function taskMarkers(tasks, emergency) {
       >
         <TaskIcon
           name={item.name}
-          complete={item.complete}
           size={60}
         ></TaskIcon>
     </Marker>

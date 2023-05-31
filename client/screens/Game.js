@@ -590,6 +590,7 @@ export default function GameScreen({ navigation }) {
         )}
         userCoords={[location.latitude, location.longitude]}
         tasks={tasks}
+        emergencyButton={emergencyButton}
       />
 
       {deathScreen()}
@@ -655,7 +656,8 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      <VotingModal isVisible={votingModalVisible} timer={votingTimer} />
+      <VotingModal isVisible={votingModalVisible} timer={votingTimer} yourId={getGameRoom().state.players.find(
+        (player) => player.sessionId === getGameRoom().sessionId).sessionId} />
       <EjectModal
         onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
         player={ejectedPlayer}
