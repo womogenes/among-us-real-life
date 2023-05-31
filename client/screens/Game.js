@@ -101,7 +101,7 @@ export default function GameScreen({ navigation }) {
     longitude: 0,
   });
   const [playerState, setPlayerState] = useState('impostor');
-  const [players, setPlayers] = useState([]); // At some point, we'll want to use a state management lib for this
+  const [players, setPlayers] = useState([]); // list of all players
   const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
   const [distPlayer, setDistPlayer] = useState([]);
   const [arrowActive, setArrowActive] = useState(false);
@@ -475,7 +475,7 @@ export default function GameScreen({ navigation }) {
 
       // Set emergency meeting location, if applicable
       setEmergencyMeetingLocation({ ...state.emergencyMeetingLocation });
-      setDisableActions(state.emergencyMeetingLocation.latitude !== 0);
+      setDisableActions(state.gameState === 'emergency');
 
       // Voting stuff
       setVotingTimer(state.votingTimer);
@@ -699,6 +699,7 @@ export default function GameScreen({ navigation }) {
       <EmergencyButton
         active={activeTask.name === 'emergency'}
         callEmergency={() => getGameRoom().send('callEmergency', location)}
+        emergency={emergencyButton}
         closeTask={closeTask}
       />
       <Timer

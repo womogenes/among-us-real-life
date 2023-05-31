@@ -116,7 +116,7 @@ export const TaskIcon = (props) => {
           style={[
             styles.image,
             {
-              backgroundColor: props.complete ? '#35e82e' : '#b5b5b5',
+              backgroundColor: props.complete === null ? '#35e82e' : props.complete? '#35e82e' : '#b5b5b5',
               width: props.size,
               height: props.size,
               borderWidth: props.size / 20,

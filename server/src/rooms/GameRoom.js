@@ -184,6 +184,19 @@ export class GameRoom extends Room {
       }
     });
 
+    this.onMessage('completeFakeTask', (client, taskId) => {
+      const playerIdx = this.state.players.findIndex(
+        (p) => p.sessionId === client.sessionId
+      );
+      const taskIdx = this.state.players[playerIdx].tasks.findIndex(
+        (task) => task.taskId === taskId
+      );
+
+      if (taskIdx === -1) return; // Probably a dev task
+
+      this.state.players[playerIdx].tasks[taskIdx].complete = null;
+    });
+
     this.onMessage('setUsername', (client, username) => {
       this.state.players.find(
         (p) => p.sessionId === client.sessionId
@@ -214,6 +227,10 @@ export class GameRoom extends Room {
     this.onMessage('callEmergency', (client, location) => {
       this.state.gameState = 'emergency';
       this.state.emergencyMeetingLocation.update(location);
+      let player = this.state.players.find(
+        (p) => p.sessionId === client.sessionId
+      );
+      player.emergency[0].uses = player.emergency[0].uses - 1;
       this.broadcast('emergency called');
     });
 

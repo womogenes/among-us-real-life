@@ -59,7 +59,7 @@ export function completeTask(activeTask, setActiveTask, getGameRoom, sabotageAct
 }
 
 export function autoCompleteTask(task, getGameRoom) {
-  getGameRoom().send('completeTask', task.taskId);
+  getGameRoom().send('completeFakeTask', task.taskId);
 }
 
 
