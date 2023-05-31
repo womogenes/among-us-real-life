@@ -25,7 +25,7 @@ export function taskMarkers(tasks, emergency) {
       </Marker>
     );
   }),
-  emergency.map((item) => {
+  emergency&& emergency.map((item) => {
     return (
       <Marker
         tracksViewChanges={item.complete}

@@ -27,7 +27,7 @@ function Minimap(props) {
         </Marker>
       );
     }),
-    props.emergencyButton.map((item) => {
+    props.emergencyButton&& props.emergencyButton.map((item) => {
       return (
         <Marker
           key={item.taskId}
