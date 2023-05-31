@@ -69,6 +69,7 @@ export default function votingModal(props) {
 
                 getGameRoom()?.send('vote', item.sessionId);
               }}
+              key={item.sessionId}
             >
               <View
                 style={[
@@ -77,15 +78,13 @@ export default function votingModal(props) {
                     opacity: item.isAlive ? 1 : 0.5,
                     borderColor: item.isAlive ? '#000' : '#f00',
                   },
-                  props.yourId === item.sessionId && {backgroundColor: '#ffd666'},
+                  props.yourId === item.sessionId && {
+                    backgroundColor: '#ffd666',
+                  },
                   { marginLeft: 5 },
                 ]}
               >
-                <ProfileIcon
-                  player={item}
-                  size={50}
-                  key={item.sessionId}
-                />
+                <ProfileIcon player={item} size={50} key={item.sessionId} />
                 <CustomText
                   textColor={'black'}
                   centerText={false}
@@ -103,11 +102,7 @@ export default function votingModal(props) {
                       );
                       return (
                         <View style={{ marginLeft: 5 }}>
-                          <ProfileIcon
-                            player={player}
-                            size={20}
-                            key={key}
-                          />
+                          <ProfileIcon player={player} size={20} key={key} />
                         </View>
                       );
                     })}

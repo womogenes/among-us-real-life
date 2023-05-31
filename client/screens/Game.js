@@ -473,6 +473,9 @@ export default function GameScreen({ navigation }) {
     });
 
     room.onMessage('endedGame', (message) => {
+      console.log(`endedgame`);
+      return;
+
       setArrowActive(false);
       if (message == 'impostor') {
         setWinningTeam(['Impostor']);
@@ -685,6 +688,12 @@ export default function GameScreen({ navigation }) {
       ) : (
         <ControlPanel />
       )}
+
+      <View style={styles.debugContainer}>
+        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
+          <Text>open voting modal</Text>
+        </TouchableOpacity>
+      </View>
 
       <VotingModal
         isVisible={votingModalVisible}
