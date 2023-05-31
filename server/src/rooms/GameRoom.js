@@ -117,7 +117,7 @@ export class GameRoom extends Room {
           }
           if (crewCount <= impostorCount) {
             this.broadcast('endedGame', 'impostor');
-          } else if (imposterCount == 0) {
+          } else if (impostorCount == 0) {
             this.broadcast('endedGame', 'crewmate');
           }
         }
@@ -161,7 +161,10 @@ export class GameRoom extends Room {
         (task) => task.taskId === taskId
       );
 
-      if (this.state.players[playerIdx].tasks[taskIdx].name === 'o2'|| this.state.players[playerIdx].tasks[taskIdx].name === 'reactor') {
+      if (
+        this.state.players[playerIdx].tasks[taskIdx].name === 'o2' ||
+        this.state.players[playerIdx].tasks[taskIdx].name === 'reactor'
+      ) {
         this.broadcast('task complete', taskId);
       }
 
@@ -175,7 +178,9 @@ export class GameRoom extends Room {
         this.state.players.forEach((p) => {
           let taskIndex = 0;
           while (taskIndex != -1) {
-            taskIndex = p.tasks.findIndex((task) => (task.name === 'o2' || task.name === 'reactor'));
+            taskIndex = p.tasks.findIndex(
+              (task) => task.name === 'o2' || task.name === 'reactor'
+            );
             if (taskIndex != -1) {
               p.tasks.splice(taskIndex, 1);
             }
