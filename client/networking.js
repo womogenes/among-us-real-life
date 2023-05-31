@@ -1,5 +1,6 @@
 import * as Colyseus from 'colyseus.js';
 import Constants from 'expo-constants';
+import { Alert } from 'react-native';
 
 const { serverAddr } = Constants.expoConfig;
 const client = new Colyseus.Client(`ws://${serverAddr}`);
@@ -25,16 +26,19 @@ const leaveGameRoom = () => {
 
 let getLobbyRoom = () => {};
 
-console.log('Connecting to server...');
-client.joinOrCreate('lobby').then((lobby) => {
-  console.log(`Joined room ${lobby.sessionId}, name: ${lobby.name}`);
+setTimeout(() => {
+  console.log('Connecting to server...');
+  client.joinOrCreate('lobby').then((lobby) => {
+    console.log(`Joined room ${lobby.sessionId}, name: ${lobby.name}`);
+    Alert.alert('Connected to server!');
 
-  lobby.onMessage('rooms', (message) => {
-    console.log(message);
+    lobby.onMessage('rooms', (message) => {
+      console.log(message);
+    });
+
+    getLobbyRoom = () => lobby;
   });
-
-  getLobbyRoom = () => lobby;
-});
+}, 5000);
 
 export {
   serverAddr,
