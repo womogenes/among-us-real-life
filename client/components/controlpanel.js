@@ -82,7 +82,7 @@ function ControlPanel(props) {
     <View style={styles.bottom}>
       <View style={styles.buttonContainer}>
         {/* Universal views */}
-        <View style={{ flex: 1, alignItems: 'center' }}>
+        {/* <View style={{ flex: 1, alignItems: 'center' }}>
           {(Platform.OS == 'android' || manualMovement) && (
             <AxisPad
               size={100}
@@ -111,7 +111,7 @@ function ControlPanel(props) {
               value={manualMovement}
             />
           </View>
-        </View>
+        </View> */}
 
         {/* Role-specific buttons */}
         {props.userType == 'crewmate' && (
