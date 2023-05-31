@@ -9,7 +9,7 @@ function EmergencyButton({ active, callEmergency, emergency, closeTask}) {
   const [emergencyButton, setEmergencyButton] = useState([{uses: 1}]);
 
   useEffect(() => { // Hacky way to make sure emergency[0] doesn't cause an error
-    if(emergency.length > 0){
+    if(emergency && emergency.length > 0){
       setEmergencyButton(emergency);
     }
   },[emergency])
