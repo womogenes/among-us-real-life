@@ -77,6 +77,7 @@ export default function votingModal(props) {
                     opacity: item.isAlive ? 1 : 0.5,
                     borderColor: item.isAlive ? '#000' : '#f00',
                   },
+                  props.yourId === item.sessionId && {backgroundColor: '#ffd666'},
                 ]}
               >
                 <ProfileIcon
@@ -90,7 +91,7 @@ export default function votingModal(props) {
                   centerText={false}
                   textSize={40}
                 >
-                  {props.yourId === item.sessionId? item.username + ' (you)': item.username}
+                  {item.username}
                 </CustomText>
 
                 <View style={styles.votes}>

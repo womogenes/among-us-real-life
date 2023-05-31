@@ -217,16 +217,17 @@ function LobbyScreen({ navigation }) {
             data={memberList}
             renderItem={({ item }) => (
               <TouchableWithoutFeedback>
-                <View style={styles.playerItem}>
+                <View style={[styles.playerItem, getGameRoom().state.players.find((player) => player.sessionId === getGameRoom().sessionId).sessionId === item.sessionId && {backgroundColor: '#ffd666'}]}>
                   <ProfileIcon
                     player={item}
                     size={50}
-                    style={{ marginRight: 10 }}
                   />
-                  <CustomText textSize={50}>
-                    {getGameRoom().state.players.find((player) => player.sessionId === getGameRoom().sessionId).sessionId === item.sessionId? item.username? item.username + ' (you)' : 'Anonymous (you)' :  item.username? item.username : 'Anonymous'}
-                    {item.isHost && ' [Host]'}
-                  </CustomText>
+                  <View style={{marginLeft: 10}}>
+                    <CustomText textSize={50}>
+                      {item.username? item.username : 'Anonymous'}
+                      {item.isHost && ' [Host]'}
+                    </CustomText>
+                  </View>
                 </View>
               </TouchableWithoutFeedback>
             )}
