@@ -101,8 +101,8 @@ export default function votingModal(props) {
                         (p) => p.sessionId === key
                       );
                       return (
-                        <View style={{ marginLeft: 5 }}>
-                          <ProfileIcon player={player} size={20} key={key} />
+                        <View style={{ marginLeft: 5 }} key={key}>
+                          <ProfileIcon player={player} size={20} />
                         </View>
                       );
                     })}
