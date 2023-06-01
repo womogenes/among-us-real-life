@@ -41,6 +41,7 @@ import VotingModal from '../components/voting.js';
 import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
 import { EjectModal } from '../components/animation-modals/eject-modal.js';
+import { DeathModal } from '../components/animation-modals/death-modal.js'
 import { AnimationModal } from '../components/animation-modals/animation-modal.js';
 import { EndGame } from '../components/animation-modals/end-game.js';
 import { StartGame } from '../components/animation-modals/start-game.js';
@@ -112,6 +113,8 @@ export default function GameScreen({ navigation }) {
   const [emergencyButton, setEmergencyButton] = useState([]); // array of the locations of the emergency button, will also be marked on the minimap
   const [impostorEmergency, setImpostorEmergency] = useState(false);
   const [startModalVisible, setStartModalVisible] = useState(true);
+  const [deathModalVisible, setDeathModalVisible] = useState(false);
+  const [playerKiller, setPlayerKiller] = useState();
 
   //REFRESH + LOADING HOOK
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
@@ -244,7 +247,7 @@ export default function GameScreen({ navigation }) {
     if (playerState == 'impostor') {
       changeButtonState(
         'kill',
-        !(distPlayer.filter((p) => [p.isAlive, !p.isImpostor]).length > 0)
+        !(distPlayer.filter((p) => p.isAlive && !p.isImpostor).length > 0)
       );
     }
   }
@@ -486,14 +489,21 @@ export default function GameScreen({ navigation }) {
       closeTask();
     });
 
+    room.onMessage('you died', (message) => {
+      if(getGameRoom()?.sessionId === message.sessionId){
+        setPlayerKiller(getGameRoom().state.players.find((p) => p.sessionId === message.client.sessionId));
+        setDeathModalVisible(true);
+      }
+    });
+
     room.onMessage('endedGame', (message) => {
       console.log(`endedgame`);
-      setArrowActive(false);
-      if (message == 'impostor') {
-        setWinningTeam('impostor');
-      } else if (message == 'crewmate') {
-        setWinningTeam('crewmate');
-      }
+      // setArrowActive(false);
+      // if (message == 'impostor') {
+      //   setWinningTeam('impostor');
+      // } else if (message == 'crewmate') {
+      //   setWinningTeam('crewmate');
+      // }
     });
 
     room.onStateChange((state) => {
@@ -717,6 +727,12 @@ export default function GameScreen({ navigation }) {
       <EjectModal
         onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
         player={ejectedPlayer}
+      />
+      <DeathModal
+        isVisible={deathModalVisible}
+        killer={playerKiller}
+        player={currPlayer}
+        onClose={() => setDeathModalVisible(false)}
       />
       <StartGame
         isVisible={startModalVisible}

@@ -228,6 +228,8 @@ export class GameRoom extends Room {
 
     this.onMessage('playerDeath', (client, sessionId) => {
       let player = this.state.players.find((p) => p.sessionId === sessionId);
+      this.broadcast('you died', {sessionId: sessionId, client: client});
+
       player.isAlive = false;
 
       player.location.update(player.location);
