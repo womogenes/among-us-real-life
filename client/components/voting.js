@@ -78,15 +78,15 @@ export default function votingModal(props) {
                     opacity: item.isAlive ? 1 : 0.5,
                     borderColor: item.isAlive ? '#000' : '#f00',
                   },
-                  props.yourId === item.sessionId && {
+                  props.myId === item.sessionId && {
                     backgroundColor: '#ffd666',
                   },
                   { marginLeft: 5 },
                 ]}
               >
-                <ProfileIcon player={item} size={50} key={item.sessionId} />
+                <ProfileIcon player={item} size={50} key={item.sessionId} isImpostor={props.isImpostor} myId={props.myId}/>
                 <CustomText
-                  textColor={'black'}
+                  textColor={props.isImpostor? item.isImpostor? 'red' : 'black' : 'black'}
                   centerText={false}
                   textSize={40}
                 >
@@ -102,7 +102,7 @@ export default function votingModal(props) {
                       );
                       return (
                         <View style={{ marginLeft: 5 }}>
-                          <ProfileIcon player={player} size={20} key={key} />
+                          <ProfileIcon player={player} size={20} key={key} isImpostor={props.isImpostor} myId={props.myId}/>
                         </View>
                       );
                     })}

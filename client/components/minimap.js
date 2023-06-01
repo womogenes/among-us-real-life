@@ -68,13 +68,13 @@ function Minimap(props) {
         moveOnMarkerPress={false}
       >
         <Marker
-          tracksViewChanges={props.player.isAlive}
-          key={props.player.sessionId}
+          tracksViewChanges={props.player?.isAlive}
+          key={props.player?.sessionId}
           coordinate={{
-            latitude: props.player.location.latitude,
-            longitude: props.player.location.longitude,
+            latitude: props.player?.location.latitude,
+            longitude: props.player?.location.longitude,
           }}
-          title={props.player.username}
+          title={props.player?.username}
         >
           <ProfileIcon player={props.player} size={20} />
         </Marker>

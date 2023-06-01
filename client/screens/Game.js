@@ -43,6 +43,7 @@ import { TaskIcon } from '../components/task-icon.js';
 import { EjectModal } from '../components/animation-modals/eject-modal.js';
 import { AnimationModal } from '../components/animation-modals/animation-modal.js';
 import { EndGame } from '../components/animation-modals/end-game.js';
+import { StartGame } from '../components/animation-modals/start-game.js';
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
@@ -103,12 +104,14 @@ export default function GameScreen({ navigation }) {
   const [playerState, setPlayerState] = useState('impostor');
   const [players, setPlayers] = useState([]); // list of all players
   const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
+  const [currPlayer, setCurrPlayer] = useState(); // more stable version of Player
   const [distPlayer, setDistPlayer] = useState([]);
   const [arrowActive, setArrowActive] = useState(false);
   const [taskNum, setTaskNum] = useState(0); // Used for impostor random complete tasks
   const [killOnCooldown, setKillOnCooldown] = useState(false);
   const [emergencyButton, setEmergencyButton] = useState([]); // array of the locations of the emergency button, will also be marked on the minimap
   const [impostorEmergency, setImpostorEmergency] = useState(false);
+  const [startModalVisible, setStartModalVisible] = useState();
 
   //REFRESH + LOADING HOOK
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
@@ -191,8 +194,9 @@ export default function GameScreen({ navigation }) {
   }
   function killButton() {
     let closestPlayer = findClosest(distPlayer);
-    console.log(closestPlayer.sessionId);
-    getGameRoom().send('playerDeath', closestPlayer.sessionId);
+    if(!closestPlayer.isImpostor){
+      getGameRoom().send('playerDeath', closestPlayer.sessionId);
+    }
   }
   function disguiseButton() {
     setPlayerState('disguised');
@@ -203,7 +207,9 @@ export default function GameScreen({ navigation }) {
   function activateUseButton() {
     if (distTask.length > 0) {
       if (playerState == 'crewmate') {
-        changeButtonState('use', false);
+        if(!getGameRoom().state.players?.find((p) => p.sessionId === getGameRoom().sessionId).isAlive && findClosest(distTask).name !== 'o2' && findClosest(distTask).name !== 'reactor' && findClosest(distTask).name !== 'emergency'){ // Dead players cannot use sabotage tasks or call emergency meetings
+          changeButtonState('use', false);
+        }
         if (buttonState.use === true) {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
         }
@@ -230,7 +236,7 @@ export default function GameScreen({ navigation }) {
     if (playerState == 'impostor') {
       changeButtonState(
         'kill',
-        !(distPlayer.filter((p) => p.isAlive).length > 0)
+        !(distPlayer.filter((p) => [p.isAlive, !p.isImpostor]).length > 0)
       );
     }
   }
@@ -259,6 +265,7 @@ export default function GameScreen({ navigation }) {
     getGameRoom()?.send('location', loc);
     setLocation(loc);
     setLoading(false);
+    setStartModalVisible(true);
     setArrowActive(true);
   };
   const animate = (loc) => {
@@ -488,10 +495,11 @@ export default function GameScreen({ navigation }) {
       setPlayers(state.players);
       setPlayer();
 
-      const player = state.players.find(
+      const player = state.players?.find(
         (player) => player.sessionId === getGameRoom().sessionId
       );
       setPlayer(player);
+      setCurrPlayer(player);
       setTasks(player.tasks);
       setEmergencyButton(player.emergency);
 
@@ -592,6 +600,8 @@ export default function GameScreen({ navigation }) {
                 direction={closestTask.direction}
                 active={arrowActive}
                 sabotage={sabotageActive}
+                isImpostor={currPlayer?.isImpostor}
+                myId={currPlayer?.sessionId}
               />
             </Marker>
           );
@@ -611,9 +621,7 @@ export default function GameScreen({ navigation }) {
       </MapView>
 
       <Minimap
-        player={getGameRoom().state.players.find(
-          (p) => p.sessionId === getGameRoom().sessionId
-        )}
+        player={currPlayer}
         userCoords={[location.latitude, location.longitude]}
         tasks={tasks}
         emergencyButton={emergencyButton}
@@ -698,17 +706,22 @@ export default function GameScreen({ navigation }) {
       <VotingModal
         isVisible={votingModalVisible}
         timer={votingTimer}
-        yourId={
-          getGameRoom().state.players.find(
-            (player) => player.sessionId === getGameRoom().sessionId
-          ).sessionId
-        }
+        myId={currPlayer?.sessionId}
+        isImpostor={currPlayer?.isImpostor}
       />
       <EjectModal
         onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
         player={ejectedPlayer}
       />
+      <StartGame
+        isVisible={startModalVisible}
+        players={getGameRoom().state.players}
+        isImpostor={currPlayer?.isImpostor}
+        sessionId={currPlayer?.sessionId}
+        onClose={() => setStartModalVisible(false)}
+      />
       <EndGame size={100} team={winningTeam} onClose={() => leaveGameRoom()} />
+
 
       {/* TASKS */}
       <CaptchaTask

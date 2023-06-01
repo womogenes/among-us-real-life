@@ -11,13 +11,13 @@ const images = {
   white: require('../assets/profile-icons/white.png'),
 };
 
-export const ProfileIcon = ({ player, size, style, direction, active, sabotage }) => {
+export const ProfileIcon = ({ player, size, style, direction, active, sabotage, isImpostor, myId }) => {
   if (!player) return;
 
   const { icon } = player;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, myId && player.sessionId === myId? {backgroundColor: '#ffd666'} : isImpostor? player?.isImpostor? {backgroundColor: 'red'} : {backgroundColor: 'white'} : {backgroundColor: 'white'}]}>
       <Image
         style={[
           style,
@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
     borderRadius: 100,
   },
   image: {
