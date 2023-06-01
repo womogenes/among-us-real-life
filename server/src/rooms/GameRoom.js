@@ -187,6 +187,24 @@ export class GameRoom extends Room {
           }
         });
       }
+
+      const totalTaskCount = this.state.players.reduce(
+        (count, player) =>
+          count + player.isImpostor ? 0 : player.tasks.length,
+        0
+      );
+      const completedTaskCount = this.state.players.reduce(
+        (count, player) =>
+          count + player.isImpostor
+            ? 0
+            : player.tasks.reduce((count, task) => count + task.complete, 0),
+        0
+      );
+
+      if(totalTaskCount == completedTaskCount) { // Crewmates completed all the tasks and win!
+        this.broadcast('endedGame', 'crewmate');
+      }
+
     });
 
     this.onMessage('completeFakeTask', (client, taskId) => {
