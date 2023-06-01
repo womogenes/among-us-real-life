@@ -364,7 +364,7 @@ export class GameRoom extends Room {
   onJoin(client, options) {
     console.log(`${client.sessionId} joined room ${this.state.code}!`);
 
-    let availIcons = ['blue', 'green', 'red', 'white'];
+    let availIcons = ['banana', 'black', 'blue', 'brown', 'coral', 'cyan', 'gray', 'green', 'lime', 'maroon', 'orange', 'pink', 'purple', 'red', 'rose', 'tan', 'white', 'yellow'];
     const icon = availIcons[this.state.players.length % availIcons.length];
 
     const isHost = this.state.players.length === 0;
