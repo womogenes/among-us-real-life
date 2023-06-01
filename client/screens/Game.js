@@ -119,20 +119,28 @@ export default function GameScreen({ navigation }) {
 
   //// FUNCTIONS
   function randomComplete(minDelay, maxDelay) {
-    // Completes closest fake task after a random interval of time, works in conjunction with a useEffect
-    let delay = Math.random() * (maxDelay - minDelay + 1) + minDelay; // generates a number between minDelay and maxDelay in miliseconds
-    setTimeout(() => {
-      if (
-        closestTask != undefined &&
-        closestTask.name !== 'o2' &&
-        closestTask.name !== 'reactor' &&
-        !sabotageActive &&
-        getGameRoom().state.gameState !== 'voting'
-      ) {
-        taskUtils.autoCompleteTask(closestTask, getGameRoom);
-      }
-      setTaskNum(taskNum + 1);
-    }, delay * 1000);
+    if(currPlayer?.isImpostor){
+      // Completes closest fake task after a random interval of time, works in conjunction with a useEffect
+      let delay = Math.random() * (maxDelay - minDelay + 1) + minDelay; // generates a number between minDelay and maxDelay in miliseconds
+      setTimeout(() => {
+        if (
+          closestTask != undefined &&
+          closestTask.name !== 'o2' &&
+          closestTask.name !== 'reactor' &&
+          closestTask.name !== 'emergency' &&
+          !sabotageActive &&
+          getGameRoom().state.gameState !== 'voting'
+        ) {
+          taskUtils.autoCompleteTask(closestTask, getGameRoom);
+        }
+        setTaskNum(taskNum + 1);
+      }, delay * 1000);
+    }
+    else{
+      setTimeout(() => {
+        setTaskNum(taskNum + 1);
+      }, 1000);
+    }
   }
 
   // SABOTAGE, EMERGENCY MEETING AND VOTING FUNCTIONS

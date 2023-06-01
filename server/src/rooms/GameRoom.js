@@ -199,7 +199,7 @@ export class GameRoom extends Room {
 
       if (taskIdx === -1) return; // Probably a dev task
 
-      this.state.players[playerIdx].tasks[taskIdx].complete = null;
+      this.state.players[playerIdx].tasks[taskIdx].complete = true;
     });
 
     this.onMessage('setUsername', (client, username) => {
