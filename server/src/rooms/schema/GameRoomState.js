@@ -123,10 +123,10 @@ class Settings extends Schema {
     super();
 
     this.killRadius = 10;
-    this.killCooldown = 20;
+    this.killCooldown = 40;
     this.saboCooldown = 180;
     this.impostorNum = 1;
-    this.votingTimer = 30;
+    this.votingTimer = 50;
     this.playerSight = 100;
     this.anonVotes = false;
   }

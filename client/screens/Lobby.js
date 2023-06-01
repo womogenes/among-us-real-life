@@ -32,11 +32,11 @@ function LobbyScreen({ navigation }) {
   const [killRadius, setKillRadius] = useState([10]);
   const [prevKillRadius, setPrevKillRadius] = useState([10]);
 
-  const [killCooldown, setKillCooldown] = useState([30]);
-  const [prevKillCooldown, setPrevKillCooldown] = useState([30]);
+  const [killCooldown, setKillCooldown] = useState([40]);
+  const [prevKillCooldown, setPrevKillCooldown] = useState([40]);
 
   const [saboCooldown, setSaboCooldown] = useState([180]);
-  const [prevSaboCooldown, setPrevSaboCooldown] = useState([20]);
+  const [prevSaboCooldown, setPrevSaboCooldown] = useState([180]);
 
   const [impostorNum, setImpostorNum] = useState([1]);
   const [prevImpostorNum, setPrevImpostorNum] = useState([1]);

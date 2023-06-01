@@ -71,7 +71,7 @@ export default function GameScreen({ navigation }) {
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
   const [ejectedPlayer, setEjectedPlayer] = useState({});
-  const [winningTeam, setWinningTeam] = useState({});
+  const [winningTeam, setWinningTeam] = useState();
 
   // BUTTON HOOKS
   const [disableActions, setDisableActions] = useState(false);
@@ -488,13 +488,11 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('endedGame', (message) => {
       console.log(`endedgame`);
-      return;
-
       setArrowActive(false);
       if (message == 'impostor') {
-        setWinningTeam(['Impostor']);
+        setWinningTeam('impostor');
       } else if (message == 'crewmate') {
-        setWinningTeam(['Crewmate']);
+        setWinningTeam('crewmate');
       }
     });
 
@@ -727,7 +725,7 @@ export default function GameScreen({ navigation }) {
         sessionId={currPlayer?.sessionId}
         onClose={() => setStartModalVisible(false)}
       />
-      <EndGame size={100} team={winningTeam} onClose={() => leaveGameRoom()} />
+      <EndGame size={100} team={winningTeam} players={players} myId={currPlayer?.sessionId} onClose={() => leaveGameRoom()} />
 
 
       {/* TASKS */}

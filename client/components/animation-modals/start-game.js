@@ -1,4 +1,4 @@
-import { StyleSheet, View, Modal, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View, Modal, TouchableOpacity, Text, ScrollView } from 'react-native';
 import { ProfileIcon } from '../profile-icon';
 import CustomText from '../text';
 import { useState, useEffect } from 'react';
@@ -38,7 +38,7 @@ export const StartGame = (props) => {
   }
 
   return (
-    <AnimationModal isVisible={props.isVisible} size={100} height={'80%'} onClose={props.onClose}>
+    <AnimationModal isVisible={props.isVisible} height={'80%'} onClose={props.onClose}>
       <View style={styles.container}>
         <CustomText textSize={60} centerText={true} textColor={props.isImpostor? 'red' : 'white'}>
           {props.isImpostor? <Text>Impostor</Text> : <Text>Crewmate</Text>}
@@ -46,9 +46,9 @@ export const StartGame = (props) => {
         <CustomText textSize={30} textColor={'#9c9c9c'} centerText={true}>
           {props.isImpostor? <Text>Be the last standing!</Text> : <Text>There is an impostor among us!</Text>}
         </CustomText>
-        <View style={styles.profileList}>
+        <ScrollView style={styles.profileList}>
           {mapPlayers()}
-        </View>
+        </ScrollView>
       </View>
     </AnimationModal>
   );
@@ -65,8 +65,6 @@ const styles = StyleSheet.create({
   },
   profileList: {
     flexDirecion: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
     width: '80%',
     height: '80%',
     padding: 5,
