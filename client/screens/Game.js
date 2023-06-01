@@ -111,7 +111,7 @@ export default function GameScreen({ navigation }) {
   const [killOnCooldown, setKillOnCooldown] = useState(false);
   const [emergencyButton, setEmergencyButton] = useState([]); // array of the locations of the emergency button, will also be marked on the minimap
   const [impostorEmergency, setImpostorEmergency] = useState(false);
-  const [startModalVisible, setStartModalVisible] = useState();
+  const [startModalVisible, setStartModalVisible] = useState(true);
 
   //REFRESH + LOADING HOOK
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
@@ -265,7 +265,6 @@ export default function GameScreen({ navigation }) {
     getGameRoom()?.send('location', loc);
     setLocation(loc);
     setLoading(false);
-    setStartModalVisible(true);
     setArrowActive(true);
   };
   const animate = (loc) => {
