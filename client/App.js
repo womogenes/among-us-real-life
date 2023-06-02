@@ -72,6 +72,13 @@ export default function App() {
         require('./assets/splash.png'),
         require('./assets/usebutton.png'),
         require('./assets/x.png'),
+        require('./assets/task-icons/calibrate.png'),
+        require('./assets/task-icons/electricity.png'),
+        require('./assets/task-icons/emergency.png'),
+        require('./assets/task-icons/memory.png'),
+        require('./assets/task-icons/passcode.png'),
+        require('./assets/task-icons/recaptcha.png'),
+        require('./assets/task-icons/scanner.png'),
       ]);
 
       await Promise.all([...imageAssets]);
