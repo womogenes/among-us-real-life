@@ -157,14 +157,13 @@ function LobbyScreen({ navigation }) {
   }
 
   function settingsUpdated() {
-    console.log(`anonVotes: ${anonVotes}`);
     getGameRoom().send('settingsUpdated', {
       killRadius: killRadius[0],
       killCooldown: killCooldown[0],
       saboCooldown: saboCooldown[0],
       impostorNum: impostorNum[0],
       votingTimer: votingTimer[0],
-      anonVotes: anonVotes,
+      anonVotes: !anonVotes, // Necessary because React state is bad
       playerSight: playerSight[0],
     });
   }
