@@ -25,36 +25,55 @@ const images = {
   yellow: require('../assets/profile-icons/yellow.png'),
 };
 
-export const ProfileIcon = ({ player, size, style, direction, active, sabotage, isImpostor, myId }) => {
-  if (!player) return;
-
-  const { icon } = player;
+export const ProfileIcon = ({ player, size, style, direction, active, sabotage, isImpostor, myId, renderIcon }) => {
+  
+  const icon = player?.icon;
+  if (!player && !renderIcon){
+    return;
+  }
 
   return (
-    <View style={[styles.container, myId && player.sessionId === myId? {backgroundColor: '#ffd666'} : isImpostor? player?.isImpostor? {backgroundColor: 'red'} : {backgroundColor: 'white'} : {backgroundColor: 'white'}]}>
-      <Image
-        style={[
-          style,
-          styles.image,
-          !player.isAlive ? styles.imageDead : {},
-          { width: size, height: size },
-          { zIndex: getGameRoom()?.sessionId === player.sessionId ? 9 : 1 },
-        ]}
-        source={images[icon]}
-      />
-      {active && (
-        <View
-          style={[
-            styles.arrow,
-            {
-              transform: [{ rotateZ: parseFloat(direction + Math.PI) + 'rad' }],
-            },
-          ]}
-        >
-          <View style={[styles.triangle, (sabotage? {borderBottomColor: '#f70000'} : {borderBottomColor: '#fcfa65'})]}></View>
+    <View>
+      {player? 
+        <View style={[styles.container, myId && player.sessionId === myId? {backgroundColor: '#ffd666'} : isImpostor? player?.isImpostor? {backgroundColor: 'red'} : {backgroundColor: 'white'} : {backgroundColor: 'white'}]}>
+          <Image
+            style={[
+              style,
+              styles.image,
+              !player.isAlive ? styles.imageDead : {},
+              { width: size, height: size },
+              { zIndex: getGameRoom()?.sessionId === player.sessionId ? 9 : 1 },
+            ]}
+            source={images[icon?.name]}
+          />
+          {active && (
+            <View
+              style={[
+                styles.arrow,
+                {
+                  transform: [{ rotateZ: parseFloat(direction + Math.PI) + 'rad' }],
+                },
+              ]}
+            >
+              <View style={[styles.triangle, (sabotage? {borderBottomColor: '#f70000'} : {borderBottomColor: '#fcfa65'})]}></View>
+            </View>
+          )}
         </View>
-      )}
+      :
+      renderIcon &&
+        <View style={[styles.container, {backgroundColor: 'white'}]}>
+          <Image
+            style={[
+              style,
+              styles.image,
+              { width: size, height: size },,
+            ]}
+            source={images[renderIcon?.name]}
+          />
+        </View>
+      }
     </View>
+
   );
 };
 

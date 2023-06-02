@@ -4,6 +4,7 @@ const { MapSchema } = schema;
 
 import {
   GameRoomState,
+  Icon,
   Player,
   Task,
   EmergencyButton,
@@ -42,6 +43,13 @@ export class GameRoom extends Room {
 
       checkCanStartVoting();
     });
+
+    this.onMessage('updateIcon', (client, name) => {
+      const player = this.state.players.find(
+        (p) => p.sessionId === client.sessionId
+      );
+      player.icon.update(name);
+    })
 
     // Check if everyone is in range to begin voting
     const checkCanStartVoting = () => {
@@ -401,30 +409,10 @@ export class GameRoom extends Room {
   onJoin(client, options) {
     console.log(`${client.sessionId} joined room ${this.state.code}!`);
 
-    let availIcons = [
-      'banana',
-      'black',
-      'blue',
-      'brown',
-      'coral',
-      'cyan',
-      'gray',
-      'green',
-      'lime',
-      'maroon',
-      'orange',
-      'pink',
-      'purple',
-      'red',
-      'rose',
-      'tan',
-      'white',
-      'yellow',
-    ];
-    const icon = availIcons[this.state.players.length % availIcons.length];
+    const randIcon = this.state.iconList.filter((icon) => !this.state.players.find((p) => p.icon.name === icon.name))[0]; // Picks first icon from array of unused icons
 
     const isHost = this.state.players.length === 0;
-    this.state.players.push(new Player(client.sessionId, isHost, icon));
+    this.state.players.push(new Player(client.sessionId, isHost, new Icon(randIcon.name)));
 
     this.state.refresh += 1;
   }

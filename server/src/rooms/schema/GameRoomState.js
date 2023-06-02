@@ -30,6 +30,22 @@ schema.defineTypes(Location, {
   altitude: 'number', // altitude
 });
 
+export class Icon extends Schema {
+  constructor(name) {
+    super();
+
+    this.name = name;
+  }
+  update(newName){
+    this.name = newName;
+  }
+}
+
+schema.defineTypes(Icon, {
+  name: 'string',
+  used: 'boolean',
+});
+
 export class Task extends Schema {
   constructor(name, location, taskId) {
     super();
@@ -59,6 +75,7 @@ export class EmergencyButton extends Schema {
     this.taskId = nanoid();
     this.location = location;
     this.uses = uses;
+    
   }
 }
 schema.defineTypes(EmergencyButton, {
@@ -75,7 +92,7 @@ export class Player extends Schema {
 
     this.sessionId = sessionId;
     this.username = 'Anonymous';
-    this.icon = icon; // Automatically assigned for now
+    this.icon = icon;
     this.location = new Location();
     this.trueLocation = new Location();
     this.isHost = isHost;
@@ -108,7 +125,7 @@ export class Player extends Schema {
 schema.defineTypes(Player, {
   sessionId: 'string',
   username: 'string',
-  icon: 'string',
+  icon: Icon,
   location: Location,
   trueLocation: Location,
   isHost: 'boolean',
@@ -172,6 +189,27 @@ export class GameRoomState extends Schema {
     this.sabotageTaskList = new ArraySchema();
     this.votes = new MapSchema();
     this.votingTimer = this.settings.votingTimer;
+    this.iconList = new ArraySchema();
+    this.iconList.push(
+      new Icon('banana'),
+      new Icon('yellow'),
+      new Icon('rose'),
+      new Icon('pink'),
+      new Icon('orange'),
+      new Icon('coral'),
+      new Icon('red'),
+      new Icon('maroon'),
+      new Icon('cyan'),
+      new Icon('blue'),
+      new Icon('purple'),
+      new Icon('lime'),
+      new Icon('green'),
+      new Icon('tan'),
+      new Icon('brown'),
+      new Icon('white'),
+      new Icon('gray'),
+      new Icon('black'),
+    )
   }
 }
 schema.defineTypes(GameRoomState, {
@@ -187,4 +225,5 @@ schema.defineTypes(GameRoomState, {
   sabotageTaskList: [Task],
   votes: { map: 'string' },
   votingTimer: 'number',
+  iconList: [Icon],
 });

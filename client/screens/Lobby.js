@@ -19,6 +19,7 @@ import * as Haptics from 'expo-haptics';
 
 import CustomText from '../components/text.js';
 import { ProfileIcon } from '../components/profile-icon.js';
+import { StyleModal } from '../components/style-modal.js';
 
 import { getGameRoom, leaveGameRoom } from '../networking.js';
 
@@ -57,6 +58,8 @@ function LobbyScreen({ navigation }) {
 
   const [memberList, setMemberList] = useState([]);
   const [isHost, setIsHost] = useState(false);
+
+  const [styleModalVisible, setStyleModalVisible] = useState(false);
 
   useEffect(() => {
     // NETWORKING STUFF
@@ -211,30 +214,63 @@ function LobbyScreen({ navigation }) {
           <CustomText textSize={50}>Code: {roomCode}</CustomText>
         </View>
 
+        <StyleModal
+          active={styleModalVisible}
+          icons={getGameRoom()?.state.iconList}
+          gameRoom={getGameRoom()}
+          sessionId={getGameRoom().sessionId}
+          onClose={() => setStyleModalVisible(false)}
+        />
+
         <View style={styles.playerContainer}>
           <FlatList
             data={memberList}
             renderItem={({ item }) => (
-              <TouchableWithoutFeedback>
-                <View
-                  style={[
-                    styles.playerItem,
-                    getGameRoom().state.players.find(
-                      (player) => player.sessionId === getGameRoom().sessionId
-                    ).sessionId === item.sessionId && {
-                      backgroundColor: '#ffd666',
-                    },
-                  ]}
-                >
-                  <ProfileIcon player={item} size={50} />
-                  <View style={{ marginLeft: 10 }}>
-                    <CustomText textSize={50}>
-                      {item.username ? item.username : 'Anonymous'}
-                      {item.isHost && ' [Host]'}
-                    </CustomText>
+              <View>
+                {getGameRoom().state.players.find((player) => player.sessionId === getGameRoom().sessionId).sessionId === item.sessionId?
+                  <TouchableOpacity onPress={() => setStyleModalVisible(true)}>
+                  <View
+                    style={[
+                      styles.playerItem,
+                      getGameRoom().state.players.find(
+                        (player) => player.sessionId === getGameRoom().sessionId
+                      ).sessionId === item.sessionId && {
+                        backgroundColor: '#ffd666',
+                      },
+                    ]}
+                  >
+                    <ProfileIcon player={item} size={50} />
+                    <View style={{ marginLeft: 10 }}>
+                      <CustomText textSize={50}>
+                        {item.username ? item.username : 'Anonymous'}
+                        {item.isHost && ' [Host]'}
+                      </CustomText>
+                    </View>
                   </View>
-                </View>
-              </TouchableWithoutFeedback>
+                </TouchableOpacity>
+                :
+                <TouchableWithoutFeedback>
+                  <View
+                    style={[
+                      styles.playerItem,
+                      getGameRoom().state.players.find(
+                        (player) => player.sessionId === getGameRoom().sessionId
+                      ).sessionId === item.sessionId && {
+                        backgroundColor: '#ffd666',
+                      },
+                    ]}
+                  >
+                    <ProfileIcon player={item} size={50} />
+                    <View style={{ marginLeft: 10 }}>
+                      <CustomText textSize={50}>
+                        {item.username ? item.username : 'Anonymous'}
+                        {item.isHost && ' [Host]'}
+                      </CustomText>
+                    </View>
+                  </View>
+                </TouchableWithoutFeedback>
+                }
+              </View>
             )}
           />
         </View>
