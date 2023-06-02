@@ -287,8 +287,8 @@ export class GameRoom extends Room {
     });
 
     this.onMessage('o2', () => {
-      this.broadcast('sabotage');
       this.state.gameState = 'sabotage';
+      this.broadcast('sabotage');
       const newId1 = nanoid();
       const newTask1 = new Task(
         'o2',
@@ -310,8 +310,8 @@ export class GameRoom extends Room {
     });
 
     this.onMessage('reactor', () => {
-      this.broadcast('sabotage');
       this.state.gameState = 'sabotage';
+      this.broadcast('sabotage');
       const newId1 = nanoid();
       const newTask1 = new Task(
         'reactor',
