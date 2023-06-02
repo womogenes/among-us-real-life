@@ -166,18 +166,18 @@ export default function GameScreen({ navigation }) {
     setSabotageType(type);
   }
 
-  const openVotingModal = () => {
-    const room = getGameRoom();
-    if (!room) return;
+  // const openVotingModal = () => {
+  //   const room = getGameRoom();
+  //   if (!room) return;
 
-    if (room.state.gameState !== 'voting') {
-      // If this is triggered manually
-      room?.send('startVoting');
-    }
+  //   if (room.state.gameState !== 'voting') {
+  //     // If this is triggered manually
+  //     room?.send('startVoting');
+  //   }
 
-    setVotingModalVisible(true);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-  };
+  //   setVotingModalVisible(true);
+  //   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+  // };
 
   function endSabotageCooldown() {
     setSabotageOnCooldown(false);
@@ -493,7 +493,6 @@ export default function GameScreen({ navigation }) {
       setArrowActive(false);
       setMeetingModalVisible(false);
       setDeathModalVisible(false);
-      openVotingModal();
     });
 
     room.onMessage('playerEjected', (playerId) => {
@@ -671,12 +670,16 @@ export default function GameScreen({ navigation }) {
           ) {
             return;
           }
+          // console.log(displayLoc);
 
           return (
             <Marker
               tracksViewChanges={p.isAlive}
               key={p.sessionId}
-              coordinate={{ ...displayLoc }}
+              coordinate={{
+                latitude: displayLoc.latitude,
+                longitude: displayLoc.longitude,
+              }}
               title={p.username}
             >
               <ProfileIcon
@@ -782,12 +785,12 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      <VotingModal
-        isVisible={votingModalVisible}
-        timer={votingTimer}
-        myId={currPlayer?.sessionId}
+      <StartGame
+        isVisible={startModalVisible}
+        players={getGameRoom().state.players}
         isImpostor={currPlayer?.isImpostor}
-        reporter={playerReporter}
+        sessionId={currPlayer?.sessionId}
+        onClose={() => setStartModalVisible(false)}
       />
       <EjectModal
         onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
@@ -805,13 +808,6 @@ export default function GameScreen({ navigation }) {
         dead={playerDead}
         onClose={() => setMeetingModalVisible(false)}
       />
-      <StartGame
-        isVisible={startModalVisible}
-        players={getGameRoom().state.players}
-        isImpostor={currPlayer?.isImpostor}
-        sessionId={currPlayer?.sessionId}
-        onClose={() => setStartModalVisible(false)}
-      />
       <EndGame
         size={100}
         team={winningTeam}
@@ -821,6 +817,13 @@ export default function GameScreen({ navigation }) {
           leaveGameRoom();
           navigation.navigate('Menu');
         }}
+      />
+      <VotingModal
+        isVisible={votingModalVisible}
+        timer={votingTimer}
+        myId={currPlayer?.sessionId}
+        isImpostor={currPlayer?.isImpostor}
+        reporter={playerReporter}
       />
 
       {/* TASKS */}
