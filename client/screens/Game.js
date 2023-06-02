@@ -198,19 +198,21 @@ export default function GameScreen({ navigation }) {
   function useButton() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     let closestTask = findClosest(distTask);
-    if (
-      !closestTask.complete &&
-      (playerState == 'crewmate' ||
-        (playerState == 'impostor' &&
-          sabotageActive &&
-          (closestTask.name === 'o2' || closestTask.name === 'reactor')) ||
-        (playerState == 'impostor' && closestTask.name === 'emergency'))
-    ) {
-      setActiveTask((prevArrState) => ({
-        ...prevArrState,
-        name: closestTask.name,
-        taskId: closestTask.taskId,
-      }));
+    if (!closestTask.complete && (playerState == 'crewmate' || (playerState == 'impostor' && sabotageActive && (closestTask.name === 'o2' || closestTask.name === 'reactor')) ||(playerState == 'impostor' && closestTask.name === 'emergency'))) {
+      if(currPlayer?.isAlive){
+        setActiveTask((prevArrState) => ({
+          ...prevArrState,
+          name: closestTask.name,
+          taskId: closestTask.taskId,
+        }));
+      }
+      else if(!currPlayer?.isAlive && !closestTask.name === 'emergency'){ // Dead players cannot call an emergency meeting
+        setActiveTask((prevArrState) => ({
+          ...prevArrState,
+          name: closestTask.name,
+          taskId: closestTask.taskId,
+        }));
+      }
     }
   }
   function reportButton() {
@@ -233,8 +235,10 @@ export default function GameScreen({ navigation }) {
   function activateUseButton() {
     if (distTask.length > 0) {
       if (playerState == 'crewmate') {
-        if(!getGameRoom().state.players?.find((p) => p.sessionId === getGameRoom().sessionId).isAlive && findClosest(distTask).name !== 'o2' && findClosest(distTask).name !== 'reactor' && findClosest(distTask).name !== 'emergency'){ // Dead players cannot use sabotage tasks or call emergency meetings
-          changeButtonState('use', false);
+        if(!currPlayer?.isAlive){ // Dead players cannot use sabotage tasks or call emergency meetings
+          if(findClosest(distTask).name !== 'o2' && findClosest(distTask).name !== 'reactor' && findClosest(distTask).name !== 'emergency'){
+            changeButtonState('use', false);
+          }
         }
         else{
           changeButtonState('use', false);
@@ -262,7 +266,7 @@ export default function GameScreen({ navigation }) {
     }
   }
   function activateKillButton() {
-    if (playerState == 'impostor') {
+    if (playerState == 'impostor' && currPlayer?.isAlive) {
       changeButtonState(
         'kill',
         !(distPlayer.filter((p) => p.isAlive && !p.isImpostor).length > 0)
@@ -270,9 +274,11 @@ export default function GameScreen({ navigation }) {
     }
   }
   function activateReportButton() {
-    let c = !(distPlayer.filter((p) => !p.isAlive).length > 0);
-    if (!c) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-    changeButtonState('report', c);
+    if(currPlayer?.isAlive){
+      let c = !(distPlayer.filter((p) => !p.isAlive).length > 0);
+      if (!c) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      changeButtonState('report', c);
+    }
   }
 
   // TASK FUNCTIONS
@@ -509,24 +515,30 @@ export default function GameScreen({ navigation }) {
       setPlayerReporter(message.caller);
       setPlayerDead(message.body);
       closeTask();
+      setDeathModalVisible(false);
+      setStartModalVisible(false);
       setMeetingModalVisible(true);
     });
 
     room.onMessage('you died', (message) => {
       if(getGameRoom()?.sessionId === message.sessionId){
+        closeTask();
+        setStartModalVisible(false);
         setPlayerKiller(getGameRoom().state.players.find((p) => p.sessionId === message.client.sessionId));
-        setDeathModalVisible(true);
+        setTimeout(() => { // Makes sure modal appears after everything else is closed
+          setDeathModalVisible(true);
+        }, 1000);
       }
     });
 
     room.onMessage('endedGame', (message) => {
       console.log(`endedgame`);
-      // setArrowActive(false);
-      // if (message == 'impostor') {
-      //   setWinningTeam('impostor');
-      // } else if (message == 'crewmate') {
-      //   setWinningTeam('crewmate');
-      // }
+      setArrowActive(false);
+      if (message == 'impostor') {
+        setWinningTeam('impostor');
+      } else if (message == 'crewmate') {
+        setWinningTeam('crewmate');
+      }
     });
 
     room.onStateChange((state) => {
@@ -540,6 +552,9 @@ export default function GameScreen({ navigation }) {
       setCurrPlayer(player);
       setTasks(player.tasks);
       setEmergencyButton(player.emergency);
+
+      // Update sabotage activity
+      setSabotageActive(state.gameState === 'sabotage');
 
       // Animate to new given location and update local state
       setLocation({ ...player.trueLocation }); // VERY IMPORTANT to make new object here, or useEffect will not fire
@@ -735,11 +750,11 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      <View style={styles.debugContainer}>
+      {/* <View style={styles.debugContainer}>
         <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
           <Text>open voting modal</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       <VotingModal
         isVisible={votingModalVisible}

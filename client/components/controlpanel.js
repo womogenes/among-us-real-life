@@ -15,7 +15,8 @@ import { getGameRoom } from '../networking.js';
 function ControlPanel(props) {
   const [killTimer, setKillTimer] = useState(null);
   const [sabotageTimer, setSabotageTimer] = useState(null);
-  const [intervalID, setIntervalID] = useState();
+  const [killID, setKillID] = useState();
+  const [saboID, setSaboID] = useState();
   const [isModalVisible, setModalVisibility] = useState(false);
   const { manualMovement, setManualMovement } = props;
 
@@ -24,7 +25,7 @@ function ControlPanel(props) {
     const interval = setInterval(() => {
       setKillTimer((prevState) => prevState - 1);
     }, 1000);
-    setIntervalID(interval);
+    setKillID(interval);
   }
 
   function sabotageCooldown() {
@@ -32,7 +33,7 @@ function ControlPanel(props) {
     const interval = setInterval(() => {
       setSabotageTimer((prevState) => prevState - 1);
     }, 1000);
-    setIntervalID(interval);
+    setSaboID(interval);
   }
 
   function sabotageTasks() {
@@ -45,14 +46,14 @@ function ControlPanel(props) {
 
   useEffect(() => {
     if (killTimer <= 0) {
-      clearInterval(intervalID);
+      clearInterval(killID);
       setKillTimer(null);
     }
   }, [killTimer]);
 
   useEffect(() => {
     if (sabotageTimer <= 0) {
-      clearInterval(intervalID);
+      clearInterval(saboID);
       setSabotageTimer(null);
       () => props.endSabotageCooldown();
     }
@@ -82,7 +83,7 @@ function ControlPanel(props) {
     <View style={styles.bottom}>
       <View style={styles.buttonContainer}>
         {/* Universal views */}
-        <View style={{ flex: 1, alignItems: 'center' }}>
+        {/* <View style={{ flex: 1, alignItems: 'center' }}>
           {(Platform.OS == 'android' || manualMovement) && (
             <AxisPad
               size={100}
@@ -111,7 +112,7 @@ function ControlPanel(props) {
               value={manualMovement}
             />
           </View>
-        </View>
+        </View> */}
 
         {/* Role-specific buttons */}
         {props.userType == 'crewmate' && (
