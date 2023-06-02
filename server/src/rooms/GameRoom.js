@@ -59,6 +59,23 @@ export class GameRoom extends Room {
       }
     };
 
+    const endSabotage = () => {
+      this.broadcast('sabotageOver');
+      this.state.gameState = 'normal';
+      this.state.sabotageCooldown = true;
+      this.state.players.forEach((p) => {
+        let taskIndex = 0;
+        while (taskIndex != -1) {
+          taskIndex = p.tasks.findIndex(
+            (task) => task.name === 'o2' || task.name === 'reactor'
+          );
+          if (taskIndex != -1) {
+            p.tasks.splice(taskIndex, 1);
+          }
+        }
+      });
+    }
+
     const startVoting = () => {
       this.state.votes = new MapSchema();
       this.state.gameState = 'voting';
@@ -100,6 +117,12 @@ export class GameRoom extends Room {
 
             this.broadcast('playerEjected', killed);
           }
+
+          this.state.players.forEach((p) => { // Clears all the bodies
+            if(!p.isAlive){
+              p.location.update({latitude: 0, longitude: 0, altitude: 0});
+            }
+          })
 
           this.state.gameState = 'normal';
           this.state.emergencyMeetingLocation = new Location();
@@ -173,20 +196,26 @@ export class GameRoom extends Room {
       }
 
       if (this.state.sabotageTaskList.length == 0 && sabotageActive) {
-        this.broadcast('sabotageOver');
-        this.state.sabotageCooldown = true;
-        this.state.players.forEach((p) => {
-          let taskIndex = 0;
-          while (taskIndex != -1) {
-            taskIndex = p.tasks.findIndex(
-              (task) => task.name === 'o2' || task.name === 'reactor'
-            );
-            if (taskIndex != -1) {
-              p.tasks.splice(taskIndex, 1);
-            }
-          }
-        });
+        endSabotage();
       }
+
+      const totalTaskCount = this.state.players.reduce(
+        (count, player) =>
+          count + player.isImpostor ? 0 : player.tasks.length,
+        0
+      );
+      const completedTaskCount = this.state.players.reduce(
+        (count, player) =>
+          count + player.isImpostor
+            ? 0
+            : player.tasks.reduce((count, task) => count + task.complete, 0),
+        0
+      );
+
+      if(totalTaskCount == completedTaskCount) { // Crewmates completed all the tasks and win!
+        this.broadcast('endedGame', 'crewmate');
+      }
+
     });
 
     this.onMessage('completeFakeTask', (client, taskId) => {
@@ -199,7 +228,7 @@ export class GameRoom extends Room {
 
       if (taskIdx === -1) return; // Probably a dev task
 
-      this.state.players[playerIdx].tasks[taskIdx].complete = null;
+      this.state.players[playerIdx].tasks[taskIdx].complete = true;
     });
 
     this.onMessage('setUsername', (client, username) => {
@@ -210,6 +239,8 @@ export class GameRoom extends Room {
 
     this.onMessage('playerDeath', (client, sessionId) => {
       let player = this.state.players.find((p) => p.sessionId === sessionId);
+      this.broadcast('you died', {sessionId: sessionId, client: client});
+
       player.isAlive = false;
 
       player.location.update(player.location);
@@ -229,18 +260,35 @@ export class GameRoom extends Room {
       }
     });
 
-    this.onMessage('callEmergency', (client, location) => {
-      this.state.gameState = 'emergency';
-      this.state.emergencyMeetingLocation.update(location);
-      let player = this.state.players.find(
-        (p) => p.sessionId === client.sessionId
-      );
-      player.emergency[0].uses = player.emergency[0].uses - 1;
-      this.broadcast('emergency called');
+    this.onMessage('callEmergency', (client, message) => {
+      if(this.state.gameState === 'sabotage'){
+        if(message.type === 'report'){
+          endSabotage();
+          this.state.gameState = 'emergency';
+          this.state.emergencyMeetingLocation.update(message.location);
+          let player = this.state.players.find(
+            (p) => p.sessionId === client.sessionId
+          );
+          this.broadcast('emergency called', {caller: player, body: message.body});
+        }
+      }
+      else{
+        console.log('emergency')
+        this.state.gameState = 'emergency';
+        this.state.emergencyMeetingLocation.update(message.location);
+        let player = this.state.players.find(
+          (p) => p.sessionId === client.sessionId
+        );
+        if(message.type === 'button'){
+          player.emergency[0].uses = player.emergency[0].uses - 1;
+        }
+        this.broadcast('emergency called', {caller: player, body: message.body});
+      }
     });
 
     this.onMessage('o2', () => {
       this.broadcast('sabotage');
+      this.state.gameState = 'sabotage';
       const newId1 = nanoid();
       const newTask1 = new Task(
         'o2',
@@ -263,6 +311,7 @@ export class GameRoom extends Room {
 
     this.onMessage('reactor', () => {
       this.broadcast('sabotage');
+      this.state.gameState = 'sabotage';
       const newId1 = nanoid();
       const newTask1 = new Task(
         'reactor',
@@ -346,7 +395,7 @@ export class GameRoom extends Room {
   onJoin(client, options) {
     console.log(`${client.sessionId} joined room ${this.state.code}!`);
 
-    let availIcons = ['blue', 'green', 'red', 'white'];
+    let availIcons = ['banana', 'black', 'blue', 'brown', 'coral', 'cyan', 'gray', 'green', 'lime', 'maroon', 'orange', 'pink', 'purple', 'red', 'rose', 'tan', 'white', 'yellow'];
     const icon = availIcons[this.state.players.length % availIcons.length];
 
     const isHost = this.state.players.length === 0;

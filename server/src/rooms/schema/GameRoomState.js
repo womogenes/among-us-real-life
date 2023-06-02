@@ -56,12 +56,10 @@ export class EmergencyButton extends Schema {
     super();
 
     this.name = 'emergency';
-    this.taskId = nanoid()
+    this.taskId = nanoid();
     this.location = location;
     this.uses = uses;
-    
   }
-
 }
 schema.defineTypes(EmergencyButton, {
   name: 'string',
@@ -100,7 +98,10 @@ export class Player extends Schema {
     // Set emergency button location
     this.emergency = new ArraySchema();
     this.emergency.push(
-      new EmergencyButton(new Location(47.73259494636459, -122.32835682174914, 0), 1), //47.737302938766845, -122.33941788971003 Felix 47.73259494636459, -122.32835682174914 Field
+      new EmergencyButton(
+        new Location(47.73259494636459, -122.32835682174914, 0),
+        1
+      ) //47.737302938766845, -122.33941788971003 Felix 47.73259494636459, -122.32835682174914 Field
     );
   }
 }
@@ -114,7 +115,7 @@ schema.defineTypes(Player, {
   isImpostor: 'boolean',
   isAlive: 'boolean',
   tasks: [Task],
-  emergency: [EmergencyButton]
+  emergency: [EmergencyButton],
 });
 
 // Settings schema
@@ -123,17 +124,17 @@ class Settings extends Schema {
     super();
 
     this.killRadius = 10;
-    this.killCooldown = 20;
+    this.killCooldown = 40;
     this.saboCooldown = 180;
     this.impostorNum = 1;
-    this.votingTimer = 30;
+    this.votingTimer = 50;
     this.playerSight = 100;
     this.anonVotes = false;
   }
 
   update(newSettings) {
     for (let key in newSettings) {
-      if (newSettings[key]) this[key] = newSettings[key];
+      if (newSettings[key] != null) this[key] = newSettings[key];
     }
   }
 }

@@ -20,7 +20,7 @@ export const AnimationModal = (props) => {
   return (
     <Modal animationType="slide" transparent={true} visible={props.isVisible}>
       <View style={styles.modal}>
-        <View style={styles.content}>
+        <View style={[props.width? {width: props.width} : {width: '80%'}, props.height? {height: props.height} : {height: '50%'}]}>
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => {
@@ -50,10 +50,5 @@ const styles = StyleSheet.create({
     top: 0,
     margin: 10,
     zIndex: 1,
-  },
-
-  content: {
-    width: '80%',
-    height: '50%',
   },
 });

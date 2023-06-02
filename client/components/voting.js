@@ -5,6 +5,7 @@ import {
   Text,
   TouchableWithoutFeedback,
   Button,
+  Image,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useEffect, useState } from 'react';
@@ -15,6 +16,8 @@ import CustomText from './text.js';
 import { ProfileIcon } from './profile-icon.js';
 
 export default function votingModal(props) {
+  const images = { report: require('../assets/reporticon.png') };
+
   const gameRoom = getGameRoom();
 
   const [votes, setVotes] = useState(new Map());
@@ -78,20 +81,36 @@ export default function votingModal(props) {
                     opacity: item.isAlive ? 1 : 0.5,
                     borderColor: item.isAlive ? '#000' : '#f00',
                   },
-                  props.yourId === item.sessionId && {
+                  props.myId === item.sessionId && {
                     backgroundColor: '#ffd666',
                   },
                   { marginLeft: 5 },
                 ]}
               >
-                <ProfileIcon player={item} size={50} key={item.sessionId} />
+                <ProfileIcon
+                  player={item}
+                  size={50}
+                  key={item.sessionId}
+                  isImpostor={props.isImpostor}
+                  myId={props.myId}
+                />
                 <CustomText
-                  textColor={'black'}
+                  textColor={
+                    props.isImpostor
+                      ? item.isImpostor
+                        ? 'red'
+                        : 'black'
+                      : 'black'
+                  }
                   centerText={false}
                   textSize={40}
                 >
                   {item.username}
                 </CustomText>
+                {props.reporter &&
+                  item.sessionId === props.reporter.sessionId && (
+                    <Image style={styles.image} source={images['report']} />
+                  )}
 
                 <View style={styles.votes}>
                   {votes
@@ -102,7 +121,13 @@ export default function votingModal(props) {
                       );
                       return (
                         <View style={{ marginLeft: 5 }} key={key}>
-                          <ProfileIcon player={player} size={20} />
+                          <ProfileIcon
+                            player={player}
+                            size={20}
+                            key={key}
+                            isImpostor={props.isImpostor}
+                            myId={props.myId}
+                          />
                         </View>
                       );
                     })}
@@ -138,6 +163,7 @@ const styles = StyleSheet.create({
   },
   player: {
     width: '100%',
+    padding: 20,
   },
   red: {
     color: 'red',
@@ -145,6 +171,7 @@ const styles = StyleSheet.create({
   candidate: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     alignContent: 'center',
     borderWidth: 2,
     borderRadius: 10,
@@ -156,5 +183,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignSelf: 'flex-end',
+  },
+  image: {
+    width: 50,
+    height: 50,
+    opacity: 0.5,
+    position: 'absolute',
+    right: 0,
   },
 });

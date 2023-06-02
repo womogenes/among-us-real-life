@@ -25,24 +25,34 @@ const taskUtils = require('../tasks-utils.js');
 import Minimap from '../components/minimap.js';
 import ControlPanel from '../components/controlpanel.js';
 import Timer from '../components/timer.js';
-
-import CaptchaTask from '../components/tasks/recaptcha.js';
-import CodeTask from '../components/sabotage/passcode.js';
-import ScanTask from '../components/sabotage/scanner.js';
-import MemoryTask from '../components/tasks/memory.js';
-import ElectricityTask from '../components/tasks/electricity.js';
-import CalibrateTask from '../components/tasks/calibrate.js';
-import EmergencyButton from '../components/tasks/emergencybutton.js';
-
 import CustomText from '../components/text.js';
 import SabotageFlash from '../components/flash.js';
 import EmergencyScreen from '../components/emergencyscreen.js';
 import VotingModal from '../components/voting.js';
+
+// TASKS
+import CaptchaTask from '../components/tasks/recaptcha.js';
+import MemoryTask from '../components/tasks/memory.js';
+import ElectricityTask from '../components/tasks/electricity.js';
+import CalibrateTask from '../components/tasks/calibrate.js';
+
+// SABOTAGE TASKS
+import CodeTask from '../components/sabotage/passcode.js';
+import ScanTask from '../components/sabotage/scanner.js';
+
+// OTHER TASKS
+import EmergencyButton from '../components/tasks/emergencybutton.js';
+
+// ICONS
 import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
+
+// POPUP MODALS
 import { EjectModal } from '../components/animation-modals/eject-modal.js';
-import { AnimationModal } from '../components/animation-modals/animation-modal.js';
+import { DeathModal } from '../components/animation-modals/death-modal.js';
+import { MeetingModal } from '../components/animation-modals/meeting-modal.js';
 import { EndGame } from '../components/animation-modals/end-game.js';
+import { StartGame } from '../components/animation-modals/start-game.js';
 
 var mapView;
 let manualMovementVar; // !! HACK !! React state sucks
@@ -70,7 +80,7 @@ export default function GameScreen({ navigation }) {
   const [votingModalVisible, setVotingModalVisible] = useState(false);
   const [votingTimer, setVotingTimer] = useState(-1); // Now dynamically changes!
   const [ejectedPlayer, setEjectedPlayer] = useState({});
-  const [winningTeam, setWinningTeam] = useState({});
+  const [winningTeam, setWinningTeam] = useState();
 
   // BUTTON HOOKS
   const [disableActions, setDisableActions] = useState(false);
@@ -103,6 +113,7 @@ export default function GameScreen({ navigation }) {
   const [playerState, setPlayerState] = useState('impostor');
   const [players, setPlayers] = useState([]); // list of all players
   const [player, setPlayer] = useState(); // Player state, continually updated by server (for convenience)
+  const [currPlayer, setCurrPlayer] = useState(); // more stable version of Player
   const [distPlayer, setDistPlayer] = useState([]);
   const [arrowActive, setArrowActive] = useState(false);
   const [taskNum, setTaskNum] = useState(0); // Used for impostor random complete tasks
@@ -110,26 +121,42 @@ export default function GameScreen({ navigation }) {
   const [emergencyButton, setEmergencyButton] = useState([]); // array of the locations of the emergency button, will also be marked on the minimap
   const [impostorEmergency, setImpostorEmergency] = useState(false);
 
+  const [playerKiller, setPlayerKiller] = useState(); // player who killed you
+  const [playerReporter, setPlayerReporter] = useState(); // player who reported
+  const [playerDead, setPlayerDead] = useState(); // player whose body was reported
+
+  // POPUP VISIBILITY
+  const [startModalVisible, setStartModalVisible] = useState(true);
+  const [deathModalVisible, setDeathModalVisible] = useState(false);
+  const [meetingModalVisible, setMeetingModalVisible] = useState(false);
+
   //REFRESH + LOADING HOOK
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
   const [loading, setLoading] = useState(true); // "Refresh" state to force rerenders
 
   //// FUNCTIONS
   function randomComplete(minDelay, maxDelay) {
-    // Completes closest fake task after a random interval of time, works in conjunction with a useEffect
-    let delay = Math.random() * (maxDelay - minDelay + 1) + minDelay; // generates a number between minDelay and maxDelay in miliseconds
-    setTimeout(() => {
-      if (
-        closestTask != undefined &&
-        closestTask.name !== 'o2' &&
-        closestTask.name !== 'reactor' &&
-        !sabotageActive &&
-        getGameRoom().state.gameState !== 'voting'
-      ) {
-        taskUtils.autoCompleteTask(closestTask, getGameRoom);
-      }
-      setTaskNum(taskNum + 1);
-    }, delay * 1000);
+    if (currPlayer?.isImpostor) {
+      // Completes closest fake task after a random interval of time, works in conjunction with a useEffect
+      let delay = Math.random() * (maxDelay - minDelay + 1) + minDelay; // generates a number between minDelay and maxDelay in miliseconds
+      setTimeout(() => {
+        if (
+          closestTask != undefined &&
+          closestTask.name !== 'o2' &&
+          closestTask.name !== 'reactor' &&
+          closestTask.name !== 'emergency' &&
+          !sabotageActive &&
+          getGameRoom().state.gameState !== 'voting'
+        ) {
+          taskUtils.autoCompleteTask(closestTask, getGameRoom);
+        }
+        setTaskNum(taskNum + 1);
+      }, delay * 1000);
+    } else {
+      setTimeout(() => {
+        setTaskNum(taskNum + 1);
+      }, 1000);
+    }
   }
 
   // SABOTAGE, EMERGENCY MEETING AND VOTING FUNCTIONS
@@ -178,21 +205,36 @@ export default function GameScreen({ navigation }) {
           (closestTask.name === 'o2' || closestTask.name === 'reactor')) ||
         (playerState == 'impostor' && closestTask.name === 'emergency'))
     ) {
-      setActiveTask((prevArrState) => ({
-        ...prevArrState,
-        name: closestTask.name,
-        taskId: closestTask.taskId,
-      }));
+      if (currPlayer?.isAlive) {
+        setActiveTask((prevArrState) => ({
+          ...prevArrState,
+          name: closestTask.name,
+          taskId: closestTask.taskId,
+        }));
+      } else if (!currPlayer?.isAlive && !closestTask.name === 'emergency') {
+        // Dead players cannot call an emergency meeting
+        setActiveTask((prevArrState) => ({
+          ...prevArrState,
+          name: closestTask.name,
+          taskId: closestTask.taskId,
+        }));
+      }
     }
   }
   function reportButton() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    getGameRoom().send('callEmergency', location);
+    let deadPlayer = findClosest(distPlayer.filter((p) => !p.isAlive));
+    getGameRoom().send('callEmergency', {
+      location: location,
+      type: 'report',
+      body: deadPlayer,
+    });
   }
   function killButton() {
     let closestPlayer = findClosest(distPlayer);
-    console.log(closestPlayer.sessionId);
-    getGameRoom().send('playerDeath', closestPlayer.sessionId);
+    if (!closestPlayer.isImpostor) {
+      getGameRoom().send('playerDeath', closestPlayer.sessionId);
+    }
   }
   function disguiseButton() {
     setPlayerState('disguised');
@@ -203,7 +245,18 @@ export default function GameScreen({ navigation }) {
   function activateUseButton() {
     if (distTask.length > 0) {
       if (playerState == 'crewmate') {
-        changeButtonState('use', false);
+        if (!currPlayer?.isAlive) {
+          // Dead players cannot use sabotage tasks or call emergency meetings
+          if (
+            findClosest(distTask).name !== 'o2' &&
+            findClosest(distTask).name !== 'reactor' &&
+            findClosest(distTask).name !== 'emergency'
+          ) {
+            changeButtonState('use', false);
+          }
+        } else {
+          changeButtonState('use', false);
+        }
         if (buttonState.use === true) {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
         }
@@ -227,17 +280,20 @@ export default function GameScreen({ navigation }) {
     }
   }
   function activateKillButton() {
-    if (playerState == 'impostor') {
+    if (playerState == 'impostor' && currPlayer?.isAlive) {
       changeButtonState(
         'kill',
-        !(distPlayer.filter((p) => p.isAlive).length > 0)
+        !(distPlayer.filter((p) => p.isAlive && !p.isImpostor).length > 0)
       );
     }
   }
   function activateReportButton() {
-    let c = !(distPlayer.filter((p) => !p.isAlive).length > 0);
-    if (!c) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-    changeButtonState('report', c);
+    if (currPlayer?.isAlive) {
+      let c = !(distPlayer.filter((p) => !p.isAlive).length > 0);
+      if (!c)
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      changeButtonState('report', c);
+    }
   }
 
   // TASK FUNCTIONS
@@ -435,6 +491,8 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('startVoting', () => {
       setArrowActive(false);
+      setMeetingModalVisible(false);
+      setDeathModalVisible(false);
       openVotingModal();
     });
 
@@ -468,19 +526,38 @@ export default function GameScreen({ navigation }) {
       setSabNotif(taskId);
     });
 
-    room.onMessage('emergency called', () => {
+    room.onMessage('emergency called', (message) => {
+      setPlayerReporter(message.caller);
+      setPlayerDead(message.body);
       closeTask();
+      setDeathModalVisible(false);
+      setStartModalVisible(false);
+      setMeetingModalVisible(true);
+    });
+
+    room.onMessage('you died', (message) => {
+      if (getGameRoom()?.sessionId === message.sessionId) {
+        closeTask();
+        setStartModalVisible(false);
+        setPlayerKiller(
+          getGameRoom().state.players.find(
+            (p) => p.sessionId === message.client.sessionId
+          )
+        );
+        setTimeout(() => {
+          // Makes sure modal appears after everything else is closed
+          setDeathModalVisible(true);
+        }, 1000);
+      }
     });
 
     room.onMessage('endedGame', (message) => {
       console.log(`endedgame`);
-      return;
-
       setArrowActive(false);
       if (message == 'impostor') {
-        setWinningTeam(['Impostor']);
+        setWinningTeam('impostor');
       } else if (message == 'crewmate') {
-        setWinningTeam(['Crewmate']);
+        setWinningTeam('crewmate');
       }
     });
 
@@ -488,12 +565,16 @@ export default function GameScreen({ navigation }) {
       setPlayers(state.players);
       setPlayer();
 
-      const player = state.players.find(
+      const player = state.players?.find(
         (player) => player.sessionId === getGameRoom().sessionId
       );
       setPlayer(player);
+      setCurrPlayer(player);
       setTasks(player.tasks);
       setEmergencyButton(player.emergency);
+
+      // Update sabotage activity
+      setSabotageActive(state.gameState === 'sabotage');
 
       // Animate to new given location and update local state
       setLocation({ ...player.trueLocation }); // VERY IMPORTANT to make new object here, or useEffect will not fire
@@ -592,6 +673,8 @@ export default function GameScreen({ navigation }) {
                 direction={closestTask.direction}
                 active={arrowActive}
                 sabotage={sabotageActive}
+                isImpostor={currPlayer?.isImpostor}
+                myId={currPlayer?.sessionId}
               />
             </Marker>
           );
@@ -611,9 +694,7 @@ export default function GameScreen({ navigation }) {
       </MapView>
 
       <Minimap
-        player={getGameRoom().state.players.find(
-          (p) => p.sessionId === getGameRoom().sessionId
-        )}
+        player={currPlayer}
         userCoords={[location.latitude, location.longitude]}
         tasks={tasks}
         emergencyButton={emergencyButton}
@@ -698,17 +779,40 @@ export default function GameScreen({ navigation }) {
       <VotingModal
         isVisible={votingModalVisible}
         timer={votingTimer}
-        yourId={
-          getGameRoom().state.players.find(
-            (player) => player.sessionId === getGameRoom().sessionId
-          ).sessionId
-        }
+        myId={currPlayer?.sessionId}
+        isImpostor={currPlayer?.isImpostor}
+        reporter={playerReporter}
       />
       <EjectModal
         onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
         player={ejectedPlayer}
       />
-      <EndGame size={100} team={winningTeam} onClose={() => leaveGameRoom()} />
+      <DeathModal
+        isVisible={deathModalVisible}
+        killer={playerKiller}
+        player={currPlayer}
+        onClose={() => setDeathModalVisible(false)}
+      />
+      <MeetingModal
+        isVisible={meetingModalVisible}
+        reporter={playerReporter}
+        dead={playerDead}
+        onClose={() => setMeetingModalVisible(false)}
+      />
+      <StartGame
+        isVisible={startModalVisible}
+        players={getGameRoom().state.players}
+        isImpostor={currPlayer?.isImpostor}
+        sessionId={currPlayer?.sessionId}
+        onClose={() => setStartModalVisible(false)}
+      />
+      <EndGame
+        size={100}
+        team={winningTeam}
+        players={players}
+        myId={currPlayer?.sessionId}
+        onClose={() => leaveGameRoom()}
+      />
 
       {/* TASKS */}
       <CaptchaTask
@@ -746,7 +850,13 @@ export default function GameScreen({ navigation }) {
       />
       <EmergencyButton
         active={activeTask.name === 'emergency'}
-        callEmergency={() => getGameRoom().send('callEmergency', location)}
+        callEmergency={() =>
+          getGameRoom().send('callEmergency', {
+            location: location,
+            type: 'button',
+            body: undefined,
+          })
+        }
         emergency={emergencyButton}
         closeTask={closeTask}
       />

@@ -8,12 +8,27 @@ import {
 import { React, useEffect, useState } from 'react';
 import * as Haptics from 'expo-haptics';
 
-import { connectToGameRoom, getLobbyRoom } from '../networking.js';
+import {
+  connectToGameRoom,
+  getLobbyRoom,
+  connectToServer,
+} from '../networking.js';
 
 import CustomText from '../components/text.js';
+import CustomButton from '../components/button.js';
 import { ProfileIcon } from '../components/profile-icon.js';
 
 function MenuScreen({ navigation }) {
+  const [connected, setConnected] = useState('notConnected');
+
+  const onConnectPressed = async () => {
+    console.log('hello');
+    setConnected('connecting');
+
+    await connectToServer();
+    setConnected('connected');
+  };
+
   const joinGame = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     navigation.navigate('Join');
@@ -49,13 +64,36 @@ function MenuScreen({ navigation }) {
           </CustomText>
         </View>
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.button} onPress={joinGame}>
-            <CustomText textSize={40}>Join</CustomText>
-          </TouchableOpacity>
+          {connected != 'connected' && (
+            <>
+              <CustomText textSize={30}>
+                Connect to the correct network, then
+              </CustomText>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={onConnectPressed}
+              >
+                <CustomText textSize={40}>
+                  {connected === 'notConnected'
+                    ? 'Connect to server'
+                    : connected === 'connecting'
+                    ? 'Connecting...'
+                    : 'Connected'}
+                </CustomText>
+              </TouchableOpacity>
+            </>
+          )}
 
-          <TouchableOpacity style={styles.button} onPress={toLobby}>
-            <CustomText textSize={40}>Create</CustomText>
-          </TouchableOpacity>
+          {connected === 'connected' && (
+            <>
+              <TouchableOpacity style={styles.button} onPress={joinGame}>
+                <CustomText textSize={40}>Join</CustomText>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={toLobby}>
+                <CustomText textSize={40}>Create</CustomText>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </ImageBackground>
     </View>
