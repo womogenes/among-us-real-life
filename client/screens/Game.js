@@ -770,11 +770,11 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      <View style={styles.debugContainer}>
+      {/* <View style={styles.debugContainer}>
         <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
           <Text>open voting modal</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       <VotingModal
         isVisible={votingModalVisible}

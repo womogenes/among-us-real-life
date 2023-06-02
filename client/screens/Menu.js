@@ -66,8 +66,8 @@ function MenuScreen({ navigation }) {
         <View style={styles.buttonsContainer}>
           {connected != 'connected' && (
             <>
-              <CustomText textSize={30}>
-                Connect to the correct network, then
+              <CustomText textSize={30} textColor="#fff">
+                Please switch to mobile data.
               </CustomText>
               <TouchableOpacity
                 style={styles.button}
