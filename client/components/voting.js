@@ -5,6 +5,7 @@ import {
   Text,
   TouchableWithoutFeedback,
   Button,
+  Image,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { useEffect, useState } from 'react';
@@ -15,6 +16,9 @@ import CustomText from './text.js';
 import { ProfileIcon } from './profile-icon.js';
 
 export default function votingModal(props) {
+
+  const images = {report: require('../assets/reporticon.png')};
+
   const gameRoom = getGameRoom();
 
   const [votes, setVotes] = useState(new Map());
@@ -92,6 +96,7 @@ export default function votingModal(props) {
                 >
                   {item.username}
                 </CustomText>
+                {props.reporter && item.sessionId === props.reporter.sessionId && <Image style={styles.image} source={images['report']}/>}
 
                 <View style={styles.votes}>
                   {votes
@@ -101,7 +106,7 @@ export default function votingModal(props) {
                         (p) => p.sessionId === key
                       );
                       return (
-                        <View style={{ marginLeft: 5 }}>
+                        <View style={{ marginLeft: 5 }} key={key}>
                           <ProfileIcon player={player} size={20} key={key} isImpostor={props.isImpostor} myId={props.myId}/>
                         </View>
                       );
@@ -138,6 +143,7 @@ const styles = StyleSheet.create({
   },
   player: {
     width: '100%',
+    padding: 20,
   },
   red: {
     color: 'red',
@@ -145,6 +151,7 @@ const styles = StyleSheet.create({
   candidate: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     alignContent: 'center',
     borderWidth: 2,
     borderRadius: 10,
@@ -156,5 +163,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignSelf: 'flex-end',
+  },
+  image: {
+    width: 50,
+    height: 50,
+    opacity: 0.5,
+    position: 'absolute',
+    right: 0,
   },
 });

@@ -249,14 +249,16 @@ export class GameRoom extends Room {
       }
     });
 
-    this.onMessage('callEmergency', (client, location) => {
+    this.onMessage('callEmergency', (client, message) => {
       this.state.gameState = 'emergency';
-      this.state.emergencyMeetingLocation.update(location);
+      this.state.emergencyMeetingLocation.update(message.location);
       let player = this.state.players.find(
         (p) => p.sessionId === client.sessionId
       );
-      player.emergency[0].uses = player.emergency[0].uses - 1;
-      this.broadcast('emergency called');
+      if(message.type === 'button'){
+        player.emergency[0].uses = player.emergency[0].uses - 1;
+      }
+      this.broadcast('emergency called', {caller: player, body: message.body});
     });
 
     this.onMessage('o2', () => {

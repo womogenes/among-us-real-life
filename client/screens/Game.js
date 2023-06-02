@@ -25,24 +25,32 @@ const taskUtils = require('../tasks-utils.js');
 import Minimap from '../components/minimap.js';
 import ControlPanel from '../components/controlpanel.js';
 import Timer from '../components/timer.js';
-
-import CaptchaTask from '../components/tasks/recaptcha.js';
-import CodeTask from '../components/sabotage/passcode.js';
-import ScanTask from '../components/sabotage/scanner.js';
-import MemoryTask from '../components/tasks/memory.js';
-import ElectricityTask from '../components/tasks/electricity.js';
-import CalibrateTask from '../components/tasks/calibrate.js';
-import EmergencyButton from '../components/tasks/emergencybutton.js';
-
 import CustomText from '../components/text.js';
 import SabotageFlash from '../components/flash.js';
 import EmergencyScreen from '../components/emergencyscreen.js';
 import VotingModal from '../components/voting.js';
+
+// TASKS
+import CaptchaTask from '../components/tasks/recaptcha.js';
+import MemoryTask from '../components/tasks/memory.js';
+import ElectricityTask from '../components/tasks/electricity.js';
+import CalibrateTask from '../components/tasks/calibrate.js';
+
+// SABOTAGE TASKS
+import CodeTask from '../components/sabotage/passcode.js';
+import ScanTask from '../components/sabotage/scanner.js';
+
+// OTHER TASKS
+import EmergencyButton from '../components/tasks/emergencybutton.js';
+
+// ICONS
 import { ProfileIcon } from '../components/profile-icon.js';
 import { TaskIcon } from '../components/task-icon.js';
+
+// POPUP MODALS
 import { EjectModal } from '../components/animation-modals/eject-modal.js';
-import { DeathModal } from '../components/animation-modals/death-modal.js'
-import { AnimationModal } from '../components/animation-modals/animation-modal.js';
+import { DeathModal } from '../components/animation-modals/death-modal.js';
+import { MeetingModal } from '../components/animation-modals/meeting-modal.js';
 import { EndGame } from '../components/animation-modals/end-game.js';
 import { StartGame } from '../components/animation-modals/start-game.js';
 
@@ -112,9 +120,15 @@ export default function GameScreen({ navigation }) {
   const [killOnCooldown, setKillOnCooldown] = useState(false);
   const [emergencyButton, setEmergencyButton] = useState([]); // array of the locations of the emergency button, will also be marked on the minimap
   const [impostorEmergency, setImpostorEmergency] = useState(false);
+
+  const [playerKiller, setPlayerKiller] = useState(); // player who killed you
+  const [playerReporter, setPlayerReporter] = useState(); // player who reported
+  const [playerDead, setPlayerDead] = useState(); // player whose body was reported
+
+  // POPUP VISIBILITY
   const [startModalVisible, setStartModalVisible] = useState(true);
   const [deathModalVisible, setDeathModalVisible] = useState(false);
-  const [playerKiller, setPlayerKiller] = useState();
+  const [meetingModalVisible, setMeetingModalVisible] = useState(false);
 
   //REFRESH + LOADING HOOK
   const [refresh, setRefresh] = useState(0); // "Refresh" state to force rerenders
@@ -201,7 +215,8 @@ export default function GameScreen({ navigation }) {
   }
   function reportButton() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    getGameRoom().send('callEmergency', location);
+    let deadPlayer = (findClosest(distPlayer.filter((p) => !p.isAlive)))
+    getGameRoom().send('callEmergency', {location: location, type: 'report', body: deadPlayer});
   }
   function killButton() {
     let closestPlayer = findClosest(distPlayer);
@@ -219,6 +234,9 @@ export default function GameScreen({ navigation }) {
     if (distTask.length > 0) {
       if (playerState == 'crewmate') {
         if(!getGameRoom().state.players?.find((p) => p.sessionId === getGameRoom().sessionId).isAlive && findClosest(distTask).name !== 'o2' && findClosest(distTask).name !== 'reactor' && findClosest(distTask).name !== 'emergency'){ // Dead players cannot use sabotage tasks or call emergency meetings
+          changeButtonState('use', false);
+        }
+        else{
           changeButtonState('use', false);
         }
         if (buttonState.use === true) {
@@ -452,6 +470,8 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('startVoting', () => {
       setArrowActive(false);
+      setMeetingModalVisible(false);
+      setDeathModalVisible(false);
       openVotingModal();
     });
 
@@ -485,8 +505,11 @@ export default function GameScreen({ navigation }) {
       setSabNotif(taskId);
     });
 
-    room.onMessage('emergency called', () => {
+    room.onMessage('emergency called', (message) => {
+      setPlayerReporter(message.caller);
+      setPlayerDead(message.body);
       closeTask();
+      setMeetingModalVisible(true);
     });
 
     room.onMessage('you died', (message) => {
@@ -723,6 +746,7 @@ export default function GameScreen({ navigation }) {
         timer={votingTimer}
         myId={currPlayer?.sessionId}
         isImpostor={currPlayer?.isImpostor}
+        reporter={playerReporter}
       />
       <EjectModal
         onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
@@ -733,6 +757,12 @@ export default function GameScreen({ navigation }) {
         killer={playerKiller}
         player={currPlayer}
         onClose={() => setDeathModalVisible(false)}
+      />
+      <MeetingModal
+        isVisible={meetingModalVisible}
+        reporter={playerReporter}
+        dead={playerDead}
+        onClose={() => setMeetingModalVisible(false)}
       />
       <StartGame
         isVisible={startModalVisible}
@@ -780,7 +810,7 @@ export default function GameScreen({ navigation }) {
       />
       <EmergencyButton
         active={activeTask.name === 'emergency'}
-        callEmergency={() => getGameRoom().send('callEmergency', location)}
+        callEmergency={() => getGameRoom().send('callEmergency', {location: location, type: 'button', body: undefined})}
         emergency={emergencyButton}
         closeTask={closeTask}
       />
