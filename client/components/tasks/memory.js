@@ -95,7 +95,10 @@ function MemoryTask(props) {
       <View style={styles.modal}>
         <TouchableOpacity
           style={styles.closeButton}
-          onPress={() => props.closeTask('electricity')}
+          onPress={() => {
+            props.closeTask('memory');
+            console.log('hi');
+          }}
         >
           <CustomText textSize={30}>&#10006;</CustomText>
         </TouchableOpacity>
@@ -138,6 +141,7 @@ const styles = StyleSheet.create({
     right: 5,
     top: 0,
     margin: 10,
+    zIndex: 1,
   },
   lights: {
     height: 100,

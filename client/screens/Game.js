@@ -628,6 +628,18 @@ export default function GameScreen({ navigation }) {
         </CustomText>
       </View>
 
+      <View style={styles.debugContainer}>
+        <TouchableOpacity
+          onPress={() => {
+            leaveGameRoom();
+            navigation.navigate('Menu');
+          }}
+          style={styles.testButton}
+        >
+          <Text>Leave game</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* MAIN MAP */}
       <MapView
         ref={(ref) => (mapView = ref)}
@@ -770,12 +782,6 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      {/* <View style={styles.debugContainer}>
-        <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
-          <Text>open voting modal</Text>
-        </TouchableOpacity>
-      </View> */}
-
       <VotingModal
         isVisible={votingModalVisible}
         timer={votingTimer}
@@ -811,7 +817,10 @@ export default function GameScreen({ navigation }) {
         team={winningTeam}
         players={players}
         myId={currPlayer?.sessionId}
-        onClose={() => leaveGameRoom()}
+        onClose={() => {
+          leaveGameRoom();
+          navigation.navigate('Menu');
+        }}
       />
 
       {/* TASKS */}
@@ -835,7 +844,10 @@ export default function GameScreen({ navigation }) {
         active={activeTask.name === 'memory'}
         code={Array.from({ length: 4 }, () => Math.floor(Math.random() * 16))}
         complete={completeTask}
-        closeTask={closeTask}
+        closeTask={() => {
+          closeTask();
+          console.log('hello');
+        }}
       />
       <ElectricityTask
         active={activeTask.name === 'electricity'}
@@ -909,17 +921,17 @@ const styles = StyleSheet.create({
   },
   deathText: {},
   debugContainer: {
+    position: 'absolute',
+    right: 20,
+    top: Constants.statusBarHeight,
     alignItems: 'flex-end',
-    marginTop: Constants.statusBarHeight,
     borderRadius: 10,
     zIndex: 2,
   },
   testButton: {
     padding: 10,
     margin: 10,
-    position: 'absolute',
-    top: 500,
-    backgroundColor: 'powderblue',
+    backgroundColor: '#ddd',
     borderRadius: 5,
   },
   gameEnded: {

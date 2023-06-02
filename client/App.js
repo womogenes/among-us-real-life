@@ -82,7 +82,6 @@ export default function App() {
       ]);
 
       await Promise.all([...imageAssets]);
-      Alert.alert('Images are cached!');
     }
 
     loadResourcesAndDataAsync();
