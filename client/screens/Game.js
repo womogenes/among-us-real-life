@@ -136,7 +136,7 @@ export default function GameScreen({ navigation }) {
 
   //// FUNCTIONS
   function randomComplete(minDelay, maxDelay) {
-    if(currPlayer?.isImpostor){
+    if (currPlayer?.isImpostor) {
       // Completes closest fake task after a random interval of time, works in conjunction with a useEffect
       let delay = Math.random() * (maxDelay - minDelay + 1) + minDelay; // generates a number between minDelay and maxDelay in miliseconds
       setTimeout(() => {
@@ -152,8 +152,7 @@ export default function GameScreen({ navigation }) {
         }
         setTaskNum(taskNum + 1);
       }, delay * 1000);
-    }
-    else{
+    } else {
       setTimeout(() => {
         setTaskNum(taskNum + 1);
       }, 1000);
@@ -198,15 +197,22 @@ export default function GameScreen({ navigation }) {
   function useButton() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     let closestTask = findClosest(distTask);
-    if (!closestTask.complete && (playerState == 'crewmate' || (playerState == 'impostor' && sabotageActive && (closestTask.name === 'o2' || closestTask.name === 'reactor')) ||(playerState == 'impostor' && closestTask.name === 'emergency'))) {
-      if(currPlayer?.isAlive){
+    if (
+      !closestTask.complete &&
+      (playerState == 'crewmate' ||
+        (playerState == 'impostor' &&
+          sabotageActive &&
+          (closestTask.name === 'o2' || closestTask.name === 'reactor')) ||
+        (playerState == 'impostor' && closestTask.name === 'emergency'))
+    ) {
+      if (currPlayer?.isAlive) {
         setActiveTask((prevArrState) => ({
           ...prevArrState,
           name: closestTask.name,
           taskId: closestTask.taskId,
         }));
-      }
-      else if(!currPlayer?.isAlive && !closestTask.name === 'emergency'){ // Dead players cannot call an emergency meeting
+      } else if (!currPlayer?.isAlive && !closestTask.name === 'emergency') {
+        // Dead players cannot call an emergency meeting
         setActiveTask((prevArrState) => ({
           ...prevArrState,
           name: closestTask.name,
@@ -217,12 +223,16 @@ export default function GameScreen({ navigation }) {
   }
   function reportButton() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    let deadPlayer = (findClosest(distPlayer.filter((p) => !p.isAlive)))
-    getGameRoom().send('callEmergency', {location: location, type: 'report', body: deadPlayer});
+    let deadPlayer = findClosest(distPlayer.filter((p) => !p.isAlive));
+    getGameRoom().send('callEmergency', {
+      location: location,
+      type: 'report',
+      body: deadPlayer,
+    });
   }
   function killButton() {
     let closestPlayer = findClosest(distPlayer);
-    if(!closestPlayer.isImpostor){
+    if (!closestPlayer.isImpostor) {
       getGameRoom().send('playerDeath', closestPlayer.sessionId);
     }
   }
@@ -235,12 +245,16 @@ export default function GameScreen({ navigation }) {
   function activateUseButton() {
     if (distTask.length > 0) {
       if (playerState == 'crewmate') {
-        if(!currPlayer?.isAlive){ // Dead players cannot use sabotage tasks or call emergency meetings
-          if(findClosest(distTask).name !== 'o2' && findClosest(distTask).name !== 'reactor' && findClosest(distTask).name !== 'emergency'){
+        if (!currPlayer?.isAlive) {
+          // Dead players cannot use sabotage tasks or call emergency meetings
+          if (
+            findClosest(distTask).name !== 'o2' &&
+            findClosest(distTask).name !== 'reactor' &&
+            findClosest(distTask).name !== 'emergency'
+          ) {
             changeButtonState('use', false);
           }
-        }
-        else{
+        } else {
           changeButtonState('use', false);
         }
         if (buttonState.use === true) {
@@ -274,9 +288,10 @@ export default function GameScreen({ navigation }) {
     }
   }
   function activateReportButton() {
-    if(currPlayer?.isAlive){
+    if (currPlayer?.isAlive) {
       let c = !(distPlayer.filter((p) => !p.isAlive).length > 0);
-      if (!c) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      if (!c)
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       changeButtonState('report', c);
     }
   }
@@ -521,11 +536,16 @@ export default function GameScreen({ navigation }) {
     });
 
     room.onMessage('you died', (message) => {
-      if(getGameRoom()?.sessionId === message.sessionId){
+      if (getGameRoom()?.sessionId === message.sessionId) {
         closeTask();
         setStartModalVisible(false);
-        setPlayerKiller(getGameRoom().state.players.find((p) => p.sessionId === message.client.sessionId));
-        setTimeout(() => { // Makes sure modal appears after everything else is closed
+        setPlayerKiller(
+          getGameRoom().state.players.find(
+            (p) => p.sessionId === message.client.sessionId
+          )
+        );
+        setTimeout(() => {
+          // Makes sure modal appears after everything else is closed
           setDeathModalVisible(true);
         }, 1000);
       }
@@ -750,11 +770,11 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      {/* <View style={styles.debugContainer}>
+      <View style={styles.debugContainer}>
         <TouchableOpacity onPress={openVotingModal} style={styles.testButton}>
           <Text>open voting modal</Text>
         </TouchableOpacity>
-      </View> */}
+      </View>
 
       <VotingModal
         isVisible={votingModalVisible}
@@ -786,8 +806,13 @@ export default function GameScreen({ navigation }) {
         sessionId={currPlayer?.sessionId}
         onClose={() => setStartModalVisible(false)}
       />
-      <EndGame size={100} team={winningTeam} players={players} myId={currPlayer?.sessionId} onClose={() => leaveGameRoom()} />
-
+      <EndGame
+        size={100}
+        team={winningTeam}
+        players={players}
+        myId={currPlayer?.sessionId}
+        onClose={() => leaveGameRoom()}
+      />
 
       {/* TASKS */}
       <CaptchaTask
@@ -825,7 +850,13 @@ export default function GameScreen({ navigation }) {
       />
       <EmergencyButton
         active={activeTask.name === 'emergency'}
-        callEmergency={() => getGameRoom().send('callEmergency', {location: location, type: 'button', body: undefined})}
+        callEmergency={() =>
+          getGameRoom().send('callEmergency', {
+            location: location,
+            type: 'button',
+            body: undefined,
+          })
+        }
         emergency={emergencyButton}
         closeTask={closeTask}
       />

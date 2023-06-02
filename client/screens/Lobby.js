@@ -157,14 +157,14 @@ function LobbyScreen({ navigation }) {
   }
 
   function settingsUpdated() {
-    console.log(impostorNum[0]);
+    console.log(`anonVotes: ${anonVotes}`);
     getGameRoom().send('settingsUpdated', {
       killRadius: killRadius[0],
       killCooldown: killCooldown[0],
       saboCooldown: saboCooldown[0],
       impostorNum: impostorNum[0],
       votingTimer: votingTimer[0],
-      anonVotes: anonVotes[0],
+      anonVotes: anonVotes,
       playerSight: playerSight[0],
     });
   }
@@ -217,14 +217,20 @@ function LobbyScreen({ navigation }) {
             data={memberList}
             renderItem={({ item }) => (
               <TouchableWithoutFeedback>
-                <View style={[styles.playerItem, getGameRoom().state.players.find((player) => player.sessionId === getGameRoom().sessionId).sessionId === item.sessionId && {backgroundColor: '#ffd666'}]}>
-                  <ProfileIcon
-                    player={item}
-                    size={50}
-                  />
-                  <View style={{marginLeft: 10}}>
+                <View
+                  style={[
+                    styles.playerItem,
+                    getGameRoom().state.players.find(
+                      (player) => player.sessionId === getGameRoom().sessionId
+                    ).sessionId === item.sessionId && {
+                      backgroundColor: '#ffd666',
+                    },
+                  ]}
+                >
+                  <ProfileIcon player={item} size={50} />
+                  <View style={{ marginLeft: 10 }}>
                     <CustomText textSize={50}>
-                      {item.username? item.username : 'Anonymous'}
+                      {item.username ? item.username : 'Anonymous'}
                       {item.isHost && ' [Host]'}
                     </CustomText>
                   </View>
@@ -383,21 +389,26 @@ function LobbyScreen({ navigation }) {
                     }}
                     trackColor={{ false: '#888', true: '#666' }}
                     thumbColor={anonVotes ? '#fff' : '#fff'}
-                    onValueChange={() => setAnonVotes(!anonVotes)}
+                    onValueChange={() => {
+                      setAnonVotes(!anonVotes);
+                      settingsUpdated();
+                    }}
                     value={anonVotes}
                     disabled={!isHost}
                   />
                 </View>
                 <View style={styles.reset}>
-                  <TouchableOpacity
-                    onPress={() => reset()}
-                    disabled={!isHost}
-                  >
-                    <CustomText centerText={true} textSize={40} textColor={'red'}>Reset</CustomText>
+                  <TouchableOpacity onPress={() => reset()} disabled={!isHost}>
+                    <CustomText
+                      centerText={true}
+                      textSize={40}
+                      textColor={'red'}
+                    >
+                      Reset
+                    </CustomText>
                   </TouchableOpacity>
                 </View>
-                <View style={styles.endSpace}>
-                </View>
+                <View style={styles.endSpace}></View>
               </ScrollView>
             </View>
 

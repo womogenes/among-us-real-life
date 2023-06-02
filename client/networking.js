@@ -19,7 +19,9 @@ const connectToGameRoom = (code) => {
 };
 
 const leaveGameRoom = () => {
+  console.log('trying to leave room');
   getGameRoom()?.leave();
+  console.log('left game room');
   getGameRoom = () => {};
 };
 
