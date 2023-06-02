@@ -3,52 +3,55 @@ import { TaskIcon } from './components/task-icon';
 import { Marker } from 'react-native-maps';
 
 export function taskMarkers(tasks, emergency) {
-  return [tasks.map((item) => {
-    let markerLabel = item.name + item.complete ? ' (Complete)' : '';
+  return [
+    tasks.map((item) => {
+      let markerLabel = item.name + item.complete ? ' (Complete)' : '';
 
-    return (
-      <Marker
-        tracksViewChanges={item.complete}
-        key={item.taskId}
-        coordinate={{
-          latitude: item.location.latitude,
-          longitude: item.location.longitude,
-        }}
-        title={markerLabel}
-        zIndex={-1}
-      >
-        <TaskIcon
-          name={item.name}
-          complete={item.complete}
-          size={60}
-        ></TaskIcon>
-      </Marker>
-    );
-  }),
-  emergency&& emergency.map((item) => {
-    return (
-      <Marker
-        tracksViewChanges={item.complete}
-        key={item.taskId}
-        coordinate={{
-          latitude: item.location.latitude,
-          longitude: item.location.longitude,
-        }}
-        title={'EMERGENCY'}
-        zIndex={-1}
-      >
-        <TaskIcon
-          name={item.name}
-          size={60}
-        ></TaskIcon>
-    </Marker>
-    );
-  })
-
+      return (
+        <Marker
+          tracksViewChanges={item.complete}
+          key={item.taskId}
+          coordinate={{
+            latitude: item.location.latitude,
+            longitude: item.location.longitude,
+          }}
+          title={markerLabel}
+          zIndex={-1}
+        >
+          <TaskIcon
+            name={item.name}
+            complete={item.complete}
+            size={60}
+          ></TaskIcon>
+        </Marker>
+      );
+    }),
+    emergency &&
+      emergency.map((item) => {
+        return (
+          <Marker
+            tracksViewChanges={item.complete}
+            key={item.taskId}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={'EMERGENCY'}
+            zIndex={-1}
+          >
+            <TaskIcon name={item.name} size={60}></TaskIcon>
+          </Marker>
+        );
+      }),
   ];
 }
 
-export function completeTask(activeTask, setActiveTask, getGameRoom, sabotageActive) {
+export function completeTask(
+  activeTask,
+  setActiveTask,
+  getGameRoom,
+  sabotageActive
+) {
   const { name, taskId } = activeTask;
   closeTask(setActiveTask);
 
@@ -61,8 +64,8 @@ export function autoCompleteTask(task, getGameRoom) {
   getGameRoom().send('completeFakeTask', task.taskId);
 }
 
-
 export function closeTask(setActiveTask) {
+  console.log('reset task');
   setActiveTask((prevArrState) => ({
     ...prevArrState,
     name: null,
