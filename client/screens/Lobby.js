@@ -216,7 +216,8 @@ function LobbyScreen({ navigation }) {
 
         <StyleModal
           active={styleModalVisible}
-          icons={getGameRoom()?.state.iconList}
+          skins={getGameRoom()?.state.skinList}
+          hats={getGameRoom()?.state.hatList}
           gameRoom={getGameRoom()}
           sessionId={getGameRoom().sessionId}
           onClose={() => setStyleModalVisible(false)}

@@ -4,34 +4,36 @@ import Modal from 'react-native-modal';
 import CustomText from '../components/text.js';
 import { ProfileIcon } from '../components/profile-icon.js';
 
-export const StyleModal = ({ active, icons, gameRoom, sessionId, onClose }) => {
+export const StyleModal = ({ active, skins, hats, gameRoom, sessionId, onClose }) => {
 
-  const renderIcons = () => {
+  const [mode, setMode] = useState('skin');
+
+  const renderSkins = () => {
     return(
-      icons?.map((icon) => {
+      skins?.map((skin) => {
         let disabled;
-        let player = gameRoom.state.players?.find((p) => p?.icon?.name === icon?.name)
-        let yourIcon;
-        let iconOpacity = 1;
+        let player = gameRoom.state.players?.find((p) => p?.icon?.skin?.name === skin?.name)
+        let yourSkin;
+        let skinOpacity = 1;
         if(player){
           if(player.sessionId !== sessionId) {
             disabled = true
-            iconOpacity = 0.5;
+            skinOpacity = 0.5;
           }
           else{
             disabled = false
-            yourIcon = true;
+            yourSkin = true;
           }
         }
         else{
           disabled = false
         }
         return(
-          <TouchableOpacity disabled={disabled} onPress={() => selectIcon(icon?.name)} key={icon?.name}>
+          <TouchableOpacity disabled={disabled} onPress={() => selectSkin(skin?.name)} key={skin?.name}>
             <ProfileIcon
-              style={[{margin: 2}, yourIcon && {backgroundColor: '#ffd666'}, {opacity: iconOpacity}]}
+              style={[{margin: 2}, yourSkin && {backgroundColor: '#ffd666'}, {opacity: skinOpacity}]}
               size={60}
-              renderIcon={icon && icon}
+              renderSkin={skin}
             />
           </TouchableOpacity>
         )
@@ -39,21 +41,66 @@ export const StyleModal = ({ active, icons, gameRoom, sessionId, onClose }) => {
     )
   }
 
-  function selectIcon(name) {
-    gameRoom.send('updateIcon', name);
+  const renderHats = () => {
+    return(
+      hats?.map((hat) => {
+        let yourHat;
+        let player = gameRoom.state.players?.find((p) => p.sessionId === sessionId)
+        if(player?.icon?.hat?.name === hat.name){
+          yourHat = true;
+        }
+        else{
+          yourHat = false;
+        }
+        return(
+          <TouchableOpacity onPress={() => selectHat(hat?.name)} key={hat?.name}>
+            <ProfileIcon
+              style={[{margin: 2}, yourHat && {backgroundColor: '#ffd666'}, {overflow: 'visible'}]}
+              size={60}
+              renderHat={hat}
+            />
+          </TouchableOpacity>
+        )
+      })
+    )
+  }
+
+  function changeMode() {
+    if(mode === 'skin'){
+      setMode('hat');
+    }
+    else if(mode === 'hat'){
+      setMode('skin');
+    }
+  }
+
+  function selectSkin(name) {
+    gameRoom.send('updateSkin', name);
+  }
+
+  function selectHat(name) {
+    gameRoom.send('updateHat', name);
   }
 
   return (
     <Modal isVisible={active}>
       <View style={styles.modal}>
         <View style={styles.masterContainer}>
-          <CustomText textSize={40} textAlign={'center'} textColor={'black'}>
-            <Text style={{textAlign: 'center'}}>Choose your skin</Text>
-          </CustomText>
+          <TouchableOpacity onPress={() => changeMode()}>
+            <CustomText textSize={40} textAlign={'center'} textColor={'black'}>
+              {mode === 'skin'? <Text style={{textAlign: 'center'}}>Choose your skin</Text> : <Text style={{textAlign: 'center'}}>Choose your hat</Text>}
+            </CustomText>
+          </TouchableOpacity>
           <ScrollView>
-            <View style={styles.iconList}>
-              {renderIcons()}
-            </View>
+            {mode === 'skin'?       
+              <View style={styles.list}>
+                {renderSkins()}
+              </View>            
+              : 
+              <View style={styles.list}>
+                {renderHats()}
+              </View>
+            }
           </ScrollView>
         </View>
         <TouchableOpacity
@@ -92,7 +139,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingBottom: 20,
   },
-  iconList: {
+  list: {
     flex: 1,
     width: '100%',
     height: '100%',
