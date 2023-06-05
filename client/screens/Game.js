@@ -687,14 +687,15 @@ export default function GameScreen({ navigation }) {
                 longitude: displayLoc.longitude,
               }}
               title={p.username}
+              style={p.sessionId === getGameRoom()?.sessionId? {zIndex: 9} : {zIndex: 1}}
             >
               <ProfileIcon
                 player={p} // Pass the whole player object
                 size={40}
                 direction={closestTask.direction}
-                active={arrowActive}
+                active={p.sessionId === getGameRoom()?.sessionId? getGameRoom()?.state.players.find((p) => p.sessionId === getGameRoom()?.sessionId).tasks.find((t) => !t.complete)? arrowActive : false : false}
                 sabotage={sabotageActive}
-                isImpostor={currPlayer?.isImpostor}
+                isImpostor={playerState === 'disguised'? false : currPlayer?.isImpostor}
                 myId={currPlayer?.sessionId}
               />
             </Marker>

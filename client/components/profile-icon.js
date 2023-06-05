@@ -89,7 +89,7 @@ export const ProfileIcon = ({ player, size, style, direction, active, sabotage, 
                 },
               ]}
             >
-              <View style={[styles.triangle, (sabotage? {borderBottomColor: '#f70000'} : {borderBottomColor: '#fcfa65'})]}></View>
+              <View style={[styles.triangle, (sabotage? {borderBottomColor: '#f70000'} : {borderBottomColor: '#ffc400'})]}></View>
             </View>
           )}
         </View>
