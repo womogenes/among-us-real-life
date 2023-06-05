@@ -466,6 +466,11 @@ export default function GameScreen({ navigation }) {
     ),
   ]);
 
+  useEffect(() => {
+    setStartModalVisible(false);
+    setStartModalVisible(true);
+  }, []);
+
   // SABOTAGE
   useEffect(() => {
     if (activeTask.taskId === sabNotif) {

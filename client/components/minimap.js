@@ -11,7 +11,7 @@ function Minimap(props) {
 
   useEffect(() => {
     setGameStart(props.visible);
-    console.log(props.visible);
+    // console.log(props.visible);
   }, [props.visible]);
 
   function taskMarkers() {
