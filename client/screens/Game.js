@@ -601,18 +601,17 @@ export default function GameScreen({ navigation }) {
 
       // Set progress bar based on task completion percentage
       // Array.reduce documentation: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
-      const totalTaskCount = state.players.reduce(
-        (count, player) =>
-          count + player.isImpostor ? 0 : player.tasks.length,
-        0
-      );
-      const completedTaskCount = state.players.reduce(
-        (count, player) =>
-          count + player.isImpostor
-            ? 0
-            : player.tasks.reduce((count, task) => count + task.complete, 0),
-        0
-      );
+      let totalTaskCount = 0;
+      for (let player of state.players) {
+        totalTaskCount += player.isImpostor ? 0 : player.tasks.length;
+      }
+      let completedTaskCount = 0;
+      for (let player of state.players) {
+        if (player.isImpostor) continue;
+        for (let task of player.tasks) {
+          completedTaskCount += task.complete ? 1 : 0;
+        }
+      }
       setTaskCompletion(completedTaskCount / totalTaskCount);
 
       // Force rerender
