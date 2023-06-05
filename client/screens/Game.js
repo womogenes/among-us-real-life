@@ -683,7 +683,7 @@ export default function GameScreen({ navigation }) {
                 player={p} // Pass the whole player object
                 size={40}
                 direction={closestTask.direction}
-                active={arrowActive}
+                active={arrowActive && p.sessionId === getGameRoom()?.sessionId}
                 sabotage={sabotageActive}
                 isImpostor={currPlayer?.isImpostor}
                 myId={currPlayer?.sessionId}
