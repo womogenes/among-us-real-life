@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
   buttonImage: {
     resizeMode: 'contain',
     flex: 1,
+    zIndex: 9,
   },
   buttonText: {
     color: 'black',

@@ -4,51 +4,60 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { getGameRoom } from '../networking';
 import { TaskIcon } from './task-icon';
 import { ProfileIcon } from './profile-icon';
+import { useEffect, useState } from 'react';
 
 function Minimap(props) {
+  const [gameStart, setGameStart] = useState(props.visible);
+
+  useEffect(() => {
+    setGameStart(props.visible);
+    console.log(props.visible);
+  }, [props.visible]);
+
   function taskMarkers() {
-    return [props.tasks.map((item) => {
-      return (
-        <Marker
-          tracksViewChanges={item.complete}
-          key={item.taskId}
-          coordinate={{
-            latitude: item.location.latitude,
-            longitude: item.location.longitude,
-          }}
-          title={item.name}
-          zIndex={item.name == 'o2' ? 9 : -1}
-        >
-          <TaskIcon
-            name={item.name}
-            complete={item.complete}
-            size={20}
-          ></TaskIcon>
-        </Marker>
-      );
-    }),
-    props.emergencyButton&& props.emergencyButton.map((item) => {
-      return (
-        <Marker
-          key={item.taskId}
-          coordinate={{
-            latitude: item.location.latitude,
-            longitude: item.location.longitude,
-          }}
-          title={item.name}
-          zIndex={item.name == 'o2' ? 9 : -1}
-        >
-          <TaskIcon
-            name={item.name}
-            size={20}
-          ></TaskIcon>
-        </Marker>
-      );
-    }),
-  ]
+    return [
+      props.tasks.map((item) => {
+        return (
+          <Marker
+            tracksViewChanges={item.complete}
+            key={item.taskId}
+            coordinate={{
+              latitude: item.location.latitude,
+              longitude: item.location.longitude,
+            }}
+            title={item.name}
+            zIndex={item.name == 'o2' ? 9 : -1}
+          >
+            <TaskIcon
+              name={item.name}
+              complete={item.complete}
+              size={20}
+            ></TaskIcon>
+          </Marker>
+        );
+      }),
+      props.emergencyButton &&
+        props.emergencyButton.map((item) => {
+          return (
+            <Marker
+              key={item.taskId}
+              coordinate={{
+                latitude: item.location.latitude,
+                longitude: item.location.longitude,
+              }}
+              title={item.name}
+              zIndex={item.name == 'o2' ? 9 : -1}
+            >
+              <TaskIcon name={item.name} size={20}></TaskIcon>
+            </Marker>
+          );
+        }),
+    ];
   }
 
-  return (
+  return gameStart ? (
+    <></>
+  ) : (
     <View style={styles.container}>
       <MapView
         style={styles.map}
@@ -98,6 +107,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 50,
     left: 25,
+    zIndex: -1,
   },
   map: {
     position: 'absolute',

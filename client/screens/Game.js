@@ -563,7 +563,7 @@ export default function GameScreen({ navigation }) {
         } else if (message == 'crewmate') {
           setWinningTeam('crewmate');
         }
-      }, 1000)
+      }, 1000);
     });
 
     room.onStateChange((state) => {
@@ -687,15 +687,31 @@ export default function GameScreen({ navigation }) {
                 longitude: displayLoc.longitude,
               }}
               title={p.username}
-              style={p.sessionId === getGameRoom()?.sessionId? {zIndex: 9} : {zIndex: 1}}
+              style={
+                p.sessionId === getGameRoom()?.sessionId
+                  ? { zIndex: 9 }
+                  : { zIndex: 1 }
+              }
             >
               <ProfileIcon
                 player={p} // Pass the whole player object
                 size={40}
                 direction={closestTask.direction}
-                active={p.sessionId === getGameRoom()?.sessionId? getGameRoom()?.state.players.find((p) => p.sessionId === getGameRoom()?.sessionId).tasks.find((t) => !t.complete)? arrowActive : false : false}
+                active={
+                  p.sessionId === getGameRoom()?.sessionId
+                    ? getGameRoom()
+                        ?.state.players.find(
+                          (p) => p.sessionId === getGameRoom()?.sessionId
+                        )
+                        .tasks.find((t) => !t.complete)
+                      ? arrowActive
+                      : false
+                    : false
+                }
                 sabotage={sabotageActive}
-                isImpostor={playerState === 'disguised'? false : currPlayer?.isImpostor}
+                isImpostor={
+                  playerState === 'disguised' ? false : currPlayer?.isImpostor
+                }
                 myId={currPlayer?.sessionId}
               />
             </Marker>
@@ -715,15 +731,12 @@ export default function GameScreen({ navigation }) {
         {taskMarkers()}
       </MapView>
 
-      <View style={styles.dimmerContainer}>
-        <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
-      </View>
-
       <Minimap
         player={currPlayer}
         userCoords={[location.latitude, location.longitude]}
         tasks={tasks}
         emergencyButton={emergencyButton}
+        visible={startModalVisible}
       />
 
       {deathScreen()}
@@ -742,20 +755,18 @@ export default function GameScreen({ navigation }) {
       {playerState == 'crewmate' ? (
         <ControlPanel
           userType={'crewmate'}
-          useButtonState={disableActions || buttonState.use}
-          useButtonPress={useButton}
           reportButtonState={disableActions || buttonState.report}
           reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
           setManualMovement={setManualMovementHook}
+          useButtonState={disableActions || buttonState.use}
+          useButtonPress={useButton}
         />
       ) : playerState == 'impostor' ? (
         <ControlPanel
           userType={'impostor'}
-          useButtonState={disableActions || buttonState.use}
-          useButtonPress={useButton}
           killButtonState={
             disableActions || !player?.isAlive || buttonState.kill
           }
@@ -780,17 +791,19 @@ export default function GameScreen({ navigation }) {
           reactor={() => sabotage('reactor')}
           emergencyButton={impostorEmergency}
           emergencyActive={getGameRoom().state.gameState === 'emergency'}
+          useButtonState={disableActions || buttonState.use}
+          useButtonPress={useButton}
         />
       ) : playerState == 'disguised' ? (
         <ControlPanel
           userType={'disguisedimpostor'}
           revealButtonPress={revealButton}
-          reportButtonState={buttonState.report}
-          reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
           setManualMovement={setManualMovementHook}
+          reportButtonState={buttonState.report}
+          reportButtonPress={reportButton}
         />
       ) : (
         <ControlPanel />
@@ -890,6 +903,10 @@ export default function GameScreen({ navigation }) {
         playing={sabotageActive}
         completion={() => getGameRoom().send('sabotageDeath')}
       />
+
+      <View style={styles.dimmerContainer}>
+        <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
+      </View>
     </View>
   );
 }
@@ -913,7 +930,7 @@ const styles = StyleSheet.create({
     verticalAlign: 'center',
     opacity: 0.5,
     transform: [{ scale: 2 }],
-    zIndex: -1,
+    zIndex: -2,
   },
   container: {
     flex: 1,
@@ -927,7 +944,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: -2,
+    zIndex: -3,
   },
   deathScreen: {
     width: '100%',
