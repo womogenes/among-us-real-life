@@ -35,6 +35,7 @@ import CaptchaTask from '../components/tasks/recaptcha.js';
 import MemoryTask from '../components/tasks/memory.js';
 import ElectricityTask from '../components/tasks/electricity.js';
 import CalibrateTask from '../components/tasks/calibrate.js';
+import WiresTask from '../components/tasks/wires.js';
 
 // SABOTAGE TASKS
 import CodeTask from '../components/sabotage/passcode.js';
@@ -551,7 +552,7 @@ export default function GameScreen({ navigation }) {
     });
 
     room.onMessage('endedGame', (message) => {
-      console.log(`endedgame`);
+      console.log(`endedGame`);
 
       setArrowActive(false);
       setTimeout(() => {
@@ -563,7 +564,7 @@ export default function GameScreen({ navigation }) {
         } else if (message == 'crewmate') {
           setWinningTeam('crewmate');
         }
-      }, 1000)
+      }, 1000);
     });
 
     room.onStateChange((state) => {
@@ -870,6 +871,11 @@ export default function GameScreen({ navigation }) {
       />
       <CalibrateTask
         active={activeTask.name === 'calibrate'}
+        complete={completeTask}
+        closeTask={closeTask}
+      />
+      <WiresTask
+        active={activeTask.name === 'wires'}
         complete={completeTask}
         closeTask={closeTask}
       />

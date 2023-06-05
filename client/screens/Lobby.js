@@ -228,49 +228,53 @@ function LobbyScreen({ navigation }) {
             data={memberList}
             renderItem={({ item }) => (
               <View>
-                {getGameRoom().state.players.find((player) => player.sessionId === getGameRoom().sessionId).sessionId === item.sessionId?
+                {getGameRoom().state.players.find(
+                  (player) => player.sessionId === getGameRoom().sessionId
+                ).sessionId === item.sessionId ? (
                   <TouchableOpacity onPress={() => setStyleModalVisible(true)}>
-                  <View
-                    style={[
-                      styles.playerItem,
-                      getGameRoom().state.players.find(
-                        (player) => player.sessionId === getGameRoom().sessionId
-                      ).sessionId === item.sessionId && {
-                        backgroundColor: '#ffd666',
-                      },
-                    ]}
-                  >
-                    <ProfileIcon player={item} size={50} />
-                    <View style={{ marginLeft: 10 }}>
-                      <CustomText textSize={50}>
-                        {item.username ? item.username : 'Anonymous'}
-                        {item.isHost && ' [Host]'}
-                      </CustomText>
+                    <View
+                      style={[
+                        styles.playerItem,
+                        getGameRoom().state.players.find(
+                          (player) =>
+                            player.sessionId === getGameRoom().sessionId
+                        ).sessionId === item.sessionId && {
+                          backgroundColor: '#ffd666',
+                        },
+                      ]}
+                    >
+                      <ProfileIcon player={item} size={50} />
+                      <View style={{ marginLeft: 10 }}>
+                        <CustomText textSize={50}>
+                          {item.username ? item.username : 'Anonymous'}
+                          {item.isHost && ' [Host]'}
+                        </CustomText>
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-                :
-                <TouchableWithoutFeedback>
-                  <View
-                    style={[
-                      styles.playerItem,
-                      getGameRoom().state.players.find(
-                        (player) => player.sessionId === getGameRoom().sessionId
-                      ).sessionId === item.sessionId && {
-                        backgroundColor: '#ffd666',
-                      },
-                    ]}
-                  >
-                    <ProfileIcon player={item} size={50} />
-                    <View style={{ marginLeft: 10 }}>
-                      <CustomText textSize={50}>
-                        {item.username ? item.username : 'Anonymous'}
-                        {item.isHost && ' [Host]'}
-                      </CustomText>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableWithoutFeedback>
+                    <View
+                      style={[
+                        styles.playerItem,
+                        getGameRoom().state.players.find(
+                          (player) =>
+                            player.sessionId === getGameRoom().sessionId
+                        ).sessionId === item.sessionId && {
+                          backgroundColor: '#ffd666',
+                        },
+                      ]}
+                    >
+                      <ProfileIcon player={item} size={50} />
+                      <View style={{ marginLeft: 10 }}>
+                        <CustomText textSize={50}>
+                          {item.username ? item.username : 'Anonymous'}
+                          {item.isHost && ' [Host]'}
+                        </CustomText>
+                      </View>
                     </View>
-                  </View>
-                </TouchableWithoutFeedback>
-                }
+                  </TouchableWithoutFeedback>
+                )}
               </View>
             )}
           />
