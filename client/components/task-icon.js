@@ -12,6 +12,7 @@ const images = {
   electricity: require('../assets/task-icons/electricity.png'),
   reactor: require('../assets/task-icons/scanner.png'),
   emergency: require('../assets/task-icons/emergency.png'),
+  wires: require('../assets/task-icons/wires.png'),
 };
 
 export const TaskIcon = (props) => {
