@@ -466,10 +466,10 @@ export default function GameScreen({ navigation }) {
     ),
   ]);
 
-  useEffect(() => {
-    setStartModalVisible(false);
-    setStartModalVisible(true);
-  }, []);
+  // useEffect(() => {
+  //   setStartModalVisible(false);
+  //   setStartModalVisible(true);
+  // }, []);
 
   // SABOTAGE
   useEffect(() => {
@@ -745,6 +745,10 @@ export default function GameScreen({ navigation }) {
         visible={startModalVisible}
       />
 
+      <View style={styles.dimmerContainer}>
+        <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
+      </View>
+
       {deathScreen()}
       <SabotageFlash
         sabotageActive={sabotageActive}
@@ -914,10 +918,6 @@ export default function GameScreen({ navigation }) {
         playing={sabotageActive}
         completion={() => getGameRoom().send('sabotageDeath')}
       />
-
-      <View style={styles.dimmerContainer}>
-        <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
-      </View>
     </View>
   );
 }
