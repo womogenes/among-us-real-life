@@ -44,7 +44,7 @@ const hats ={
   toilet: {source: require('../assets/hats/toilet.png'), size: 2, bottom: 2.2, left: -20},
 };
 
-export const ProfileIcon = ({ player, size, style, direction, active, sabotage, isImpostor, myId, renderSkin, renderHat }) => {
+export const ProfileIcon = ({ player, size, style, direction, active, sabotage, isImpostor, myId, voting, renderSkin, renderHat }) => {
   
   const icon = player?.icon;
   if (!player && !renderSkin && !renderHat){
@@ -55,21 +55,19 @@ export const ProfileIcon = ({ player, size, style, direction, active, sabotage, 
     <View>
       {player? 
         <View style={[styles.container, myId && player.sessionId === myId? {backgroundColor: '#ffd666'} : isImpostor? player?.isImpostor? {backgroundColor: 'red'} : {backgroundColor: 'white'} : {backgroundColor: 'white'}]}>
-          <View style={[style, styles.imageContainer, { width: size, height: size }, { zIndex: getGameRoom()?.sessionId === player.sessionId ? 9 : 1 }]}>
+          <View style={[style, styles.imageContainer, { width: size, height: size }, { zIndex: getGameRoom()?.sessionId === player.sessionId ? 9 : 1 }, !player.isAlive ? {opacity: 0.5} : {opacity: 1}]}>
             <Image
               style={[
                 styles.image,
-                !player.isAlive ? styles.imageDead : {},
                 { width: size, height: size },
               ]}
               source={skins[icon?.skin?.name]}
             />
-            <View style={styles.imageBorder}>
+            <View style={[styles.imageBorder, !player.isAlive ? {borderColor: '#f00'} : {}, voting? {borderWidth: 1} : {borderWidth: 3}]}>
             </View>
-            {player?.icon?.hat?.name && hats[icon?.hat?.name]?
+            {player?.icon?.hat?.name && !voting && hats[icon?.hat?.name]?
               <Image
                 style={[
-                  !player.isAlive ? {opacity: 0.5} : {opacity: 1},
                   {width: size/(hats[icon?.hat?.name]?.size ? hats[icon?.hat?.name]?.size : 10), height: size/(hats[icon?.hat?.name]?.size? hats[icon?.hat?.name]?.size : 10)},
                   { bottom: size/(hats[icon?.hat?.name]?.bottom? hats[icon?.hat?.name]?.bottom : 10) },
                   { left: size/(hats[icon?.hat?.name]?.left?  hats[icon?.hat?.name]?.left : 2)},
@@ -112,7 +110,7 @@ export const ProfileIcon = ({ player, size, style, direction, active, sabotage, 
         </View>
       :
       <View style={[styles.container, {backgroundColor: 'white'}]}>
-        <View style={[style, styles.imageContainer, { width: size, height: size }, {overflow: 'visible'}]}>
+        <View style={[style, styles.imageContainer, { width: size, height: size }]}>
           <Image
             style={[
               style,
@@ -146,17 +144,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderRadius: 9999,
     borderColor: '#000',
-    borderWidth: 3,
     width: '100%',
     height: '100%',
   },
   image: {
     borderRadius: 9999,
     position: 'absolute',
-  },
-  imageDead: {
-    borderColor: '#f00',
-    opacity: 0.5,
   },
   arrow: {
     alignItems: 'center',

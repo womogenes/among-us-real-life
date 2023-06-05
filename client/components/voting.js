@@ -127,6 +127,7 @@ export default function votingModal(props) {
                             key={key}
                             isImpostor={props.isImpostor}
                             myId={props.myId}
+                            voting={true}
                           />
                         </View>
                       );

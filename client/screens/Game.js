@@ -552,12 +552,18 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('endedGame', (message) => {
       console.log(`endedgame`);
+
       setArrowActive(false);
-      if (message == 'impostor') {
-        setWinningTeam('impostor');
-      } else if (message == 'crewmate') {
-        setWinningTeam('crewmate');
-      }
+      setTimeout(() => {
+        closeTask();
+        setDeathModalVisible(false);
+        setStartModalVisible(false);
+        if (message == 'impostor') {
+          setWinningTeam('impostor');
+        } else if (message == 'crewmate') {
+          setWinningTeam('crewmate');
+        }
+      }, 1000)
     });
 
     room.onStateChange((state) => {
@@ -707,6 +713,10 @@ export default function GameScreen({ navigation }) {
 
         {taskMarkers()}
       </MapView>
+
+      <View style={styles.dimmerContainer}>
+        <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
+      </View>
 
       <Minimap
         player={currPlayer}
@@ -879,7 +889,6 @@ export default function GameScreen({ navigation }) {
         playing={sabotageActive}
         completion={() => getGameRoom().send('sabotageDeath')}
       />
-      <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
     </View>
   );
 }
@@ -890,12 +899,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  dimmerContainer: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   dimmer: {
     position: 'absolute',
     alignSelf: 'center',
     verticalAlign: 'center',
     opacity: 0.5,
-    transform: [{ scale: 2.0 }],
+    transform: [{ scale: 2 }],
     zIndex: -1,
   },
   container: {
