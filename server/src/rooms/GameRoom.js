@@ -4,6 +4,9 @@ const { MapSchema } = schema;
 
 import {
   GameRoomState,
+  Skin,
+  Hat,
+  Icon,
   Player,
   Task,
   EmergencyButton,
@@ -42,6 +45,20 @@ export class GameRoom extends Room {
 
       checkCanStartVoting();
     });
+
+    this.onMessage('updateSkin', (client, skin) => {
+      const player = this.state.players.find(
+        (p) => p.sessionId === client.sessionId
+      );
+      player.icon.update(new Skin(skin), player.icon.hat);
+    })
+
+    this.onMessage('updateHat', (client, hat) => {
+      const player = this.state.players.find(
+        (p) => p.sessionId === client.sessionId
+      );
+      player.icon.update(player.icon.skin, new Hat(hat));
+    })
 
     // Check if everyone is in range to begin voting
     const checkCanStartVoting = () => {
@@ -401,30 +418,10 @@ export class GameRoom extends Room {
   onJoin(client, options) {
     console.log(`${client.sessionId} joined room ${this.state.code}!`);
 
-    let availIcons = [
-      'banana',
-      'black',
-      'blue',
-      'brown',
-      'coral',
-      'cyan',
-      'gray',
-      'green',
-      'lime',
-      'maroon',
-      'orange',
-      'pink',
-      'purple',
-      'red',
-      'rose',
-      'tan',
-      'white',
-      'yellow',
-    ];
-    const icon = availIcons[this.state.players.length % availIcons.length];
+    const randSkin = this.state.skinList.filter((skin) => !this.state.players.find((p) => p.icon.skin === skin))[0]; // Picks first skin from array of unused skins
 
     const isHost = this.state.players.length === 0;
-    this.state.players.push(new Player(client.sessionId, isHost, icon));
+    this.state.players.push(new Player(client.sessionId, isHost, new Icon(randSkin, new Hat('none'))));
 
     this.state.refresh += 1;
   }

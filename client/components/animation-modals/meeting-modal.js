@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     position: 'absolute',
-    top: 70,
     transform: [{rotateZ: '10deg'}],
     alignItems: 'center',
     justifyContent: 'center',

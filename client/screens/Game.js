@@ -166,18 +166,18 @@ export default function GameScreen({ navigation }) {
     setSabotageType(type);
   }
 
-  const openVotingModal = () => {
-    const room = getGameRoom();
-    if (!room) return;
+  // const openVotingModal = () => {
+  //   const room = getGameRoom();
+  //   if (!room) return;
 
-    if (room.state.gameState !== 'voting') {
-      // If this is triggered manually
-      room?.send('startVoting');
-    }
+  //   if (room.state.gameState !== 'voting') {
+  //     // If this is triggered manually
+  //     room?.send('startVoting');
+  //   }
 
-    setVotingModalVisible(true);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-  };
+  //   setVotingModalVisible(true);
+  //   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+  // };
 
   function endSabotageCooldown() {
     setSabotageOnCooldown(false);
@@ -493,7 +493,6 @@ export default function GameScreen({ navigation }) {
       setArrowActive(false);
       setMeetingModalVisible(false);
       setDeathModalVisible(false);
-      openVotingModal();
     });
 
     room.onMessage('playerEjected', (playerId) => {
@@ -553,12 +552,18 @@ export default function GameScreen({ navigation }) {
 
     room.onMessage('endedGame', (message) => {
       console.log(`endedgame`);
+
       setArrowActive(false);
-      if (message == 'impostor') {
-        setWinningTeam('impostor');
-      } else if (message == 'crewmate') {
-        setWinningTeam('crewmate');
-      }
+      setTimeout(() => {
+        closeTask();
+        setDeathModalVisible(false);
+        setStartModalVisible(false);
+        if (message == 'impostor') {
+          setWinningTeam('impostor');
+        } else if (message == 'crewmate') {
+          setWinningTeam('crewmate');
+        }
+      }, 1000)
     });
 
     room.onStateChange((state) => {
@@ -671,12 +676,16 @@ export default function GameScreen({ navigation }) {
           ) {
             return;
           }
+          // console.log(displayLoc);
 
           return (
             <Marker
               tracksViewChanges={p.isAlive}
               key={p.sessionId}
-              coordinate={{ ...displayLoc }}
+              coordinate={{
+                latitude: displayLoc.latitude,
+                longitude: displayLoc.longitude,
+              }}
               title={p.username}
             >
               <ProfileIcon
@@ -704,6 +713,10 @@ export default function GameScreen({ navigation }) {
 
         {taskMarkers()}
       </MapView>
+
+      <View style={styles.dimmerContainer}>
+        <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
+      </View>
 
       <Minimap
         player={currPlayer}
@@ -782,12 +795,12 @@ export default function GameScreen({ navigation }) {
         <ControlPanel />
       )}
 
-      <VotingModal
-        isVisible={votingModalVisible}
-        timer={votingTimer}
-        myId={currPlayer?.sessionId}
+      <StartGame
+        isVisible={startModalVisible}
+        players={getGameRoom().state.players}
         isImpostor={currPlayer?.isImpostor}
-        reporter={playerReporter}
+        sessionId={currPlayer?.sessionId}
+        onClose={() => setStartModalVisible(false)}
       />
       <EjectModal
         onClose={() => [setEjectedPlayer({}), setArrowActive(true)]}
@@ -805,13 +818,6 @@ export default function GameScreen({ navigation }) {
         dead={playerDead}
         onClose={() => setMeetingModalVisible(false)}
       />
-      <StartGame
-        isVisible={startModalVisible}
-        players={getGameRoom().state.players}
-        isImpostor={currPlayer?.isImpostor}
-        sessionId={currPlayer?.sessionId}
-        onClose={() => setStartModalVisible(false)}
-      />
       <EndGame
         size={100}
         team={winningTeam}
@@ -821,6 +827,13 @@ export default function GameScreen({ navigation }) {
           leaveGameRoom();
           navigation.navigate('Menu');
         }}
+      />
+      <VotingModal
+        isVisible={votingModalVisible}
+        timer={votingTimer}
+        myId={currPlayer?.sessionId}
+        isImpostor={currPlayer?.isImpostor}
+        reporter={playerReporter}
       />
 
       {/* TASKS */}
@@ -876,7 +889,6 @@ export default function GameScreen({ navigation }) {
         playing={sabotageActive}
         completion={() => getGameRoom().send('sabotageDeath')}
       />
-      <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
     </View>
   );
 }
@@ -887,12 +899,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  dimmerContainer: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   dimmer: {
     position: 'absolute',
     alignSelf: 'center',
     verticalAlign: 'center',
     opacity: 0.5,
-    transform: [{ scale: 2.0 }],
+    transform: [{ scale: 2 }],
     zIndex: -1,
   },
   container: {

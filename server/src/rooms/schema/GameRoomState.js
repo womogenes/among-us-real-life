@@ -30,6 +30,54 @@ schema.defineTypes(Location, {
   altitude: 'number', // altitude
 });
 
+
+// COSMETICS
+export class Skin extends Schema {
+  constructor(name) {
+    super();
+
+    this.name = name;
+  }
+}
+
+schema.defineTypes(Skin, {
+  name: 'string',
+});
+
+export class Hat extends Schema {
+  constructor(name) {
+    super();
+
+    this.name = name;
+  }
+}
+
+schema.defineTypes(Hat, {
+  name: 'string',
+});
+
+export class Icon extends Schema {
+  constructor(skin, hat) {
+    super();
+
+    this.skin = skin;
+    this.hat = hat;
+  }
+  update(newSkin, newHat){
+    if(newSkin){
+      this.skin = newSkin;
+    }
+    if(newHat){
+      this.hat = newHat;
+    }
+  }
+}
+
+schema.defineTypes(Icon, {
+  skin: Skin,
+  hat: Hat,
+});
+
 export class Task extends Schema {
   constructor(name, location, taskId) {
     super();
@@ -59,6 +107,7 @@ export class EmergencyButton extends Schema {
     this.taskId = nanoid();
     this.location = location;
     this.uses = uses;
+    
   }
 }
 schema.defineTypes(EmergencyButton, {
@@ -75,7 +124,7 @@ export class Player extends Schema {
 
     this.sessionId = sessionId;
     this.username = 'Anonymous';
-    this.icon = icon; // Automatically assigned for now
+    this.icon = icon;
     this.location = new Location();
     this.trueLocation = new Location();
     this.isHost = isHost;
@@ -108,7 +157,7 @@ export class Player extends Schema {
 schema.defineTypes(Player, {
   sessionId: 'string',
   username: 'string',
-  icon: 'string',
+  icon: Icon,
   location: Location,
   trueLocation: Location,
   isHost: 'boolean',
@@ -172,7 +221,49 @@ export class GameRoomState extends Schema {
     this.sabotageTaskList = new ArraySchema();
     this.votes = new MapSchema();
     this.votingTimer = this.settings.votingTimer;
+    this.skinList = new ArraySchema();
+    this.skinList.push(
+      new Skin('banana'),
+      new Skin('yellow'),
+      new Skin('rose'),
+      new Skin('pink'),
+      new Skin('orange'),
+      new Skin('coral'),
+      new Skin('red'),
+      new Skin('maroon'),
+      new Skin('cyan'),
+      new Skin('blue'),
+      new Skin('purple'),
+      new Skin('lime'),
+      new Skin('green'),
+      new Skin('tan'),
+      new Skin('brown'),
+      new Skin('white'),
+      new Skin('gray'),
+      new Skin('black'),
+    )
+    this.hatList = new ArraySchema();
+    this.hatList.push(
+      new Hat('none'),
+      new Hat('bandana'),
+      new Hat('bandana2'),
+      new Hat('cap'),
+      new Hat('doctor'),
+      new Hat('fedora'),
+      new Hat('general'),
+      new Hat('goggles'),
+      new Hat('halo'),
+      new Hat('nest'),
+      new Hat('oldcap'),
+      new Hat('paper'),
+      new Hat('russian'),
+      new Hat('slippery'),
+      new Hat('soldier'),
+      new Hat('sprout'),
+      new Hat('toilet'),
+    )
   }
+
 }
 schema.defineTypes(GameRoomState, {
   refresh: 'number',
@@ -187,4 +278,6 @@ schema.defineTypes(GameRoomState, {
   sabotageTaskList: [Task],
   votes: { map: 'string' },
   votingTimer: 'number',
+  skinList: [Skin],
+  hatList: [Hat]
 });

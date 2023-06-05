@@ -37,6 +37,8 @@ export default function App() {
   useEffect(() => {
     async function loadResourcesAndDataAsync() {
       const imageAssets = cacheImages([
+
+        // Skins
         require('./assets/profile-icons/banana.png'),
         require('./assets/profile-icons/black.png'),
         require('./assets/profile-icons/blue.png'),
@@ -55,6 +57,26 @@ export default function App() {
         require('./assets/profile-icons/tan.png'),
         require('./assets/profile-icons/white.png'),
         require('./assets/profile-icons/yellow.png'),
+
+        // Hats
+        require('./assets/hats/bandana.png'),
+        require('./assets/hats/bandana2.png'),
+        require('./assets/hats/cap.png'),
+        require('./assets/hats/doctor.png'),
+        require('./assets/hats/fedora.png'),
+        require('./assets/hats/general.png'),
+        require('./assets/hats/goggles.png'),
+        require('./assets/hats/halo.png'),
+        require('./assets/hats/nest.png'),
+        require('./assets/hats/oldcap.png'),
+        require('./assets/hats/paper.png'), 
+        require('./assets/hats/russian.png'),
+        require('./assets/hats/slippery.png'),
+        require('./assets/hats/soldier.png'),
+        require('./assets/hats/sprout.png'),
+        require('./assets/hats/toilet.png'),
+
+        // Other
         require('./assets/adaptive-icon.png'),
         require('./assets/dimmer.png'),
         require('./assets/electricitySlider.png'),
@@ -72,6 +94,8 @@ export default function App() {
         require('./assets/splash.png'),
         require('./assets/usebutton.png'),
         require('./assets/x.png'),
+
+        // Tasks
         require('./assets/task-icons/calibrate.png'),
         require('./assets/task-icons/electricity.png'),
         require('./assets/task-icons/emergency.png'),
