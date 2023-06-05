@@ -112,7 +112,7 @@ function ControlPanel(props) {
               value={manualMovement}
             />
           </View>
-        </View>
+      </View>
 
         {/* Role-specific buttons */}
         {props.userType == 'crewmate' && (
