@@ -105,5 +105,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     fontSize: 40,
     fontFamily: 'Impostograph-Regular',
+    zIndex: 10,
   },
 });
