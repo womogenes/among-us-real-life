@@ -409,9 +409,10 @@ export class GameRoom extends Room {
   }
 
   onAuth(client, options, request) {
-    // return true;
 
-    // undid: Temporarily allow joining an in-progress game for the sake of testing
+    if(this.state.players.length >= 18) { // Player limit of 18
+      return false;
+    }
     return !this.state.gameStarted;
   }
 
