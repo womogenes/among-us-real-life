@@ -30,7 +30,6 @@ schema.defineTypes(Location, {
   altitude: 'number', // altitude
 });
 
-
 // COSMETICS
 export class Skin extends Schema {
   constructor(name) {
@@ -63,11 +62,11 @@ export class Icon extends Schema {
     this.skin = skin;
     this.hat = hat;
   }
-  update(newSkin, newHat){
-    if(newSkin){
+  update(newSkin, newHat) {
+    if (newSkin) {
       this.skin = newSkin;
     }
-    if(newHat){
+    if (newHat) {
       this.hat = newHat;
     }
   }
@@ -107,7 +106,6 @@ export class EmergencyButton extends Schema {
     this.taskId = nanoid();
     this.location = location;
     this.uses = uses;
-    
   }
 }
 schema.defineTypes(EmergencyButton, {
@@ -139,7 +137,7 @@ export class Player extends Schema {
       new Task('reCaptcha', new Location(47.731639, -122.327612, 0)), // Red square
       new Task('memory', new Location(47.731779, -122.32705, 0)), // Bliss
       new Task('reCaptcha', new Location(47.733402, -122.327814, 0)), // AAC
-      new Task('reCaptcha', new Location(47.73264, -122.327554, 0)), // Quad
+      new Task('wires', new Location(47.73264, -122.327554, 0)), // Quad
       new Task('electricity', new Location(47.732325, -122.326288, 0)), // Behind St. Nick's
       new Task('memory', new Location(47.733534, -122.326878, 0)) // East side of AAC
     );
@@ -240,8 +238,8 @@ export class GameRoomState extends Schema {
       new Skin('brown'),
       new Skin('white'),
       new Skin('gray'),
-      new Skin('black'),
-    )
+      new Skin('black')
+    );
     this.hatList = new ArraySchema();
     this.hatList.push(
       new Hat('none'),
@@ -260,10 +258,9 @@ export class GameRoomState extends Schema {
       new Hat('slippery'),
       new Hat('soldier'),
       new Hat('sprout'),
-      new Hat('toilet'),
-    )
+      new Hat('toilet')
+    );
   }
-
 }
 schema.defineTypes(GameRoomState, {
   refresh: 'number',
@@ -279,5 +276,5 @@ schema.defineTypes(GameRoomState, {
   votes: { map: 'string' },
   votingTimer: 'number',
   skinList: [Skin],
-  hatList: [Hat]
+  hatList: [Hat],
 });

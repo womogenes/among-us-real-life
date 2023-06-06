@@ -35,6 +35,7 @@ import CaptchaTask from '../components/tasks/recaptcha.js';
 import MemoryTask from '../components/tasks/memory.js';
 import ElectricityTask from '../components/tasks/electricity.js';
 import CalibrateTask from '../components/tasks/calibrate.js';
+import WiresTask from '../components/tasks/wires.js';
 
 // SABOTAGE TASKS
 import CodeTask from '../components/sabotage/passcode.js';
@@ -465,6 +466,11 @@ export default function GameScreen({ navigation }) {
     ),
   ]);
 
+  // useEffect(() => {
+  //   setStartModalVisible(false);
+  //   setStartModalVisible(true);
+  // }, []);
+
   // SABOTAGE
   useEffect(() => {
     if (activeTask.taskId === sabNotif) {
@@ -551,7 +557,7 @@ export default function GameScreen({ navigation }) {
     });
 
     room.onMessage('endedGame', (message) => {
-      console.log(`endedgame`);
+      console.log(`endedGame`);
 
       setArrowActive(false);
       setTimeout(() => {
@@ -563,7 +569,7 @@ export default function GameScreen({ navigation }) {
         } else if (message == 'crewmate') {
           setWinningTeam('crewmate');
         }
-      }, 1000)
+      }, 1000);
     });
 
     room.onStateChange((state) => {
@@ -595,18 +601,17 @@ export default function GameScreen({ navigation }) {
 
       // Set progress bar based on task completion percentage
       // Array.reduce documentation: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
-      const totalTaskCount = state.players.reduce(
-        (count, player) =>
-          count + player.isImpostor ? 0 : player.tasks.length,
-        0
-      );
-      const completedTaskCount = state.players.reduce(
-        (count, player) =>
-          count + player.isImpostor
-            ? 0
-            : player.tasks.reduce((count, task) => count + task.complete, 0),
-        0
-      );
+      let totalTaskCount = 0;
+      for (let player of state.players) {
+        totalTaskCount += player.isImpostor ? 0 : player.tasks.length;
+      }
+      let completedTaskCount = 0;
+      for (let player of state.players) {
+        if (player.isImpostor) continue;
+        for (let task of player.tasks) {
+          completedTaskCount += task.complete ? 1 : 0;
+        }
+      }
       setTaskCompletion(completedTaskCount / totalTaskCount);
 
       // Force rerender
@@ -687,15 +692,31 @@ export default function GameScreen({ navigation }) {
                 longitude: displayLoc.longitude,
               }}
               title={p.username}
-              style={p.sessionId === getGameRoom()?.sessionId? {zIndex: 9} : {zIndex: 1}}
+              style={
+                p.sessionId === getGameRoom()?.sessionId
+                  ? { zIndex: 9 }
+                  : { zIndex: 1 }
+              }
             >
               <ProfileIcon
                 player={p} // Pass the whole player object
                 size={40}
                 direction={closestTask.direction}
-                active={p.sessionId === getGameRoom()?.sessionId? getGameRoom()?.state.players.find((p) => p.sessionId === getGameRoom()?.sessionId).tasks.find((t) => !t.complete)? arrowActive : false : false}
+                active={
+                  p.sessionId === getGameRoom()?.sessionId
+                    ? getGameRoom()
+                        ?.state.players.find(
+                          (p) => p.sessionId === getGameRoom()?.sessionId
+                        )
+                        .tasks.find((t) => !t.complete)
+                      ? arrowActive
+                      : false
+                    : false
+                }
                 sabotage={sabotageActive}
-                isImpostor={playerState === 'disguised'? false : currPlayer?.isImpostor}
+                isImpostor={
+                  playerState === 'disguised' ? false : currPlayer?.isImpostor
+                }
                 myId={currPlayer?.sessionId}
               />
             </Marker>
@@ -715,16 +736,17 @@ export default function GameScreen({ navigation }) {
         {taskMarkers()}
       </MapView>
 
-      <View style={styles.dimmerContainer}>
-        <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
-      </View>
-
       <Minimap
         player={currPlayer}
         userCoords={[location.latitude, location.longitude]}
         tasks={tasks}
         emergencyButton={emergencyButton}
+        visible={startModalVisible}
       />
+
+      <View style={styles.dimmerContainer}>
+        <Image source={require('../assets/dimmer.png')} style={styles.dimmer} />
+      </View>
 
       {deathScreen()}
       <SabotageFlash
@@ -742,20 +764,18 @@ export default function GameScreen({ navigation }) {
       {playerState == 'crewmate' ? (
         <ControlPanel
           userType={'crewmate'}
-          useButtonState={disableActions || buttonState.use}
-          useButtonPress={useButton}
           reportButtonState={disableActions || buttonState.report}
           reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
           setManualMovement={setManualMovementHook}
+          useButtonState={disableActions || buttonState.use}
+          useButtonPress={useButton}
         />
       ) : playerState == 'impostor' ? (
         <ControlPanel
           userType={'impostor'}
-          useButtonState={disableActions || buttonState.use}
-          useButtonPress={useButton}
           killButtonState={
             disableActions || !player?.isAlive || buttonState.kill
           }
@@ -780,17 +800,19 @@ export default function GameScreen({ navigation }) {
           reactor={() => sabotage('reactor')}
           emergencyButton={impostorEmergency}
           emergencyActive={getGameRoom().state.gameState === 'emergency'}
+          useButtonState={disableActions || buttonState.use}
+          useButtonPress={useButton}
         />
       ) : playerState == 'disguised' ? (
         <ControlPanel
           userType={'disguisedimpostor'}
           revealButtonPress={revealButton}
-          reportButtonState={buttonState.report}
-          reportButtonPress={reportButton}
           taskCompletion={taskCompletion}
           tasks={tasks}
           manualMovement={manualMovement}
           setManualMovement={setManualMovementHook}
+          reportButtonState={buttonState.report}
+          reportButtonPress={reportButton}
         />
       ) : (
         <ControlPanel />
@@ -874,6 +896,11 @@ export default function GameScreen({ navigation }) {
         complete={completeTask}
         closeTask={closeTask}
       />
+      <WiresTask
+        active={activeTask.name === 'wires'}
+        complete={completeTask}
+        closeTask={closeTask}
+      />
       <EmergencyButton
         active={activeTask.name === 'emergency'}
         callEmergency={() =>
@@ -913,7 +940,7 @@ const styles = StyleSheet.create({
     verticalAlign: 'center',
     opacity: 0.5,
     transform: [{ scale: 2 }],
-    zIndex: -1,
+    zIndex: -2,
   },
   container: {
     flex: 1,
@@ -927,7 +954,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: -2,
+    zIndex: -3,
   },
   deathScreen: {
     width: '100%',

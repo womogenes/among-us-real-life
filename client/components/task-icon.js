@@ -12,6 +12,7 @@ const images = {
   electricity: require('../assets/task-icons/electricity.png'),
   reactor: require('../assets/task-icons/scanner.png'),
   emergency: require('../assets/task-icons/emergency.png'),
+  wires: require('../assets/task-icons/wires.png'),
 };
 
 export const TaskIcon = (props) => {
@@ -46,11 +47,11 @@ export const TaskIcon = (props) => {
       duration: 10,
       useNativeDriver: false,
       easing: Easing.inOut(Easing.sin),
-    }).start()
+    }).start();
   }
 
-  if(props.name === 'o2' || props.name === 'reactor') {
-    if(props.complete === false) {
+  if (props.name === 'o2' || props.name === 'reactor') {
+    if (props.complete === false) {
       toggleBeacon.start();
     } else {
       toggleBeacon.stop();
@@ -81,8 +82,7 @@ export const TaskIcon = (props) => {
         </View>
       </View>
     );
-  }
-  else if(props.name === 'emergency'){
+  } else if (props.name === 'emergency') {
     return (
       <View style={styles.container}>
         <Animated.View
@@ -116,7 +116,12 @@ export const TaskIcon = (props) => {
           style={[
             styles.image,
             {
-              backgroundColor: props.complete === null ? '#35e82e' : props.complete? '#35e82e' : '#b5b5b5',
+              backgroundColor:
+                props.complete === null
+                  ? '#35e82e'
+                  : props.complete
+                  ? '#35e82e'
+                  : '#b5b5b5',
               width: props.size,
               height: props.size,
               borderWidth: props.size / 20,

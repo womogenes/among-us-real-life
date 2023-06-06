@@ -51,14 +51,14 @@ export class GameRoom extends Room {
         (p) => p.sessionId === client.sessionId
       );
       player.icon.update(new Skin(skin), player.icon.hat);
-    })
+    });
 
     this.onMessage('updateHat', (client, hat) => {
       const player = this.state.players.find(
         (p) => p.sessionId === client.sessionId
       );
       player.icon.update(player.icon.skin, new Hat(hat));
-    })
+    });
 
     // Check if everyone is in range to begin voting
     const checkCanStartVoting = () => {
@@ -217,18 +217,17 @@ export class GameRoom extends Room {
         endSabotage();
       }
 
-      const totalTaskCount = this.state.players.reduce(
-        (count, player) =>
-          count + player.isImpostor ? 0 : player.tasks.length,
-        0
-      );
-      const completedTaskCount = this.state.players.reduce(
-        (count, player) =>
-          count + player.isImpostor
-            ? 0
-            : player.tasks.reduce((count, task) => count + task.complete, 0),
-        0
-      );
+      let totalTaskCount = 0;
+      for (let player of this.state.players) {
+        totalTaskCount += player.isImpostor ? 0 : player.tasks.length;
+      }
+      let completedTaskCount = 0;
+      for (let player of this.state.players) {
+        if (player.isImpostor) continue;
+        for (let task of player.tasks) {
+          completedTaskCount += task.complete ? 1 : 0;
+        }
+      }
 
       if (totalTaskCount == completedTaskCount) {
         // Crewmates completed all the tasks and win!
@@ -419,10 +418,14 @@ export class GameRoom extends Room {
   onJoin(client, options) {
     console.log(`${client.sessionId} joined room ${this.state.code}!`);
 
-    const randSkin = this.state.skinList.filter((skin) => !this.state.players.find((p) => p.icon.skin === skin))[0]; // Picks first skin from array of unused skins
+    const randSkin = this.state.skinList.filter(
+      (skin) => !this.state.players.find((p) => p.icon.skin === skin)
+    )[0]; // Picks first skin from array of unused skins
 
     const isHost = this.state.players.length === 0;
-    this.state.players.push(new Player(client.sessionId, isHost, new Icon(randSkin, new Hat('none'))));
+    this.state.players.push(
+      new Player(client.sessionId, isHost, new Icon(randSkin, new Hat('none')))
+    );
 
     this.state.refresh += 1;
   }

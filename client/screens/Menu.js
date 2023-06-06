@@ -18,6 +18,8 @@ import CustomText from '../components/text.js';
 import CustomButton from '../components/button.js';
 import { ProfileIcon } from '../components/profile-icon.js';
 
+import WiresTask from '../components/tasks/wires.js';
+
 function MenuScreen({ navigation }) {
   const [connected, setConnected] = useState('notConnected');
 
@@ -63,6 +65,7 @@ function MenuScreen({ navigation }) {
             (Lakeside Edition)
           </CustomText>
         </View>
+
         <View style={styles.buttonsContainer}>
           {connected != 'connected' && (
             <>

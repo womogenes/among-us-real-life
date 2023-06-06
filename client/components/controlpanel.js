@@ -19,6 +19,7 @@ function ControlPanel(props) {
   const [saboID, setSaboID] = useState();
   const [isModalVisible, setModalVisibility] = useState(false);
   const { manualMovement, setManualMovement } = props;
+  const [loading, setLoading] = useState(true);
 
   function killCooldown() {
     setKillTimer(props.killCooldown);
@@ -52,6 +53,12 @@ function ControlPanel(props) {
   }, [killTimer]);
 
   useEffect(() => {
+    if (props.useButtonState !== null && props.reportButtonState !== null) {
+      setLoading(false);
+    }
+  }, [props.useButtonState, props.reportButtonState]);
+
+  useEffect(() => {
     if (sabotageTimer <= 0) {
       clearInterval(saboID);
       setSabotageTimer(null);
@@ -79,7 +86,9 @@ function ControlPanel(props) {
     }
   }, [props.killOnCooldown]);
 
-  return (
+  return loading ? (
+    <></>
+  ) : (
     <View style={styles.bottom}>
       <View style={styles.buttonContainer}>
         {/* Universal views */}
@@ -112,7 +121,7 @@ function ControlPanel(props) {
               value={manualMovement}
             />
           </View>
-      </View>
+        </View>
 
         {/* Role-specific buttons */}
         {props.userType == 'crewmate' && (
